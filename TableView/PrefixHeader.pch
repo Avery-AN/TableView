@@ -1,0 +1,72 @@
+//
+//  PrefixHeader.pch
+//  TestProject
+//
+//  Created by Avery An on 2019/5/8.
+//  Copyright © 2019 Avery An. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#endif /* PrefixHeader_pch */
+
+
+
+#import <Masonry.h>
+#import "NSString+Additions.h"
+#import "UIColor+Color.h"
+#import <SDWebImageDownloader.h>
+#import "UIImageView+WebCache.h"
+#import "UIImage+RoundedImage.h"
+#import "UIImage+ClipsToBounds.h"
+#import "UIImage+GIF.h"
+
+
+#ifndef weakify
+#if DEBUG
+#if __has_feature(objc_arc)
+#define weakify(object) autoreleasepool{} __weak __typeof__(object) weak##_##object = object;
+#else
+#define weakify(object) autoreleasepool{} __block __typeof__(object) block##_##object = object;
+#endif
+#else
+#if __has_feature(objc_arc)
+#define weakify(object) try{} @finally{} {} __weak __typeof__(object) weak##_##object = object;
+#else
+#define weakify(object) try{} @finally{} {} __block __typeof__(object) block##_##object = object;
+#endif
+#endif
+#endif
+
+#ifndef strongify
+#if DEBUG
+#if __has_feature(objc_arc)
+#define strongify(object) autoreleasepool{} __typeof__(object) object = weak##_##object;
+#else
+#define strongify(object) autoreleasepool{} __typeof__(object) object = block##_##object;
+#endif
+#else
+#if __has_feature(objc_arc)
+#define strongify(object) try{} @finally{} __typeof__(object) object = weak##_##object;
+#else
+#define strongify(object) try{} @finally{} __typeof__(object) object = block##_##object;
+#endif
+#endif
+#endif
+
+
+#define HEXColor(colorString)       [UIColor colorWithHexString:colorString]
+#define MainColor                   HEXColor(@"17a5af")
+
+#define BottomLineHeight_1pixel         (1 / [UIScreen mainScreen].scale)  //设置1像素高度
+#define SINGLE_LINE_ADJUST_OFFSET       ((1 / [UIScreen mainScreen].scale) / 2)
+
+#define UIHeight                [[UIScreen mainScreen] bounds].size.height
+#define UIWidth                 [[UIScreen mainScreen] bounds].size.width
+#define NavigationBarHeight     ([[UIScreen mainScreen] bounds].size.height - 812 >= 0 ? 88 : 64)
+#define BaseViewHeight          [[UIScreen mainScreen] bounds].size.height - 812 >= 0 ? (UIHeight-34) : UIHeight
+#define HEXColor(colorString)   [UIColor colorWithHexString:colorString]
