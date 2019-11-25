@@ -101,9 +101,9 @@ typedef union {
     QAAttributedLayer *layer = (QAAttributedLayer *)self.layer;
 
     // 处理"...查看全文":
-    if (self.numberOfLines != 0 && self.showMoreText && layer.showMoreTextEffected) {
+    if (self.numberOfLines != 0 && self.showMoreText && self.attributedText.showMoreTextEffected) {
         NSDictionary *highlightFrameDic = layer.textDrawer.highlightFrameDic; // (key:range - value:CGRect-array)
-        //NSString *truncationRangeKey = NSStringFromRange(NSMakeRange(self.attributedText.length - self.seeMoreText.length, self.seeMoreText.length));
+        // NSString *truncationRangeKey = NSStringFromRange(NSMakeRange(self.attributedText.length - self.seeMoreText.length, self.seeMoreText.length));
         NSString *truncationRangeKey = [layer.truncationInfo valueForKey:@"truncationRange"];
         if (truncationRangeKey) {
             NSRange truncationRange = NSRangeFromString(truncationRangeKey);
@@ -464,7 +464,7 @@ typedef union {
     else {
         _attributedText = [[NSMutableAttributedString alloc] initWithAttributedString:attributedText];
     }
-
+    
     if ([NSThread isMainThread]) {
         [self.layer setNeedsDisplay];
     }

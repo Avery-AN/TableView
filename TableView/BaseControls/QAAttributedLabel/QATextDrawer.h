@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "QAAttributedLayer.h"
 
 @interface QATextDrawer : NSObject
 
@@ -77,6 +78,7 @@
 maxNumberOfLines:(NSInteger)maxNumberOfLines
    textAlignment:(NSTextAlignment)textAlignment
   truncationText:(NSDictionary *)truncationTextInfo
-  isSaveTextInfo:(BOOL)isSave;
+  isSaveTextInfo:(BOOL)isSave
+           layer:(QAAttributedLayer *)layer;
 
 @end

@@ -23,7 +23,7 @@
         NSInteger content_height = 15;
         _styleLabel = [[QAAttributedLabel alloc] initWithFrame:CGRectMake(0, 0, content_width, content_height)];
         _styleLabel.backgroundColor = [UIColor whiteColor];
-        _styleLabel.font = [UIFont systemFontOfSize:17];
+        _styleLabel.font = [UIFont systemFontOfSize:18];
 //        _styleLabel.font = [UIFont fontWithName:@"AvenirNext-HeavyItalic" size:20];
         _styleLabel.textColor = HEXColor(@"666666");
         _styleLabel.lineSpace = 1.1;
@@ -33,8 +33,7 @@
         _styleLabel.atHighlight = YES;
 //        _styleLabel.showShortLink = YES;
 //        _styleLabel.shortLink = @"这里就是网址呀";
-//        _styleLabel.numberOfLines = 7;
-//        _styleLabel.numberOfLines = 6;
+//        _styleLabel.numberOfLines = 3;
         _styleLabel.numberOfLines = 21;
         _styleLabel.topicHighlight = YES;
         _styleLabel.showMoreText = YES;
@@ -45,7 +44,7 @@
         _styleLabel.textAlignment = NSTextAlignmentJustified;
 //        _styleLabel.textAlignment = NSTextAlignmentLeft;
         _styleLabel.highLightTexts = [NSArray arrayWithObjects:@"添加系统控件",@"索性直接绘制", nil];
-        _styleLabel.highlightTextColor = [UIColor purpleColor];
+        _styleLabel.highlightTextColor = [UIColor blueColor];
         _styleLabel.highlightTapedTextColor = [UIColor greenColor];
         _styleLabel.highlightTapedBackgroundColor = [UIColor grayColor];
         _styleLabel.highlightAtTextColor = [UIColor greenColor];
@@ -54,7 +53,6 @@
         _styleLabel.highlightAtTapedTextColor = [UIColor redColor];
         _styleLabel.highlightLinkTapedTextColor = [UIColor magentaColor];
         _styleLabel.highlightTopicTapedTextColor = [UIColor greenColor];
-        
     }
     return _styleLabel;
 }

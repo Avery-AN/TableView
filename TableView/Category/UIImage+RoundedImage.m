@@ -16,7 +16,7 @@
     int radius = 0;
     CGImageRef imageRef;
     BOOL new = NO;
-    if (abs(width - height) > 2) {  // 允许2像素的误差
+    if (abs(width - height) > 1) {  // 允许1像素的误差
         CGFloat x = 0;
         CGFloat y = 0;
         if (width > height) {

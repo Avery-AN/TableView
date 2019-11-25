@@ -36,11 +36,11 @@
     self.view.backgroundColor = [UIColor whiteColor];
     
     self.data = [NSMutableArray arrayWithCapacity:0];
-    [self performSelector:@selector(generateContent) withObject:nil afterDelay:0];  // 生成文案 (模拟服务器端数据)
+    [self performSelector:@selector(generateContent) withObject:nil afterDelay:0];  // 模拟服务器端数据(get数据)
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self performSelector:@selector(setFPS) withObject:nil afterDelay:0];
+    [self performSelector:@selector(setFPS) withObject:nil afterDelay:.5];
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
@@ -51,20 +51,18 @@
 
 #pragma mark - Private Methods -
 - (void)setFPS {
-    @weakify(self);
-    dispatch_async(dispatch_queue_create("CADisplayLink", NULL), ^{
-        @strongify(self);
-        if (!self.displayLink) {
-            self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkTick)];
-            [self.displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
-        }
-    });
+    if (!self.displayLink) {
+        self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkTick)];
+        [self.displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
+    }
 }
 - (void)destroyDisplayLink {
-    [self.displayLink removeFromRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
-    self.displayLink.paused = YES;
-    [self.displayLink invalidate];
-    self.displayLink = nil;
+    if (self.displayLink) {
+        [self.displayLink removeFromRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
+        self.displayLink.paused = YES;
+        [self.displayLink invalidate];
+        self.displayLink = nil;
+    }
 }
 - (void)generateContent {
     NSMutableArray *datas = [NSMutableArray array];
@@ -351,15 +349,17 @@
     }
     self.originalDatas = datas;
     
-    [self getContent]; // 获取数据 (模拟网络操作)
+    [self processDatas];
 }
-- (void)getContent {
-    // 获取数据 (模拟网络操作):
+- (void)processDatas {
     /*
      maxConcurrentOperationCount的主要作用是加快首屏cell的渲染
      maxConcurrentOperationCount的值可以根据cell的height以及tableView.contentView.height来计算
     */
-    int maxConcurrentOperationCount = 5;
+    NSInteger maxConcurrentOperationCount = 5;
+    if (self.originalDatas.count < maxConcurrentOperationCount) {
+        maxConcurrentOperationCount = self.originalDatas.count;
+    }
     [ScratchablelatexCell getStytle:self.originalDatas maxConcurrentOperationCount:maxConcurrentOperationCount completion:^(NSInteger start, NSInteger end) {
         NSLog(@"已获取到新数据数据: %ld - %ld", start , end);
         for (NSInteger i = start; i <= end; i++) {

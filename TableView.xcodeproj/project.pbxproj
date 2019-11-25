@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BB0666FF238396CE0086CF6F /* emoji偷笑@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB0666FD238396CE0086CF6F /* emoji偷笑@2x.png */; };
-		BB066700238396CE0086CF6F /* emoji偷笑@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB0666FE238396CE0086CF6F /* emoji偷笑@3x.png */; };
-		BB066703238397290086CF6F /* nezha@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB066701238397290086CF6F /* nezha@3x.png */; };
-		BB066704238397290086CF6F /* nezha@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB066702238397290086CF6F /* nezha@2x.png */; };
+		BB58E08A238B7CD0005C4EA9 /* emoji偷笑@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB58E086238B7CD0005C4EA9 /* emoji偷笑@2x.png */; };
+		BB58E08B238B7CD0005C4EA9 /* emoji偷笑@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB58E087238B7CD0005C4EA9 /* emoji偷笑@3x.png */; };
+		BB58E08C238B7CD0005C4EA9 /* nezha@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB58E088238B7CD0005C4EA9 /* nezha@2x.png */; };
+		BB58E08D238B7CD0005C4EA9 /* nezha@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB58E089238B7CD0005C4EA9 /* nezha@3x.png */; };
 		BB9F6C0A23838A7000F05116 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BB9F6C0923838A7000F05116 /* AppDelegate.m */; };
 		BB9F6C1523838A7200F05116 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB9F6C1423838A7200F05116 /* Assets.xcassets */; };
 		BB9F6C1B23838A7200F05116 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BB9F6C1A23838A7200F05116 /* main.m */; };
@@ -48,10 +48,10 @@
 /* Begin PBXFileReference section */
 		175F2055E5583335E94BE624 /* Pods_TableView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TableView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		62D176DA0D2F114333645CB8 /* Pods-TableView.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TableView.debug.xcconfig"; path = "Target Support Files/Pods-TableView/Pods-TableView.debug.xcconfig"; sourceTree = "<group>"; };
-		BB0666FD238396CE0086CF6F /* emoji偷笑@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "emoji偷笑@2x.png"; sourceTree = "<group>"; };
-		BB0666FE238396CE0086CF6F /* emoji偷笑@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "emoji偷笑@3x.png"; sourceTree = "<group>"; };
-		BB066701238397290086CF6F /* nezha@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nezha@3x.png"; sourceTree = "<group>"; };
-		BB066702238397290086CF6F /* nezha@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nezha@2x.png"; sourceTree = "<group>"; };
+		BB58E086238B7CD0005C4EA9 /* emoji偷笑@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "emoji偷笑@2x.png"; sourceTree = "<group>"; };
+		BB58E087238B7CD0005C4EA9 /* emoji偷笑@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "emoji偷笑@3x.png"; sourceTree = "<group>"; };
+		BB58E088238B7CD0005C4EA9 /* nezha@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nezha@2x.png"; sourceTree = "<group>"; };
+		BB58E089238B7CD0005C4EA9 /* nezha@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nezha@3x.png"; sourceTree = "<group>"; };
 		BB9F6C0523838A7000F05116 /* TableView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TableView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB9F6C0823838A7000F05116 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		BB9F6C0923838A7000F05116 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -149,12 +149,20 @@
 		BB0666FC238396CE0086CF6F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				BB066702238397290086CF6F /* nezha@2x.png */,
-				BB066701238397290086CF6F /* nezha@3x.png */,
-				BB0666FD238396CE0086CF6F /* emoji偷笑@2x.png */,
-				BB0666FE238396CE0086CF6F /* emoji偷笑@3x.png */,
+				BB58E085238B7CD0005C4EA9 /* EmojiImages */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		BB58E085238B7CD0005C4EA9 /* EmojiImages */ = {
+			isa = PBXGroup;
+			children = (
+				BB58E086238B7CD0005C4EA9 /* emoji偷笑@2x.png */,
+				BB58E087238B7CD0005C4EA9 /* emoji偷笑@3x.png */,
+				BB58E088238B7CD0005C4EA9 /* nezha@2x.png */,
+				BB58E089238B7CD0005C4EA9 /* nezha@3x.png */,
+			);
+			path = EmojiImages;
 			sourceTree = "<group>";
 		};
 		BB9F6BFC23838A7000F05116 = {
@@ -391,13 +399,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB066704238397290086CF6F /* nezha@2x.png in Resources */,
-				BB066703238397290086CF6F /* nezha@3x.png in Resources */,
 				BB9F6C7823838BEB00F05116 /* emoji_default@3x.png in Resources */,
-				BB066700238396CE0086CF6F /* emoji偷笑@3x.png in Resources */,
+				BB58E08D238B7CD0005C4EA9 /* nezha@3x.png in Resources */,
+				BB58E08B238B7CD0005C4EA9 /* emoji偷笑@3x.png in Resources */,
 				BB9F6C7923838BEB00F05116 /* emoji_default@2x.png in Resources */,
+				BB58E08C238B7CD0005C4EA9 /* nezha@2x.png in Resources */,
 				BB9F6C1523838A7200F05116 /* Assets.xcassets in Resources */,
-				BB0666FF238396CE0086CF6F /* emoji偷笑@2x.png in Resources */,
+				BB58E08A238B7CD0005C4EA9 /* emoji偷笑@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -613,8 +621,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = D9YF9J5KM6;
 				GCC_PREFIX_HEADER = TableView/PrefixHeader.pch;
 				INFOPLIST_FILE = TableView/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -631,8 +641,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = D9YF9J5KM6;
 				GCC_PREFIX_HEADER = TableView/PrefixHeader.pch;
 				INFOPLIST_FILE = TableView/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

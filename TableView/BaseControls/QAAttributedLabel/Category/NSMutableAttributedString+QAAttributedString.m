@@ -251,4 +251,11 @@
     return objc_getAssociatedObject(self, _cmd);
 }
 
+- (void)setShowMoreTextEffected:(BOOL)showMoreTextEffected {
+    objc_setAssociatedObject(self, @selector(showMoreTextEffected), @(showMoreTextEffected), OBJC_ASSOCIATION_ASSIGN);
+}
+- (BOOL)showMoreTextEffected {
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
+}
+
 @end

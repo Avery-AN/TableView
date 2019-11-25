@@ -165,7 +165,7 @@ static CGFloat qa_widthCallback(void *ref) {
      [spaceString addAttribute:(id)kCTRunDelegateAttributeName value:(__bridge id)delegateRef range:NSMakeRange(0, 1)];
      */
     
-    // 自定义emoji的背景色:
+    // 自定义emoji图片的背景色:
     [spaceString addAttribute:(id)kCTBackgroundColorAttributeName value:(__bridge id)[UIColor clearColor].CGColor range:NSMakeRange(0, 1)];
     CFRelease(delegateRef);
     

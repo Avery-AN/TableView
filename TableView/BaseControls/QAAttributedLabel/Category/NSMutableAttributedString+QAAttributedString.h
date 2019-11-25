@@ -20,6 +20,11 @@
 @property (nonatomic, copy, nullable) NSAttributedString *truncationText;
 
 /**
+是否绘制了"seeMoreText"文本、YES表示已绘制
+*/
+@property (nonatomic, assign) BOOL showMoreTextEffected;
+
+/**
  联合 "...查看全文" 或者 "...全文" 【用truncationText来截断当前的字符串】
  
  @param truncationText 需要追加的文案

@@ -10,8 +10,8 @@
 
 @interface UIColor (Color)
 
-+ (UIColor*)colorWithHexString:(NSString*)stringToConvert;
-+ (UIColor*)colorWithHexString:(NSString*)stringToConvert alpha:(CGFloat)alpha;
++ (UIColor *)colorWithHexString:(NSString *)stringToConvert;
++ (UIColor *)colorWithHexString:(NSString *)stringToConvert alpha:(CGFloat)alpha;
 + (UIColor *)randomColor;
 
 @end

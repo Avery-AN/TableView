@@ -128,14 +128,18 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
 maxNumberOfLines:(NSInteger)maxNumberOfLines
    textAlignment:(NSTextAlignment)textAlignment
   truncationText:(NSDictionary *)truncationTextInfo
-  isSaveTextInfo:(BOOL)isSave {
-    if (context == NULL) {
+  isSaveTextInfo:(BOOL)isSave
+           layer:(QAAttributedLayer *)layer {
+    if (context == NULL || !attributedString || CGSizeEqualToSize(size, CGSizeZero)) {
         return;
     }
-    else if (!attributedString) {
-        return;
-    }
-    else if (CGSizeEqualToSize(size, CGSizeZero)) {
+    
+    /* 模拟耗时操作(For Test):
+     [NSThread sleepForTimeInterval:0.1];
+     */
+    
+    // 异常处理:
+    if (![attributedString.string isEqualToString:layer.attributedText_backup.string]) {
         return;
     }
     
@@ -241,7 +245,8 @@ maxNumberOfLines:(NSInteger)maxNumberOfLines
                                               lineHeight:lineHeight
                                                      run:run
                                            ContentHeight:contentHeight
-                                        attributedString:attributedString];
+                                        attributedString:attributedString
+                                                   layer:layer];
                     }
                 }
             }
@@ -319,7 +324,8 @@ maxNumberOfLines:(NSInteger)maxNumberOfLines
                         lineHeight:(CGFloat)lineHeight
                                run:(CTRunRef)run
                      ContentHeight:(CGFloat)contentHeight
-                  attributedString:(NSMutableAttributedString *)attributedString {
+                  attributedString:(NSMutableAttributedString *)attributedString
+                  layer:(QAAttributedLayer *)layer {
     CFRange runRange = CTRunGetStringRange(run);
     NSRange currentRunRange = NSMakeRange(runRange.location, runRange.length);
     
@@ -358,6 +364,11 @@ maxNumberOfLines:(NSInteger)maxNumberOfLines
             NSString *keyString = [NSString stringWithFormat:@"%@%@", attributedString.string, highlightText];
             NSString *encodedKey = [keyString md5Hash];
             
+            // 异常处理:
+            if (![attributedString.string isEqualToString:layer.attributedText_backup.string]) {
+                return;
+            }
+            
             // 获取当前CTRunRef展示的文案:
             NSRange range = NSMakeRange((currentRunRange.location - highlightRange.location), currentRunRange.length);
             NSString *currentString = [highlightText substringWithRange:range];
@@ -378,10 +389,6 @@ maxNumberOfLines:(NSInteger)maxNumberOfLines
                 }
                 
                 NSMutableArray *newlineTexts = [self.textNewlineDic valueForKey:encodedKey];
-                if (!newlineTexts) {
-                    newlineTexts = [NSMutableArray array];
-                }
-                
                 if (_currentLineIndex == lineIndex) {
                     if (highlightRects.count > 0) {
                         NSValue *rectValue = [highlightRects lastObject];
@@ -422,10 +429,6 @@ maxNumberOfLines:(NSInteger)maxNumberOfLines
                     }
                 }
                 
-                
-                if (!self.highlightFrameDic) {
-                    self.highlightFrameDic = [NSMutableDictionary dictionary];
-                }
                 [self.highlightFrameDic setValue:highlightRects forKey:NSStringFromRange(highlightRange)];
                 [self.textNewlineDic setValue:newlineTexts forKey:encodedKey];
             }

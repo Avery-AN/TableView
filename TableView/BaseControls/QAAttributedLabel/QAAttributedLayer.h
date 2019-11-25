@@ -15,11 +15,7 @@
 @property (nonatomic, nullable) QATextDrawer *textDrawer;
 @property (nonatomic, readonly, nullable) __block UIImage *contentImage;
 @property (nonatomic, copy, nullable) NSDictionary *truncationInfo;
-
-/**
- 是否绘制了"seeMoreText"文本、YES表示已绘制
- */
-@property (nonatomic, assign, readonly) BOOL showMoreTextEffected;
+@property (nonatomic, copy, nullable, readonly) NSMutableAttributedString *attributedText_backup;
 
 /**
  获取文案所占用的size
