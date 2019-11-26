@@ -20,7 +20,7 @@
 /**
  获取文案所占用的size
  */
-- (NSMutableAttributedString * _Nullable)getAttributedStringWithString:(NSString * _Nonnull)showContent
+- (NSMutableAttributedString * _Nullable)getAttributedStringWithString:(NSString * _Nonnull)content
                                                               maxWidth:(CGFloat)width;
 
 /**

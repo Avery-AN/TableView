@@ -85,4 +85,7 @@
                                   highlightFont:(UIFont * _Nonnull)highlightFont
                                  highlightRange:(NSRange)highlightRange;
 
+- (NSDictionary * _Nullable)getInstanceProperty;
+- (void)setFunctions:(NSDictionary * _Nonnull)dic;
+
 @end

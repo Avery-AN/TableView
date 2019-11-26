@@ -159,6 +159,35 @@
                  range:highlightRange];
     CFRelease(fontRef);
 }
+- (NSDictionary * _Nullable)getInstanceProperty {
+    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+    
+    unsigned int count = 0;
+    objc_property_t *properties = class_copyPropertyList([NSMutableAttributedString class], &count);
+    for (int i = 0; i < count; i++) {
+        objc_property_t property = properties[i];
+        const char *name = property_getName(property);
+        NSString *key = [NSString stringWithUTF8String:name];
+        id value = [self valueForKey:key];
+        const char *attributes_c = property_getAttributes(property);
+        NSString *attributes = [NSString stringWithUTF8String:attributes_c];
+        if (value && [attributes rangeOfString:@",R,"].location == NSNotFound) {  // 排除没有被赋值的属性 & 只读属性
+            [dic setObject:value forKey:key];
+        }
+    }
+    free(properties);
+    
+    return dic;
+}
+- (void)setFunctions:(NSDictionary * _Nonnull)dic {
+    if (!dic || dic.count == 0) {
+        return;
+    }
+    
+    for (NSString *key in dic) {
+        [self setValue:[dic valueForKey:key] forKey:key];
+    }
+}
 
 
 #pragma mark - Private Methods -

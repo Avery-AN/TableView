@@ -11,34 +11,47 @@
 #import <objc/runtime.h>
 
 
-#define LinkHighlight_MASK          (1 << 0)  // 0000 0000 0000 0001
-#define ShowShortLink_MASK          (1 << 1)  // 0000 0000 0000 0010
-#define AtHighlight_MASK            (1 << 2)  // 0000 0000 0000 0100
-#define ShowMoreText_MASK           (1 << 3)  // 0000 0000 0000 1000
-#define TopicHighlight_MASK         (1 << 4)  // 0000 0000 0001 0000
-#define Display_async_MASK          (1 << 5)  // 0000 0000 0010 0000
-#define TapedLink_at_topic_MASK     (1 << 6)  // 0000 0000 0100 0000
-#define TapedMore_MASK              (1 << 7)  // 0000 0000 1000 0000
-#define CacheContentsImage_MASK     (1 << 8)  // 0000 0001 0000 0000
+#define LinkHighlight_MASK          (1 << 0)  // 0000 0001
+#define ShowShortLink_MASK          (1 << 1)  // 0000 0010
+#define AtHighlight_MASK            (1 << 2)  // 0000 0100
+#define TopicHighlight_MASK         (1 << 3)  // 0000 1000
+#define ShowMoreText_MASK           (1 << 4)  // 0001 0000
+#define Display_async_MASK          (1 << 5)  // 0010 0000
+
+#define TapedLink_MASK              (1 << 0)  // 0000 0001
+#define TapedAt_MASK                (1 << 1)  // 0000 0010
+#define TapedTopic_MASK             (1 << 2)  // 0000 0100
+#define TapedMore_MASK              (1 << 3)  // 0000 1000
 
 typedef struct {
     char linkHighlight : 1;
     char showShortLink : 1;
     char atHighlight : 1;
+    char topicHighlight : 1;
     char showMoreText : 1;
     char display_async : 1;
-    char highlight : 1;
-    char seemore : 1;
-} Bits_struct;
-
+} Bits_struct_property;
 typedef union {
-    char bits;
-    Bits_struct bits_struct;
-} Bits_union;
+    char bits;  // char 占用1个字节
+    Bits_struct_property bits_struct;
+} Bits_union_property;
+
+
+typedef struct {
+    char tapedLink : 1;
+    char tapedAt : 1;
+    char tapedTopic : 1;
+    char tapedSeeMore : 1;
+} Bits_struct_taped;
+typedef union {
+    char bits;  // char 占用1个字节
+    Bits_struct_taped bits_struct;
+} Bits_union_taped;
 
 
 @interface QAAttributedLabel () {
-    Bits_union _bits_union;
+    Bits_union_property _bits_union_property;
+    Bits_union_taped _bits_union_taped;
 }
 @property (nonatomic, copy, nullable) NSString *tapedHighlightContent;
 @property (nonatomic, assign) NSRange tapedHighlightRange;
@@ -99,12 +112,12 @@ typedef union {
     self.tapedHighlightContent = nil;
     CGPoint point = [[touches anyObject] locationInView:self];
     QAAttributedLayer *layer = (QAAttributedLayer *)self.layer;
-
+    
     // 处理"...查看全文":
-    if (self.numberOfLines != 0 && self.showMoreText && self.attributedText.showMoreTextEffected) {
+    NSMutableAttributedString *attributedText = self.attributedText;
+    if (self.numberOfLines != 0 && self.showMoreText && attributedText.showMoreTextEffected) {
         NSDictionary *highlightFrameDic = layer.textDrawer.highlightFrameDic; // (key:range - value:CGRect-array)
-        // NSString *truncationRangeKey = NSStringFromRange(NSMakeRange(self.attributedText.length - self.seeMoreText.length, self.seeMoreText.length));
-        NSString *truncationRangeKey = [layer.truncationInfo valueForKey:@"truncationRange"];
+        NSString *truncationRangeKey = [attributedText.truncationInfo valueForKey:@"truncationRange"];
         if (truncationRangeKey) {
             NSRange truncationRange = NSRangeFromString(truncationRangeKey);
             NSArray *highlightRects = [highlightFrameDic valueForKey:truncationRangeKey];
@@ -115,7 +128,7 @@ typedef union {
                     [layer drawHighlightColor:truncationRange];
 
                     self.tapedHighlightContent = self.seeMoreText;
-                    _bits_union.bits |= TapedMore_MASK;
+                    _bits_union_taped.bits |= TapedMore_MASK;
 
                     return;
                 }
@@ -141,10 +154,23 @@ typedef union {
 
                     NSDictionary *highlightTextDic = layer.textDrawer.textDic;
                     if (highlightTextDic && highlightTextDic.count > 0) {
-                        NSString *highlightText = [highlightTextDic valueForKey:NSStringFromRange(highlightRange)];
+                        NSString *key = NSStringFromRange(highlightRange);
+                        NSString *highlightText = [highlightTextDic valueForKey:key];
+                        NSString *tapedType = [layer.textDrawer.textTypeDic valueForKey:key];
+                        if (!tapedType) {
+                            return;
+                        }
+                        else if ([tapedType isEqualToString:@"link"]) {
+                            _bits_union_taped.bits |= TapedLink_MASK;
+                        }
+                        else if ([tapedType isEqualToString:@"at"]) {
+                            _bits_union_taped.bits |= TapedAt_MASK;
+                        }
+                        else if ([tapedType isEqualToString:@"topic"]) {
+                            _bits_union_taped.bits |= TapedTopic_MASK;
+                        }
                         self.tapedHighlightContent = highlightText;
-                        _bits_union.bits |= TapedLink_at_topic_MASK;
-
+                        
                         return;
                     }
                 }
@@ -164,18 +190,26 @@ typedef union {
         if (self.QAAttributedLabelTapAction) {
             __weak typeof(self) weakSelf = self;
 
-            if (!!(_bits_union.bits & TapedMore_MASK)) {
+            if (!!(_bits_union_taped.bits & TapedMore_MASK)) {
                 self.QAAttributedLabelTapAction(weakSelf.tapedHighlightContent, QAAttributedLabel_Taped_More);
-                _bits_union.bits &= ~TapedMore_MASK;
+                _bits_union_taped.bits &= ~TapedMore_MASK;
             }
-            else if (!!(_bits_union.bits & TapedLink_at_topic_MASK)) {
-                self.QAAttributedLabelTapAction(weakSelf.tapedHighlightContent, QAAttributedLabel_Taped_Link_at_topic);
-                _bits_union.bits &= ~TapedLink_at_topic_MASK;
+            else if (!!(_bits_union_taped.bits & TapedLink_MASK)) {
+                self.QAAttributedLabelTapAction(weakSelf.tapedHighlightContent, QAAttributedLabel_Taped_Link);
+                _bits_union_taped.bits &= ~TapedLink_MASK;
             }
-            else {
-                self.QAAttributedLabelTapAction(@"点击了label自身", QAAttributedLabel_Taped_Label);
+            else if (!!(_bits_union_taped.bits & TapedAt_MASK)) {
+                self.QAAttributedLabelTapAction(weakSelf.tapedHighlightContent, QAAttributedLabel_Taped_At);
+                _bits_union_taped.bits &= ~TapedAt_MASK;
+            }
+            else if (!!(_bits_union_taped.bits & TapedTopic_MASK)) {
+                self.QAAttributedLabelTapAction(weakSelf.tapedHighlightContent, QAAttributedLabel_Taped_Topic);
+                _bits_union_taped.bits &= ~TapedTopic_MASK;
             }
         }
+    }
+    else {
+        self.QAAttributedLabelTapAction(@"点击了label自身", QAAttributedLabel_Taped_Label);
     }
 
     [self.nextResponder touchesEnded:touches withEvent:event];
@@ -302,80 +336,69 @@ typedef union {
 #pragma mark - Properties -
 - (void)setLinkHighlight:(BOOL)linkHighlight {
     if (linkHighlight) {
-        _bits_union.bits |= LinkHighlight_MASK;
+        _bits_union_property.bits |= LinkHighlight_MASK;
     }
     else {
-        _bits_union.bits &= ~LinkHighlight_MASK;
+        _bits_union_property.bits &= ~LinkHighlight_MASK;
     }
 }
 - (BOOL)linkHighlight {
-    return !!(_bits_union.bits & LinkHighlight_MASK); //位移后的值不一定是bool类型、2次取反操作可以将任何类型数据变为bool
+    return !!(_bits_union_property.bits & LinkHighlight_MASK); //位移后的值不一定是bool类型、2次取反操作可以将任何类型数据变为bool
 }
 - (void)setShowShortLink:(BOOL)showShortLink {
     if (showShortLink) {
-        _bits_union.bits |= ShowShortLink_MASK;
+        _bits_union_property.bits |= ShowShortLink_MASK;
     }
     else {
-        _bits_union.bits &= ~ShowShortLink_MASK;
+        _bits_union_property.bits &= ~ShowShortLink_MASK;
     }
 }
 - (BOOL)showShortLink {
-    return !!(_bits_union.bits & ShowShortLink_MASK);
+    return !!(_bits_union_property.bits & ShowShortLink_MASK);
 }
 - (void)setAtHighlight:(BOOL)atHighlight {
     if (atHighlight) {
-        _bits_union.bits |= AtHighlight_MASK;
+        _bits_union_property.bits |= AtHighlight_MASK;
     }
     else {
-        _bits_union.bits &= ~AtHighlight_MASK;
+        _bits_union_property.bits &= ~AtHighlight_MASK;
     }
 }
 - (BOOL)atHighlight {
-    return !!(_bits_union.bits & AtHighlight_MASK);
+    return !!(_bits_union_property.bits & AtHighlight_MASK);
 }
 - (void)setTopicHighlight:(BOOL)topicHighlight {
     if (topicHighlight) {
-        _bits_union.bits |= TopicHighlight_MASK;
+        _bits_union_property.bits |= TopicHighlight_MASK;
     }
     else {
-        _bits_union.bits &= ~TopicHighlight_MASK;
+        _bits_union_property.bits &= ~TopicHighlight_MASK;
     }
 }
 - (BOOL)topicHighlight {
-    return !!(_bits_union.bits & TopicHighlight_MASK);
+    return !!(_bits_union_property.bits & TopicHighlight_MASK);
 }
 - (void)setShowMoreText:(BOOL)showMoreText {
     if (showMoreText) {
-        _bits_union.bits |= ShowMoreText_MASK;
+        _bits_union_property.bits |= ShowMoreText_MASK;
     }
     else {
-        _bits_union.bits &= ~ShowMoreText_MASK;
+        _bits_union_property.bits &= ~ShowMoreText_MASK;
     }
 }
 - (BOOL)showMoreText {
-    return !!(_bits_union.bits & ShowMoreText_MASK);
+    return !!(_bits_union_property.bits & ShowMoreText_MASK);
 }
 - (void)setDisplay_async:(BOOL)display_async {
     if (display_async) {
-        _bits_union.bits |= Display_async_MASK;
+        _bits_union_property.bits |= Display_async_MASK;
     }
     else {
-        _bits_union.bits &= ~Display_async_MASK;
+        _bits_union_property.bits &= ~Display_async_MASK;
     }
 }
 - (BOOL)display_async {
-    return !!(_bits_union.bits & Display_async_MASK);
-}
-- (void)setCacheContentsImage:(BOOL)cacheContentsImage {
-    if (cacheContentsImage) {
-        _bits_union.bits |= CacheContentsImage_MASK;
-    }
-    else {
-        _bits_union.bits &= ~CacheContentsImage_MASK;
-    }
-}
-- (BOOL)cacheContentsImage {
-    return !!(_bits_union.bits & CacheContentsImage_MASK);
+    return !!(_bits_union_property.bits & Display_async_MASK);
 }
 
 - (void)setFont:(UIFont *)font {

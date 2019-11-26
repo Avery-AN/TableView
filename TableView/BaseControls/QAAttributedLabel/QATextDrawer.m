@@ -134,14 +134,14 @@ maxNumberOfLines:(NSInteger)maxNumberOfLines
         return;
     }
     
-    /* 模拟耗时操作(For Test):
-     [NSThread sleepForTimeInterval:0.1];
-     */
-    
     // 异常处理:
     if (![attributedString.string isEqualToString:layer.attributedText_backup.string]) {
         return;
     }
+
+    /* 模拟耗时操作(For Test):
+     [NSThread sleepForTimeInterval:0.1];
+     */
     
     @autoreleasepool {
         // 先清空数据

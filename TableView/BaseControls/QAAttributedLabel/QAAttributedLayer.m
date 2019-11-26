@@ -8,6 +8,7 @@
 
 #import "QAAttributedLayer.h"
 #import "QAAttributedLabelConfig.h"
+#import <os/lock.h>
 
 
 #define HighlightTextColor_DEFAULT              [UIColor whiteColor]
@@ -32,6 +33,11 @@ static NSString *SeeMoreText_DEFAULT = @"...查看全文";
 - (void)dealloc {
 //    NSLog(@"%s",__func__);
 }
+- (instancetype)init {
+    if (self = [super init]) {
+    }
+    return self;
+}
 
 
 #pragma mark - Override Methods -
@@ -54,8 +60,9 @@ static NSString *SeeMoreText_DEFAULT = @"...查看全文";
 
 
 #pragma mark - Public Apis -
-- (NSMutableAttributedString * _Nullable)getAttributedStringWithString:(NSString * _Nonnull)showContent
+- (NSMutableAttributedString * _Nullable)getAttributedStringWithString:(NSString * _Nonnull)content
                                                               maxWidth:(CGFloat)width {
+    NSString *showContent = [content copy];
     QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
 
     // 获取需要高亮显示的文案与位置 (link & @user & topic):
@@ -388,6 +395,7 @@ static NSString *SeeMoreText_DEFAULT = @"...查看全文";
         
         // 绘制文案:
         [self fillContentsWithContext:context
+                                label:attributedLabel
                            selfBounds:bounds];
         
         UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
@@ -413,6 +421,7 @@ static NSString *SeeMoreText_DEFAULT = @"...查看全文";
     
     // 绘制文案:
     [self fillContentsWithContext:context
+                            label:attributedLabel
                        selfBounds:self.bounds];
     
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
@@ -422,24 +431,25 @@ static NSString *SeeMoreText_DEFAULT = @"...查看全文";
     self.contents = (__bridge id _Nullable)(image.CGImage);
 }
 - (void)fillContentsWithContext:(CGContextRef)context
+                          label:(QAAttributedLabel *)attributedLabel
                      selfBounds:(CGRect)bounds {
-    QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
+    NSString *content = attributedLabel.text;
     CGFloat boundsWidth = bounds.size.width;
     CGFloat boundsHeight = bounds.size.height;
-    NSString *showContent = attributedLabel.text;
     
     NSMutableAttributedString *attributedText = nil;
     if (attributedLabel.attributedText &&
         attributedLabel.attributedText.string &&
         attributedLabel.attributedText.string.length > 0) {
-        attributedText = attributedLabel.attributedText;
+        attributedText = [attributedLabel.attributedText mutableCopy];
+        NSDictionary *dic = [attributedLabel.attributedText getInstanceProperty];
+        [attributedText setFunctions:dic];
     }
     else {
-        if (showContent == nil) {
+        if (content == nil) {
             return;
         }
-        
-        attributedText = [self getAttributedStringWithString:showContent
+        attributedText = [self getAttributedStringWithString:content
                                                     maxWidth:boundsWidth];
     }
     
@@ -646,7 +656,13 @@ static NSString *SeeMoreText_DEFAULT = @"...查看全文";
         highlightFont = attributedLabel.font;
     }
     
+    // 异常处理:
+    if (![attributedText.string isEqualToString:self.attributedText_backup.string]) {
+        return;
+    }
+    
     // 首先清空数据:
+    [self.textDrawer.textTypeDic removeAllObjects];
     [self.textDrawer.textDic removeAllObjects];
     [self.textDrawer.textForwardColorDic removeAllObjects];
     [self.textDrawer.textBackgroundColorDic removeAllObjects];
@@ -718,7 +734,7 @@ static NSString *SeeMoreText_DEFAULT = @"...查看全文";
             if (truncationRangeString && truncationText) {
                 ranges = [NSMutableArray arrayWithObject:truncationRangeString];
                 contents = [NSMutableArray arrayWithObject:truncationText];
-                [self textDrawer_saveWithType:@"seemore"
+                [self textDrawer_saveWithType:@"seeMore"
                                        ranges:ranges
                                      contents:contents
                            highlightTextColor:highlightTextColor

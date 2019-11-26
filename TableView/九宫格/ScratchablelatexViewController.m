@@ -361,7 +361,7 @@
         maxConcurrentOperationCount = self.originalDatas.count;
     }
     [ScratchablelatexCell getStytle:self.originalDatas maxConcurrentOperationCount:maxConcurrentOperationCount completion:^(NSInteger start, NSInteger end) {
-        NSLog(@"已获取到新数据数据: %ld - %ld", start , end);
+        NSLog(@"已获取到新数据: %ld - %ld", start , end);
         for (NSInteger i = start; i <= end; i++) {
             [self.data addObject:[self.originalDatas objectAtIndex:i]];
         }

@@ -12,9 +12,11 @@
 typedef void (^GetTextContentSizeBlock)(CGSize size, NSMutableAttributedString * _Nullable attributedString);
 
 typedef NS_ENUM(NSUInteger, QAAttributedLabel_TapedStyle) {
-    QAAttributedLabel_Taped_Label = 1,      // 点击了label自身
-    QAAttributedLabel_Taped_More,           // 点中了查看全文
-    QAAttributedLabel_Taped_Link_at_topic   // 点中了link链接或者@user或者topic话题
+    QAAttributedLabel_Taped_Label = 0,      // 点击了label自身
+    QAAttributedLabel_Taped_More,           // 点中了"...查看全文"
+    QAAttributedLabel_Taped_Link,           // 点中了link链接
+    QAAttributedLabel_Taped_At,             // 点中了@user
+    QAAttributedLabel_Taped_Topic           // 点中了"#topic#"话题
 };
 
 @interface QAAttributedLabel : UIView
@@ -30,7 +32,6 @@ typedef NS_ENUM(NSUInteger, QAAttributedLabel_TapedStyle) {
 @property (nonatomic, assign) BOOL topicHighlight;              // #...#文本(话题)是否需要高亮显示
 @property (nonatomic, assign) BOOL showMoreText;                // 当文本过多时、是否显示seeMoreText的内容
 @property (nonatomic, assign) BOOL display_async;               // 是否异步绘制 (默认为NO)
-// @property (nonatomic, assign, readonly) BOOL cacheContentsImage;          // 是否使用缓存 (默认为NO(配合tableView使用)、打开后会提示性能、但会增加一定的内存的占有率)
 @property (nonatomic, copy, nullable) NSString *text;
 @property (nonatomic, copy, nullable) UIFont *font;
 @property (nonatomic, copy, null_resettable) UIColor *textColor;
