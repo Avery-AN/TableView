@@ -13,9 +13,8 @@
 @interface QAAttributedLayer : CALayer
 
 @property (nonatomic, nullable) QATextDrawer *textDrawer;
-@property (nonatomic, readonly, nullable) __block UIImage *contentImage;
+@property (nonatomic, nullable) __block id currentCGImage;
 @property (nonatomic, copy, nullable) NSDictionary *truncationInfo;
-@property (nonatomic, copy, nullable, readonly) NSMutableAttributedString *attributedText_backup;
 
 /**
  获取文案所占用的size

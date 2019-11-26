@@ -49,4 +49,22 @@
     }
 }
 
++ (CGImageRef)cutCGImage:(CGImageRef)cgImage withRect:(CGRect)rect {
+    CGImageRef sourceImageRef = cgImage;
+    CGFloat scale = [UIScreen mainScreen].scale;
+    CGFloat x = rect.origin.x*scale;
+    CGFloat y = rect.origin.y*scale;
+    CGFloat width = rect.size.width*scale;
+    CGFloat height = rect.size.height*scale;
+    CGRect newRect = CGRectMake(x, y, width, height);
+    
+    if (CGImageGetWidth(cgImage) - width == 0 &&
+        CGImageGetHeight(cgImage) - height == 0) {
+        return cgImage;
+    }
+    
+    CGImageRef newImageRef = CGImageCreateWithImageInRect(sourceImageRef, newRect);
+    return newImageRef;
+}
+
 @end

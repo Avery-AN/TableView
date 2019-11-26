@@ -84,23 +84,32 @@ typedef union {
     return [QAAttributedLayer class];
 }
 
+/**
+ 此处只处理了高度的自适应
+ */
 - (void)sizeToFit {
     CGRect frame = self.frame;
     CGSize size = [self getContentSize];
 
     if (frame.size.height - size.height > 0.) {
-        self.frame = (CGRect) {frame.origin, size};
         QAAttributedLayer *layer = (QAAttributedLayer *)self.layer;
-        UIImage *contentImage = layer.contentImage;
-        contentImage = [contentImage cutWithRect:(CGRect){{0, 0}, self.textLayout.textBoundSize}];
-        layer.contents = (__bridge id _Nullable)(contentImage.CGImage);
+        CGImageRef currentCGImage = (__bridge CGImageRef)(layer.currentCGImage);
+        if (!currentCGImage) {
+            return;
+        }
+        CGImageRef newCGImage = [UIImage cutCGImage:currentCGImage withRect:(CGRect){{0, 0}, self.textLayout.textBoundSize}];
+        layer.contents = (__bridge id _Nullable)(newCGImage);
+        
+        self.frame = (CGRect) {frame.origin, size};
+    }
+    else if (frame.size.height - size.height == 0.) {
+        return;
     }
     else {
         /*
-         一种方案是在这里进行重绘
-         另外一种方案就是绘制的时候将frame设置到最大、不按照label.bounds来绘制、现实的时候再对image进行裁剪。
+         一种方案是在这里进行重绘 (需要处理下layer的display逻辑、将layer.attributedText_backup置为nil)
+         另外一种方案就是绘制的时候将frame设置到最大、不按照label.bounds来绘制、显示的时候再对image进行裁剪。
          */
-        NSLog(@"这里需要重绘");
         self.frame = (CGRect) {frame.origin, size};
         [self.layer setNeedsDisplay];
     }
@@ -494,7 +503,10 @@ typedef union {
     }
 }
 - (void)setAttributedText:(NSMutableAttributedString *)attributedText {
-    if ([attributedText isKindOfClass:[NSMutableAttributedString class]]) {
+    if (!attributedText || attributedText.length == 0) {
+        _attributedText = nil;
+    }
+    else if ([attributedText isKindOfClass:[NSMutableAttributedString class]]) {
         _attributedText = attributedText;
     }
     else {

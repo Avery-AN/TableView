@@ -19,12 +19,13 @@ static NSString *SeeMoreText_DEFAULT = @"...查看全文";
 
 
 @interface QAAttributedLayer () {
-    id _currentCGImage;
     NSRange _currentTapedRange;  // 当点击高亮文案时保存点击处的range
     __block NSDictionary *_currentTapedAttributeInfo;  // 当点击高亮文案时保存点击处的attributeInfo
-    __block NSMutableArray *_currentTapedAttributeInfo_other;  // 当点击高亮文案时保存点击处文案里包含的其它高亮文本的attributeInfo
+    __block NSMutableArray *_currentTapedAttributeInfo_other;  // 当点击高亮文案时保存点击处文案里包含的其它高亮文本的attributeInfo (PS: 高亮文案中包含有搜索到的高亮文案)
 }
 @property (nonatomic, strong, nullable) NSMutableAttributedString *renderText;
+@property (nonatomic, copy, nullable, readonly) NSMutableAttributedString *attributedText_backup;
+@property (nonatomic, copy, nullable, readonly) NSString *text_backup;
 @end
 
 @implementation QAAttributedLayer
@@ -47,13 +48,23 @@ static NSString *SeeMoreText_DEFAULT = @"...查看全文";
     QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
     if (!attributedLabel) {
         self->_attributedText_backup = nil;
+        self->_text_backup = nil;
+        self.contents = nil;
         return;
     }
     else if ([self.attributedText_backup isEqual:attributedLabel.attributedText]) {
+        if (self.currentCGImage) {
+            self.contents = self.currentCGImage;
+        }
         return;
     }
     else {  // 前后两次display时文案不一致的情况
-        self->_attributedText_backup = attributedLabel.attributedText;
+        if (attributedLabel.attributedText) {
+            self->_attributedText_backup = attributedLabel.attributedText;
+        }
+        else if (attributedLabel.text) {
+            self->_text_backup = attributedLabel.text;
+        }
         [self fillContents:attributedLabel];
     }
 }
@@ -201,7 +212,7 @@ static NSString *SeeMoreText_DEFAULT = @"...查看全文";
     return attributedText;
 }
 - (void)drawHighlightColor:(NSRange)range {
-    _currentCGImage = self.contents;   // 保存当前的self.contents以供clearHighlightColor方法中使用
+    self.currentCGImage = self.contents;   // 保存当前的self.contents以供clearHighlightColor方法中使用
     
     QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
     NSMutableAttributedString *attributedText = attributedLabel.attributedText;
@@ -282,13 +293,12 @@ static NSString *SeeMoreText_DEFAULT = @"...查看全文";
     UIGraphicsEndImageContext();
     self.contents = (__bridge id _Nullable)(image.CGImage);
     
-    _currentCGImage = self.contents;   // 保存当前的self.contents以供clearHighlightColor方法中使用
+    self.currentCGImage = self.contents;   // 保存当前的self.contents以供clearHighlightColor方法中使用
 }
 
 - (void)clearHighlightColor:(NSRange)range {
-    if (_currentCGImage) {
-        self.contents = _currentCGImage;
-        _currentCGImage = nil;
+    if (self.currentCGImage) {
+        self.contents = self.currentCGImage;
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             // 清除当点击高亮文案时所做的文案高亮属性的修改 (将点击时添加的高亮颜色去掉、并恢复到点击之前的颜色状态):
@@ -373,9 +383,13 @@ static NSString *SeeMoreText_DEFAULT = @"...查看全文";
         return;
     }
     else if (attributedLabel.attributedText == nil || attributedLabel.attributedText.length == 0) {
-        self.contents = nil;
+        if (attributedLabel.text == nil || attributedLabel.text.length == 0) {
+            self.contents = nil;
+            return;
+        }
     }
-    else if (attributedLabel.display_async) {
+    
+    if (attributedLabel.display_async) {
         [self fillContents_async:attributedLabel];
     }
     else {
@@ -398,6 +412,7 @@ static NSString *SeeMoreText_DEFAULT = @"...查看全文";
         CGContextFillRect(context, bounds);
         
         // 绘制文案:
+        __weak typeof(self) weakSelf = self;
         [self fillContentsWithContext:context
                                 label:attributedLabel
                            selfBounds:bounds
@@ -410,11 +425,11 @@ static NSString *SeeMoreText_DEFAULT = @"...查看全文";
                                 } completion:^{
                                     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
                                     image = [image decodeImage];  // image的解码
-                                    self->_contentImage = image;
+                                    weakSelf.currentCGImage = (__bridge id _Nullable)(image.CGImage);
                                     UIGraphicsEndImageContext();
             
                                     dispatch_async(dispatch_get_main_queue(), ^{
-                                        self.contents = (__bridge id _Nullable)(image.CGImage);
+                                        self.contents = weakSelf.currentCGImage;
                                     });
                                 }];
     });
@@ -444,8 +459,8 @@ static NSString *SeeMoreText_DEFAULT = @"...查看全文";
                                     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
                                     UIGraphicsEndImageContext();
                                     image = [image decodeImage];  // image的解码
-                                    self->_contentImage = image;
-                                    self.contents = (__bridge id _Nullable)(image.CGImage);
+                                    self.currentCGImage = (__bridge id _Nullable)(image.CGImage);
+                                    self.contents = self.currentCGImage;
                                 }];
 }
 - (void)fillContentsWithContext:(CGContextRef)context
@@ -472,6 +487,11 @@ static NSString *SeeMoreText_DEFAULT = @"...查看全文";
         }
         attributedText = [self getAttributedStringWithString:content
                                                     maxWidth:boundsWidth];
+        
+        if (self.text_backup) {
+            self->_attributedText_backup = attributedText;
+            self->_text_backup = nil;
+        }
     }
     
     // 保存高亮相关信息(link & at & Topic & Seemore)到layer的textDrawer中:
@@ -1014,7 +1034,7 @@ static NSString *SeeMoreText_DEFAULT = @"...查看全文";
         }
     }
     else {
-        if (_currentCGImage) {
+        if (self.currentCGImage) {
             // 保存当前点击处的attributeInfo:
             NSRange effectiveRange = NSMakeRange(0, 0);
             self->_currentTapedAttributeInfo = [attributedText attributesAtIndex:range.location effectiveRange:&effectiveRange];  //effectiveRange参数是引用参数，该参数反映了在所检索的位置上字符串中具有当前属性的范围
@@ -1098,7 +1118,7 @@ static NSString *SeeMoreText_DEFAULT = @"...查看全文";
         return YES;
     }
     
-    if (![self.attributedText_backup.string isEqualToString:content]) {
+    if (self.attributedText_backup && ![self.attributedText_backup.string isEqualToString:content]) {
         return YES;
     }
     

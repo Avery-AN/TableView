@@ -17,4 +17,6 @@
  */
 - (UIImage *)cutWithRect:(CGRect)rect;
 
++ (CGImageRef)cutCGImage:(CGImageRef)cgImage withRect:(CGRect)rect;
+
 @end
