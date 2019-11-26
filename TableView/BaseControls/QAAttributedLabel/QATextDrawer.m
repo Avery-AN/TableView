@@ -121,27 +121,27 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
     }
 }
 
-- (void)drawText:(NSMutableAttributedString *)attributedString
-         context:(CGContextRef)context
-     contentSize:(CGSize)size
-       wordSpace:(CGFloat)wordSpace
+- (int)drawText:(NSMutableAttributedString *)attributedString
+        context:(CGContextRef)context
+    contentSize:(CGSize)size
+      wordSpace:(CGFloat)wordSpace
 maxNumberOfLines:(NSInteger)maxNumberOfLines
-   textAlignment:(NSTextAlignment)textAlignment
-  truncationText:(NSDictionary *)truncationTextInfo
-  isSaveTextInfo:(BOOL)isSave
-           layer:(QAAttributedLayer *)layer {
+  textAlignment:(NSTextAlignment)textAlignment
+ truncationText:(NSDictionary *)truncationTextInfo
+ isSaveTextInfo:(BOOL)isSave
+          check:(BOOL(^)(NSString *content))check
+         cancel:(void(^)(void))cancel {
     if (context == NULL || !attributedString || CGSizeEqualToSize(size, CGSizeZero)) {
-        return;
+        return -1;
     }
     
     // 异常处理:
-    if (![attributedString.string isEqualToString:layer.attributedText_backup.string]) {
-        return;
+    if (check && check(attributedString.string)) {
+        if (cancel) {
+            cancel();
+        }
+        return -1;
     }
-
-    /* 模拟耗时操作(For Test):
-     [NSThread sleepForTimeInterval:0.1];
-     */
     
     @autoreleasepool {
         // 先清空数据
@@ -239,14 +239,25 @@ maxNumberOfLines:(NSInteger)maxNumberOfLines
                     // 保存高亮文案在字符中的NSRange以及在CTFrame中的CGRect (以便在label中处理点击事件):
                     if (isSave) {
                         CGFloat contentHeight = size.height;
-                        [self saveHighlightRangeAndFrame:line
-                                              lineOrigin:lineOrigin
-                                               lineIndex:lineIndex
-                                              lineHeight:lineHeight
-                                                     run:run
-                                           ContentHeight:contentHeight
-                                        attributedString:attributedString
-                                                   layer:layer];
+                        int result = [self saveHighlightRangeAndFrame:line
+                                                           lineOrigin:lineOrigin
+                                                            lineIndex:lineIndex
+                                                           lineHeight:lineHeight
+                                                                  run:run
+                                                        ContentHeight:contentHeight
+                                                     attributedString:attributedString
+                                                                check:check];
+                        if (result == -1) {
+                            if (cancel) {
+                                cancel();
+                            }
+                            
+                            CFRelease(drawPath);
+                            CFRelease(ctFrame);
+                            CFRelease(ctFramesetter);
+                            
+                            return -1;
+                        }
                     }
                 }
             }
@@ -256,6 +267,8 @@ maxNumberOfLines:(NSInteger)maxNumberOfLines
         CFRelease(ctFrame);
         CFRelease(ctFramesetter);
     }
+    
+    return 0;
 }
 
 
@@ -318,14 +331,14 @@ maxNumberOfLines:(NSInteger)maxNumberOfLines
     }
 }
 
-- (void)saveHighlightRangeAndFrame:(CTLineRef)line
-                        lineOrigin:(CGPoint)lineOrigin
-                         lineIndex:(CFIndex)lineIndex
-                        lineHeight:(CGFloat)lineHeight
-                               run:(CTRunRef)run
-                     ContentHeight:(CGFloat)contentHeight
-                  attributedString:(NSMutableAttributedString *)attributedString
-                  layer:(QAAttributedLayer *)layer {
+- (int)saveHighlightRangeAndFrame:(CTLineRef)line
+                       lineOrigin:(CGPoint)lineOrigin
+                        lineIndex:(CFIndex)lineIndex
+                       lineHeight:(CGFloat)lineHeight
+                              run:(CTRunRef)run
+                    ContentHeight:(CGFloat)contentHeight
+                 attributedString:(NSMutableAttributedString *)attributedString
+                            check:(BOOL(^)(NSString *content))check {
     CFRange runRange = CTRunGetStringRange(run);
     NSRange currentRunRange = NSMakeRange(runRange.location, runRange.length);
     
@@ -365,8 +378,8 @@ maxNumberOfLines:(NSInteger)maxNumberOfLines
             NSString *encodedKey = [keyString md5Hash];
             
             // 异常处理:
-            if (![attributedString.string isEqualToString:layer.attributedText_backup.string]) {
-                return;
+            if (check && check(attributedString.string)) {
+                return -1;
             }
             
             // 获取当前CTRunRef展示的文案:
@@ -434,6 +447,8 @@ maxNumberOfLines:(NSInteger)maxNumberOfLines
             }
         }
     }
+    
+    return 0;
 }
 
 

@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "QAAttributedLayer.h"
 
 @interface QATextDrawer : NSObject
 
@@ -71,14 +70,15 @@
  @param maxNumberOfLines 展示文案时最多展示的行数 (用户设定的numberoflines)
  @param isSave 是否需要保存attributedString中highllight文案的相关信息、值为YES时表示需要保存
  */
-- (void)drawText:(NSMutableAttributedString *)attributedString
-         context:(CGContextRef)context
-     contentSize:(CGSize)size
-       wordSpace:(CGFloat)wordSpace
+- (int)drawText:(NSMutableAttributedString *)attributedString
+        context:(CGContextRef)context
+    contentSize:(CGSize)size
+      wordSpace:(CGFloat)wordSpace
 maxNumberOfLines:(NSInteger)maxNumberOfLines
-   textAlignment:(NSTextAlignment)textAlignment
-  truncationText:(NSDictionary *)truncationTextInfo
-  isSaveTextInfo:(BOOL)isSave
-           layer:(QAAttributedLayer *)layer;
+  textAlignment:(NSTextAlignment)textAlignment
+ truncationText:(NSDictionary *)truncationTextInfo
+ isSaveTextInfo:(BOOL)isSave
+          check:(BOOL(^)(NSString *content))check
+         cancel:(void(^)(void))cancel;
 
 @end

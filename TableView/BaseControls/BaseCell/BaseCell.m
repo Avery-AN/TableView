@@ -84,13 +84,11 @@ typedef union {
         return;
     }
     
-    /*
-     CGRect contentFrame = [[self.styleInfo valueForKey:@"content-frame"] CGRectValue];
-     if (CGRectContainsPoint(contentFrame, point)) {
-        _bits_union.bits |= BaseCell_Taped_Content_MASK;
-        return;
-     }
-     */
+    CGRect contentFrame = [[self.styleInfo valueForKey:@"content-frame"] CGRectValue];
+    if (CGRectContainsPoint(contentFrame, point)) {
+       _bits_union.bits |= BaseCell_Taped_Content_MASK;
+       return;
+    }
     
     [self.nextResponder touchesBegan:touches withEvent:event];
 }

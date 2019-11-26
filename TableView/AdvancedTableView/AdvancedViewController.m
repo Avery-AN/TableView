@@ -272,6 +272,30 @@
         [dic setValue:content forKey:@"content"];
 
 
+        dic = [datas objectAtIndex:12];
+        content = [dic valueForKey:@"content"];
+        content = @"⚡️🌧🐟🌹\n⛰🐶🌧🐟🌹🐱🐰🐶🐘🐶😺\n1234567890\nABCDEFG";
+        [dic setValue:content forKey:@"content"];
+
+        
+        dic = [datas objectAtIndex:16];
+        content = [dic valueForKey:@"content"];
+        content = @"hello world";
+        [dic setValue:content forKey:@"content"];
+        
+        
+        dic = [datas objectAtIndex:33];
+        content = [dic valueForKey:@"content"];
+        content = @"hi~\nAvery AN ~~~";
+        [dic setValue:content forKey:@"content"];
+        
+        
+        dic = [datas objectAtIndex:40];
+        content = [dic valueForKey:@"content"];
+        content = @"回家吃饭[nezha]\n回家吃饭[nezha][nezha]\n回家吃饭[nezha][nezha][nezha]\n回家吃饭吧 bla bla bla";
+        [dic setValue:content forKey:@"content"];
+        
+
         dic = [datas lastObject];
         content = [dic valueForKey:@"content"];
         content = [content stringByAppendingString:@"https://www.avery.com.cn"];
@@ -297,7 +321,7 @@
         maxConcurrentOperationCount = datas.count;
     }
     [AdvancedCell getStytle:datas maxConcurrentOperationCount:maxConcurrentOperationCount completion:^(NSInteger start, NSInteger end) {
-        NSLog(@"已获取到新数据: %ld - %ld", start , end);
+        NSLog(@"已获取到新数据: %ld - %ld", (long)start , (long)end);
         
         for (NSInteger i = start; i <= end; i++) {
             [self.datas addObject:[datas objectAtIndex:i]];

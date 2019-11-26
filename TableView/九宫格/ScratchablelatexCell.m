@@ -217,12 +217,6 @@ static BOOL openClipsToBounds = YES;
         _styleLabel.highlightAtTapedTextColor = [UIColor redColor];
         _styleLabel.highlightLinkTapedTextColor = [UIColor magentaColor];
         _styleLabel.highlightTopicTapedTextColor = [UIColor greenColor];
-        
-        /*
-         _styleLabel.QAAttributedLabelTapAction = ^(NSString * _Nullable content, QAAttributedLabel_TapedStyle style) {
-            NSLog(@"   AdvancedCell 点击Action:  %@; style: %ld", content, style);
-         };
-         */
     }
     return _styleLabel;
 }

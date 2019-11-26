@@ -221,7 +221,20 @@ typedef union {
         QAAttributedLayer *layer = (QAAttributedLayer *)self.layer;
         [layer clearHighlightColor:self.tapedHighlightRange];
     }
-
+    
+    if (!!(_bits_union_taped.bits & TapedMore_MASK)) {
+        _bits_union_taped.bits &= ~TapedMore_MASK;
+    }
+    else if (!!(_bits_union_taped.bits & TapedLink_MASK)) {
+        _bits_union_taped.bits &= ~TapedLink_MASK;
+    }
+    else if (!!(_bits_union_taped.bits & TapedAt_MASK)) {
+        _bits_union_taped.bits &= ~TapedAt_MASK;
+    }
+    else if (!!(_bits_union_taped.bits & TapedTopic_MASK)) {
+        _bits_union_taped.bits &= ~TapedTopic_MASK;
+    }
+    
     [self.nextResponder touchesCancelled:touches withEvent:event];
 }
 
