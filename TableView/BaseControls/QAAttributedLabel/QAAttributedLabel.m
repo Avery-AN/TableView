@@ -22,6 +22,7 @@
 #define TapedAt_MASK                (1 << 1)  // 0000 0010
 #define TapedTopic_MASK             (1 << 2)  // 0000 0100
 #define TapedMore_MASK              (1 << 3)  // 0000 1000
+#define Taping_MASK                 (1 << 4)  // 0001 0000
 
 typedef struct {
     char linkHighlight : 1;
@@ -42,16 +43,20 @@ typedef struct {
     char tapedAt : 1;
     char tapedTopic : 1;
     char tapedSeeMore : 1;
+    char taping : 1;
 } Bits_struct_taped;
 typedef union {
     char bits;  // char 占用1个字节
     Bits_struct_taped bits_struct;
 } Bits_union_taped;
 
+static void *TapingContext = &TapingContext;
 
 @interface QAAttributedLabel () {
     Bits_union_property _bits_union_property;
     Bits_union_taped _bits_union_taped;
+    NSMutableArray *_searchRanges;
+    NSDictionary *_searchAttributeInfo;
 }
 @property (nonatomic, copy, nullable) NSString *tapedHighlightContent;
 @property (nonatomic, assign) NSRange tapedHighlightRange;
@@ -121,6 +126,10 @@ typedef union {
     self.tapedHighlightContent = nil;
     CGPoint point = [[touches anyObject] locationInView:self];
     QAAttributedLayer *layer = (QAAttributedLayer *)self.layer;
+    
+    [self willChangeValueForKey:NSStringFromSelector(@selector(isTaping))];
+    _bits_union_taped.bits |= Taping_MASK;
+    [self didChangeValueForKey:NSStringFromSelector(@selector(isTaping))];
     
     // 处理"...查看全文":
     NSMutableAttributedString *attributedText = self.attributedText;
@@ -220,6 +229,10 @@ typedef union {
     else {
         self.QAAttributedLabelTapAction(@"点击了label自身", QAAttributedLabel_Taped_Label);
     }
+    
+    [self willChangeValueForKey:NSStringFromSelector(@selector(isTaping))];
+    _bits_union_taped.bits &= ~Taping_MASK;
+    [self didChangeValueForKey:NSStringFromSelector(@selector(isTaping))];
 
     [self.nextResponder touchesEnded:touches withEvent:event];
 }
@@ -243,6 +256,10 @@ typedef union {
     else if (!!(_bits_union_taped.bits & TapedTopic_MASK)) {
         _bits_union_taped.bits &= ~TapedTopic_MASK;
     }
+    
+    [self willChangeValueForKey:NSStringFromSelector(@selector(isTaping))];
+    _bits_union_taped.bits &= ~Taping_MASK;
+    [self didChangeValueForKey:NSStringFromSelector(@selector(isTaping))];
     
     [self.nextResponder touchesCancelled:touches withEvent:event];
 }
@@ -309,12 +326,13 @@ typedef union {
     [self.attributedText searchTexts:texts saveWithRangeArray:&searchRanges];
     if (searchRanges.count > 0) {
         NSDictionary *info = searchResultInfo();
-        self.attributedText.searchRanges = searchRanges;
-        self.attributedText.searchAttributeInfo = info;
-        
-        if (info && [info isKindOfClass:[NSDictionary class]] && info.count > 0) {
-            QAAttributedLayer *layer = (QAAttributedLayer *)self.layer;
-            [layer drawHighlightColorInRanges:searchRanges attributeInfo:info];
+        if (self.isTaping == NO) {
+            [self processSearchResult:searchRanges searchAttributeInfo:info];
+        }
+        else {
+            _searchRanges = searchRanges;
+            _searchAttributeInfo = info;
+            [self addObserver:self forKeyPath:NSStringFromSelector(@selector(isTaping)) options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:TapingContext];
         }
     }
 }
@@ -352,6 +370,32 @@ typedef union {
         size = [QAAttributedStringSizeMeasurement calculateSizeWithString:attributedText maxWidth:self.bounds.size.width];
     }
     return size;
+}
+- (void)processSearchResult:(NSMutableArray *)searchRanges searchAttributeInfo:(NSDictionary *)info {
+    self.attributedText.searchRanges = searchRanges;
+    self.attributedText.searchAttributeInfo = info;
+    
+    if (info && [info isKindOfClass:[NSDictionary class]] && info.count > 0) {
+        QAAttributedLayer *layer = (QAAttributedLayer *)self.layer;
+        [layer drawHighlightColorInRanges:searchRanges attributeInfo:info];
+    }
+}
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context {
+    if (context == TapingContext) {
+        if (keyPath && [keyPath isEqualToString:NSStringFromSelector(@selector(isTaping))]) {
+            NSString *oldKey = [change objectForKey:NSKeyValueChangeOldKey];
+            NSString *newKey = [change objectForKey:NSKeyValueChangeNewKey];
+            
+            if (oldKey.intValue == 1 && newKey.intValue == 0) {
+                [self processSearchResult:_searchRanges searchAttributeInfo:_searchAttributeInfo];
+                
+                [self removeObserver:self forKeyPath:NSStringFromSelector(@selector(isTaping))];
+            }
+        }
+    }
 }
 
 
@@ -421,6 +465,9 @@ typedef union {
 }
 - (BOOL)display_async {
     return !!(_bits_union_property.bits & Display_async_MASK);
+}
+- (BOOL)isTaping {
+    return !!(_bits_union_taped.bits & Taping_MASK);
 }
 
 - (void)setFont:(UIFont *)font {

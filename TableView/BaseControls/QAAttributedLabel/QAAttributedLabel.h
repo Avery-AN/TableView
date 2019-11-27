@@ -26,12 +26,13 @@ typedef NS_ENUM(NSUInteger, QAAttributedLabel_TapedStyle) {
  null_unspecified: 不确定是否为空
  */
 
-@property (nonatomic, assign) BOOL linkHighlight;               // 网页链接是否需要高亮显示
-@property (nonatomic, assign) BOOL showShortLink;               // 是否展示短链接 ("www.baidu.com" -> "网页链接")
-@property (nonatomic, assign) BOOL atHighlight;                 // @的文本是否需要高亮显示
-@property (nonatomic, assign) BOOL topicHighlight;              // #...#文本(话题)是否需要高亮显示
-@property (nonatomic, assign) BOOL showMoreText;                // 当文本过多时、是否显示seeMoreText的内容
+@property (nonatomic, assign) BOOL linkHighlight;               // 网页链接是否需要高亮显示 (默认为NO)
+@property (nonatomic, assign) BOOL showShortLink;               // 是否展示短链接 ("www.baidu.com" -> "网页链接"; 默认为NO)
+@property (nonatomic, assign) BOOL atHighlight;                 // @的文本是否需要高亮显示 (默认为NO)
+@property (nonatomic, assign) BOOL topicHighlight;              // #...#文本(话题)是否需要高亮显示 (默认为NO)
+@property (nonatomic, assign) BOOL showMoreText;                // 当文本过多时、是否显示seeMoreText的内容 (默认为NO)
 @property (nonatomic, assign) BOOL display_async;               // 是否异步绘制 (默认为NO)
+@property (nonatomic, assign) BOOL isTaping;                    // 是否正在点击 (默认为NO)
 @property (nonatomic, copy, nullable) NSString *text;
 @property (nonatomic, copy, nullable) UIFont *font;
 @property (nonatomic, copy, null_resettable) UIColor *textColor;

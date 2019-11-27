@@ -218,11 +218,11 @@ static NSString *SeeMoreText_DEFAULT = @"...查看全文";
     NSMutableAttributedString *attributedText = attributedLabel.attributedText;
     CGRect bounds = attributedLabel.bounds;
     
-    if ((attributedLabel.text && [attributedLabel.text isKindOfClass:[NSString class]] &&
-         attributedLabel.text.length > 0) ||
+    if ((attributedLabel.text && [attributedLabel.text isKindOfClass:[NSString class]] && attributedLabel.text.length > 0) ||
         (attributedText && [attributedText isKindOfClass:[NSAttributedString class]] && attributedText.length > 0)) {
-        if (attributedLabel.showMoreText && attributedLabel.numberOfLines != 0 && attributedText.showMoreTextEffected &&
-        (range.location == attributedText.length - attributedLabel.seeMoreText.length)) {  // 处理SeeMore的高亮
+        if (attributedText.showMoreTextEffected &&
+            attributedLabel.showMoreText && attributedLabel.numberOfLines != 0 && attributedText.showMoreTextEffected &&
+            (range.location == attributedText.length - attributedLabel.seeMoreText.length)) {  // 处理SeeMore的高亮
             [self drawContentsImage:attributedText
                              bounds:bounds
                             inRange:range
@@ -1068,7 +1068,7 @@ static NSString *SeeMoreText_DEFAULT = @"...查看全文";
                                    value:(id)textBackgroundColor.CGColor
                                    range:range];
         }
-        else {
+        else {   // (PS: 这里也可以保留之前的背景色、不将背景色设为clearColor)
             [attributedText removeAttribute:(__bridge NSString *)kCTBackgroundColorAttributeName
                                       range:range];
             [attributedText addAttribute:(__bridge NSString *)kCTBackgroundColorAttributeName
