@@ -26,9 +26,9 @@ static NSInteger ContentImageView_gap = 6;  // 九宫格之间的间隔
 static NSInteger ContentImageView_bottomControl_gap = 10;  // ContentImageView与其下方的控件之间的间隔
 static CGFloat ContentImageView_width_height_rate = 16/9.;
 
-typedef NS_ENUM(NSInteger, ScratchablelatexCell_TapedStyle) {
+typedef NS_ENUM(NSInteger, ScratchablelatexCell_TapedPosition) {
     ScratchablelatexCell_Taped_Null = -1,
-    ScratchablelatexCell_Taped_First = 1,       // 点中了第1张图片
+    ScratchablelatexCell_Taped_First = 0,       // 点中了第1张图片
     ScratchablelatexCell_Taped_Second,          // 点中了第2张图片
     ScratchablelatexCell_Taped_Third,           // 点中了第3张图片
     ScratchablelatexCell_Taped_Fourth,          // 点中了第4张图片
@@ -58,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) UIImageView *contentImageView_7;
 @property (nonatomic) UIImageView *contentImageView_8;
 @property (nonatomic) UIImageView *contentImageView_9;
-@property (nonatomic, copy) void (^ _Nullable ScratchablelatexCellTapAction)(ScratchablelatexCell_TapedStyle style, NSDictionary *contentImageViewInfo);
+@property (nonatomic, copy) void (^ _Nullable ScratchablelatexCellTapAction)(id tapedObject, ScratchablelatexCell_TapedPosition position, NSDictionary *contentImageViewInfo);
 
 /**
  存放需要显示的控件以及控件的样式

@@ -9,6 +9,7 @@
 #import "ScratchablelatexViewController.h"
 #import "ScratchablelatexCell.h"
 #import "ScratchablelatexCell+SelfManager.h"
+#import "QAImageBrowserManager.h"
 
 @interface ScratchablelatexViewController () <UITableViewDataSource, UITableViewDelegate> {
 }
@@ -20,6 +21,7 @@
 @property (nonatomic, assign) int frameCount;  // 累积帧数
 @property (nonatomic, assign) NSTimeInterval lastTime;
 @property (nonatomic) __block CADisplayLink *displayLink;
+@property (nonatomic) QAImageBrowserManager *imageBrowserManager;
 @end
 
 
@@ -34,6 +36,8 @@
     // Do any additional setup after loading the view.
     
     self.view.backgroundColor = [UIColor whiteColor];
+    
+    self.imageBrowserManager = [[QAImageBrowserManager alloc] init];
     
     self.data = [NSMutableArray arrayWithCapacity:0];
     [self performSelector:@selector(generateContent) withObject:nil afterDelay:0];  // 模拟服务器端数据(get数据)
@@ -399,8 +403,15 @@
         cell.BaseCellTapAction = ^(BaseCell_TapedStyle style, NSString * _Nonnull content) {
             NSLog(@"   AdvancedCell-TapAction  style: %lu; content: %@", (unsigned long)style, content);
         };
-        cell.ScratchablelatexCellTapAction = ^(ScratchablelatexCell_TapedStyle style, NSDictionary * _Nonnull contentImageViewInfo) {
-            NSLog(@"   ScratchablelatexCell-TapAction: %@",contentImageViewInfo);
+        cell.ScratchablelatexCellTapAction = ^(id tapedObject, ScratchablelatexCell_TapedPosition position, NSDictionary * _Nonnull contentImageViewInfo) {
+            NSDictionary *dic = [self.data objectAtIndex:indexPath.row];
+            NSArray *images = [dic valueForKey:@"contentImageViews"];
+            
+            [self.imageBrowserManager showImageWithTapedObject:tapedObject
+                                                        images:images
+                                               currentPosition:position];
+            
+            NSLog(@" ");
         };
         cell.content.QAAttributedLabelTapAction = ^(NSString * _Nullable content, QAAttributedLabel_TapedStyle style) {
             NSLog(@"   AdvancedCell-Label-TapAction:  %@; style: %ld", content, style);

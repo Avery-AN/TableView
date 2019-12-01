@@ -12,8 +12,9 @@ static NSInteger DefaultTag_contentImageView = 10;
 static BOOL openClipsToBounds = YES;
 
 @interface ScratchablelatexCell ()
-@property (nonatomic, assign) ScratchablelatexCell_TapedStyle tapedStyle;
+@property (nonatomic, assign) ScratchablelatexCell_TapedPosition tapedPosition;
 @property (nonatomic, copy) NSDictionary *tapedInfo;
+@property (nonatomic) id tapedObject;
 @end
 
 @implementation ScratchablelatexCell
@@ -51,8 +52,9 @@ static BOOL openClipsToBounds = YES;
             CGRect contentImageViewFrame = [[dic valueForKey:@"frame"] CGRectValue];
             
             if (CGRectContainsPoint(contentImageViewFrame, point)) {
-                self.tapedStyle = i+1;
+                self.tapedPosition = i;
                 self.tapedInfo = dic;
+                self.tapedObject = [self.contentView viewWithTag:DefaultTag_contentImageView + i];
                 return;
             }
         }
@@ -63,17 +65,19 @@ static BOOL openClipsToBounds = YES;
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event {
     if (self.tapedInfo) {
         if (self.ScratchablelatexCellTapAction) {
-            self.ScratchablelatexCellTapAction(self.tapedStyle, self.tapedInfo);
+            self.ScratchablelatexCellTapAction(self.tapedObject, self.tapedPosition, self.tapedInfo);
         }
         self.tapedInfo = nil;
-        self.tapedStyle = ScratchablelatexCell_Taped_Null;
+        self.tapedPosition = ScratchablelatexCell_Taped_Null;
+        self.tapedObject = nil;
     }
     
     [self.nextResponder touchesEnded:touches withEvent:event];
 }
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event {
     self.tapedInfo = nil;
-    self.tapedStyle = ScratchablelatexCell_Taped_Null;
+    self.tapedPosition = ScratchablelatexCell_Taped_Null;
+    self.tapedObject = nil;
     
     [self.nextResponder touchesCancelled:touches withEvent:event];
 }
@@ -119,7 +123,7 @@ static BOOL openClipsToBounds = YES;
         self.yyImageView.hidden = NO;
         
         for (int i = 0; i < contentImageViews.count; i++) {
-            UIImageView *contentImageView = [self.contentView viewWithTag:DefaultTag_contentImageView+(i+1)];
+            UIImageView *contentImageView = [self.contentView viewWithTag:DefaultTag_contentImageView + i];
             contentImageView.hidden = NO;
             NSDictionary *dic = [contentImageViews objectAtIndex:i];
             CGRect rect = [[dic valueForKey:@"frame"] CGRectValue];
@@ -129,7 +133,7 @@ static BOOL openClipsToBounds = YES;
                 make.size.mas_equalTo(rect.size);
             }];
         }
-        for (NSUInteger i = contentImageViews.count+1; i <= 9; i++) {
+        for (NSUInteger i = contentImageViews.count; i < 9; i++) {
             UIImageView *contentImageView = [self.contentImageView viewWithTag:DefaultTag_contentImageView+i];
             contentImageView.hidden = YES;
         }
@@ -163,7 +167,7 @@ static BOOL openClipsToBounds = YES;
         for (int i = 0; i < contentImageViews.count; i++) {
             NSDictionary *dic = [contentImageViews objectAtIndex:i];
             NSString *url = [dic valueForKey:@"url"];
-            UIImageView *contentImageView = [self.contentView viewWithTag:DefaultTag_contentImageView+(i+1)];
+            UIImageView *contentImageView = [self.contentView viewWithTag:DefaultTag_contentImageView + i];
             SDWebImageOptions opt = SDWebImageRetryFailed | SDWebImageAvoidAutoSetImage;
             [contentImageView sd_setImageWithURL:[NSURL URLWithString:url]
                                 placeholderImage:nil
@@ -243,7 +247,7 @@ static BOOL openClipsToBounds = YES;
              */
         }
         _contentImageView_1.contentMode = UIViewContentModeScaleAspectFill;
-        _contentImageView_1.tag = DefaultTag_contentImageView+1;
+        _contentImageView_1.tag = DefaultTag_contentImageView;
     }
     return _contentImageView_1;
 }
@@ -254,7 +258,7 @@ static BOOL openClipsToBounds = YES;
             _contentImageView_2.clipsToBounds = YES;
         }
         _contentImageView_2.contentMode = UIViewContentModeScaleAspectFill;
-        _contentImageView_2.tag = DefaultTag_contentImageView+2;
+        _contentImageView_2.tag = DefaultTag_contentImageView+1;
     }
     return _contentImageView_2;
 }
@@ -265,7 +269,7 @@ static BOOL openClipsToBounds = YES;
             _contentImageView_3.clipsToBounds = YES;
         }
         _contentImageView_3.contentMode = UIViewContentModeScaleAspectFill;
-        _contentImageView_3.tag = DefaultTag_contentImageView+3;
+        _contentImageView_3.tag = DefaultTag_contentImageView+2;
     }
     return _contentImageView_3;
 }
@@ -276,7 +280,7 @@ static BOOL openClipsToBounds = YES;
             _contentImageView_4.clipsToBounds = YES;
         }
         _contentImageView_4.contentMode = UIViewContentModeScaleAspectFill;
-        _contentImageView_4.tag = DefaultTag_contentImageView+4;
+        _contentImageView_4.tag = DefaultTag_contentImageView+3;
     }
     return _contentImageView_4;
 }
@@ -287,7 +291,7 @@ static BOOL openClipsToBounds = YES;
             _contentImageView_5.clipsToBounds = YES;
         }
         _contentImageView_5.contentMode = UIViewContentModeScaleAspectFill;
-        _contentImageView_5.tag = DefaultTag_contentImageView+5;
+        _contentImageView_5.tag = DefaultTag_contentImageView+4;
     }
     return _contentImageView_5;
 }
@@ -298,7 +302,7 @@ static BOOL openClipsToBounds = YES;
             _contentImageView_6.clipsToBounds = YES;
         }
         _contentImageView_6.contentMode = UIViewContentModeScaleAspectFill;
-        _contentImageView_6.tag = DefaultTag_contentImageView+6;
+        _contentImageView_6.tag = DefaultTag_contentImageView+5;
     }
     return _contentImageView_6;
 }
@@ -309,7 +313,7 @@ static BOOL openClipsToBounds = YES;
             _contentImageView_7.clipsToBounds = YES;
         }
         _contentImageView_7.contentMode = UIViewContentModeScaleAspectFill;
-        _contentImageView_7.tag = DefaultTag_contentImageView+7;
+        _contentImageView_7.tag = DefaultTag_contentImageView+6;
     }
     return _contentImageView_7;
 }
@@ -320,7 +324,7 @@ static BOOL openClipsToBounds = YES;
             _contentImageView_8.clipsToBounds = YES;
         }
         _contentImageView_8.contentMode = UIViewContentModeScaleAspectFill;
-        _contentImageView_8.tag = DefaultTag_contentImageView+8;
+        _contentImageView_8.tag = DefaultTag_contentImageView+7;
     }
     return _contentImageView_8;
 }
@@ -331,7 +335,7 @@ static BOOL openClipsToBounds = YES;
             _contentImageView_9.clipsToBounds = YES;
         }
         _contentImageView_9.contentMode = UIViewContentModeScaleAspectFill;
-        _contentImageView_9.tag = DefaultTag_contentImageView+9;
+        _contentImageView_9.tag = DefaultTag_contentImageView+8;
     }
     return _contentImageView_9;
 }
