@@ -7,6 +7,7 @@
 //
 
 #import "QAImageBrowserManager.h"
+#import "TestView.h"
 
 static int DefaultTag = 10;
 
@@ -146,9 +147,7 @@ static int DefaultTag = 10;
     CGFloat dx = 5;
     CGFloat itemWidth = blackBackgroundViewBounds.size.width + dx;
     self.scrollView.frame = CGRectMake(0, 0, itemWidth, blackBackgroundViewBounds.size.height);
-    [self.scrollView setContentSize:CGSizeMake(itemWidth * self.images.count, blackBackgroundViewBounds.size.height)];
-    [self.scrollView setContentOffset:CGPointMake(itemWidth * self.currentPosition, 0) animated:NO];
-    
+
     for (int i = 0; i < self.images.count; i++) {
         NSDictionary *imageInfo = [self.images objectAtIndex:i];
         NSString *imageUrl = [imageInfo valueForKey:@"url"];
@@ -183,7 +182,7 @@ static int DefaultTag = 10;
             if (finished) {
                 CGRect originalFrame = [self getOriginalFrame];
                 CGRect rectInScrollView = CGRectMake(originalFrame.origin.x + self.rectOffsetX, originalFrame.origin.y + self.rectOffsetY, originalFrame.size.width, originalFrame.size.height);
-                
+
                 [self moveView:imageBrowserView toFrame:rectInScrollView];
             }
             else {
@@ -192,7 +191,7 @@ static int DefaultTag = 10;
                                      imageBrowserView.imageView.transform = CGAffineTransformIdentity;
                                      self.blackBackgroundView.alpha = 1;
                 } completion:^(BOOL finished) {
-                    
+
                 }];
             }
         };
@@ -202,6 +201,8 @@ static int DefaultTag = 10;
         imageBrowserView.frame = CGRectOffset(blackBackgroundViewBounds, dx*i, 0);
         [self.scrollView addSubview:imageBrowserView];
     }
+    [self.scrollView setContentSize:CGSizeMake(itemWidth * self.images.count, blackBackgroundViewBounds.size.height)];
+    [self.scrollView setContentOffset:CGPointMake(itemWidth * self.currentPosition, 0) animated:NO];
 }
 - (void)singleTapAction:(QAImageBrowserView *)imageBrowserView {
     CGRect originalFrame = [self getOriginalFrame];
@@ -241,7 +242,7 @@ static int DefaultTag = 10;
 
 #pragma mark - UIScrollView Delegate -
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    
+    NSLog(@"%s",__func__);
 }
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     CGFloat pageWidth = scrollView.frame.size.width;

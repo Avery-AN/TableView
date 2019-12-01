@@ -51,15 +51,16 @@
     doubleTap.numberOfTapsRequired = 2;
     doubleTap.numberOfTouchesRequired = 1;
     twoFingerTap.numberOfTouchesRequired = 2;
-    [self.imageView addGestureRecognizer:singleTap];
-    [self.imageView addGestureRecognizer:doubleTap];
-    [self.imageView addGestureRecognizer:twoFingerTap];
-    [self.imageView addGestureRecognizer:longGesture];
-    [self.imageView addGestureRecognizer:panGestureRecognizer];
-//    [self addGestureRecognizer:singleTap];
-//    [self addGestureRecognizer:doubleTap];
-//    [self addGestureRecognizer:twoFingerTap];
-//    [self addGestureRecognizer:longGesture];
+//    [self.imageView addGestureRecognizer:singleTap];
+//    [self.imageView addGestureRecognizer:doubleTap];
+//    [self.imageView addGestureRecognizer:twoFingerTap];
+//    [self.imageView addGestureRecognizer:longGesture];
+//    [self.imageView addGestureRecognizer:panGestureRecognizer];
+    
+    [self addGestureRecognizer:singleTap];
+    [self addGestureRecognizer:doubleTap];
+    [self addGestureRecognizer:twoFingerTap];
+    [self addGestureRecognizer:longGesture];
 //    [self addGestureRecognizer:panGestureRecognizer];
 
     UITapGestureRecognizer *singleTap_2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
@@ -129,13 +130,13 @@
 }
 - (CGRect)zoomRectWithScale:(CGFloat)scale centerPoint:(CGPoint)center {
     CGRect zoomRect;
-    
+
     zoomRect.size.height = [self.scrollView frame].size.height/scale;
     zoomRect.size.width = [self.scrollView frame].size.width/scale;
-    
+
     zoomRect.origin.x = center.x - zoomRect.size.width/2;
     zoomRect.origin.y = center.y - zoomRect.size.height/2;
-    
+
     return zoomRect;
 }
 
@@ -145,7 +146,7 @@
     if (self.gestureActionBlock) {
         self.gestureActionBlock(QAImageBrowserViewAction_SingleTap, self);
     }
-    
+
     // 清除内存中的图片
     [[SDWebImageManager sharedManager].imageCache clearMemory];
 }
@@ -174,22 +175,21 @@
     }
 }
 - (void)handlePan:(UIPanGestureRecognizer *)panGesture {
-    if (self.scrollView.isDragging) {
-        return;
-    }
     
+    NSLog(@"   handlePan   handlePan +++++++++ ");
+
     CGPoint transPoint = [panGesture translationInView:self];
     CGPoint velocity = [panGesture velocityInView:self];
-    
+
     switch (panGesture.state) {
         case UIGestureRecognizerStateBegan: {
-            
+
         }
         break;
-            
+
         case UIGestureRecognizerStateChanged: {
             [self.scrollView setScrollEnabled:NO];
-            
+
             double alpha = 1 - fabs(transPoint.y) / self.frame.size.height;
             alpha = MAX(alpha, 0);
             double scale = MAX(alpha, 0.5);
@@ -200,10 +200,10 @@
             }
         }
         break;
-            
+
         case UIGestureRecognizerStateEnded: {
             [self.scrollView setScrollEnabled:YES];
-            
+
             if (fabs(transPoint.y) > 220 || fabs(velocity.y) > 500) {
                 if (self.panGestureDoneActionBlock) {
                     self.panGestureDoneActionBlock(YES, self);
@@ -216,7 +216,7 @@
             }
         }
         break;
-            
+
         case UIGestureRecognizerStateCancelled: {
             [self.scrollView setScrollEnabled:YES];
             if (self.panGestureDoneActionBlock) {  // 返回到初始状态
@@ -224,9 +224,11 @@
             }
         }
         break;
-        
+
         default:{
-            
+            if (self.panGestureDoneActionBlock) {  // 返回到初始状态
+                self.panGestureDoneActionBlock(NO, self);
+            }
         }
         break;
     }
@@ -282,6 +284,7 @@
         _scrollView.showsVerticalScrollIndicator = NO;
         _scrollView.showsHorizontalScrollIndicator = NO;
         _scrollView.alwaysBounceHorizontal = YES;
+        _scrollView.pagingEnabled = YES;
         _scrollView.minimumZoomScale = 1;
         _scrollView.maximumZoomScale = 3;
         
@@ -298,7 +301,7 @@
 - (UIImageView *)imageView {
     if (!_imageView) {
         _imageView = [[UIImageView alloc] init];
-        _imageView.backgroundColor = [UIColor greenColor];
+        _imageView.backgroundColor = [UIColor clearColor];
         _imageView.clipsToBounds = YES;
         _imageView.contentMode = UIViewContentModeScaleAspectFill;
         _imageView.userInteractionEnabled = YES;
