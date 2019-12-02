@@ -7,6 +7,7 @@
 //
 
 #import "QAEmojiTextManager.h"
+#import "QATextRunDelegate.h"
 #import "QAAttributedLabelConfig.h"
 
 static NSString *EmojiTextPattern = @"\\[[0-9a-zA-Z\\u4e00-\\u9fa5]+\\]";  // 匹配Emoji表情的正则表达式

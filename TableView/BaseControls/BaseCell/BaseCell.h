@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "QAAttributedLabelConfig.h"
+#import "QAAttributedLabel.h"
 #import <YYImage/YYImage.h>
 #import <FLAnimatedImage/FLAnimatedImage.h>
 

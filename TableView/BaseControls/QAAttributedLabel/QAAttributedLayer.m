@@ -7,6 +7,9 @@
 //
 
 #import "QAAttributedLayer.h"
+#import "QAAttributedLabel.h"
+#import "QATextLayout.h"
+#import "QATextDrawer.h"
 #import "QAAttributedLabelConfig.h"
 #import <os/lock.h>
 

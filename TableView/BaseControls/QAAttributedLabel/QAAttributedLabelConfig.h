@@ -9,15 +9,11 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <CoreText/CoreText.h>
-#import "QATextDrawer.h"
-#import "QATextLayout.h"
-#import "QAAttributedLayer.h"
+#import <objc/runtime.h>
 #import "QAAttributedStringSizeMeasurement.h"
-#import "QATextRunDelegate.h"
 #import "NSMutableAttributedString+QAAttributedString.h"
 #import "NSString+QAReplace.h"
 #import "UIImage+QACutImage.h"
-#import "QAAttributedLabel.h"
 #import "QAEmojiTextManager.h"
 #import "QAHighlightTextManager.h"
 #import "UIImage+DecodeImage.h"

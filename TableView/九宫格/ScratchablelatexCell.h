@@ -7,6 +7,7 @@
 //
 
 #import "BaseCell.h"
+#import "QAAttributedLabel.h"
 
 static NSInteger MaxLines = 3;  // 最多显示3行
 static NSInteger MaxItems = 3;  // 一行最多显示3张

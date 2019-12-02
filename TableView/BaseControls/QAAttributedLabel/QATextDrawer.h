@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "QATextRunDelegate.h"
 
 @interface QATextDrawer : NSObject
 

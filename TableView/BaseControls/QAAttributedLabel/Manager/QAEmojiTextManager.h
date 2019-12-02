@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-@class QAAttributedLabel;
 
 typedef void (^QAEmojiCompletionBlock)(BOOL success, NSArray * _Nullable emojiTexts, NSArray * _Nullable matches);
 
