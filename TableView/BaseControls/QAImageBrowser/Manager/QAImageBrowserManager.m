@@ -16,7 +16,7 @@ static int DefaultTag = 10;
 @property (nonatomic, unsafe_unretained) NSArray *images;
 @property (nonatomic, assign) NSInteger currentPosition;
 @property (nonatomic, unsafe_unretained) id tapedObject;
-@property (nonatomic, unsafe_unretained) UIView *panView;
+@property (nonatomic, unsafe_unretained) UIView *paningViewInCell;
 @property (nonatomic, assign) CGFloat rectOffsetX;
 @property (nonatomic, assign) CGFloat rectOffsetY;
 @property (nonatomic, unsafe_unretained) UIWindow *window;
@@ -172,8 +172,8 @@ static int DefaultTag = 10;
         imageBrowserView.imageView.frame = rectInScrollView;
     }
     completion:^(BOOL finished) {
-        if (self.panView) {
-            self.panView.hidden = NO;
+        if (self.paningViewInCell) {
+            self.paningViewInCell.hidden = NO;
         }
         if (finished) {
             [self.scrollView removeFromSuperview];
@@ -213,7 +213,7 @@ static int DefaultTag = 10;
                              fabs(view.frame.size.width - rect.size.width) <= 1 &&
                              fabs(view.frame.size.height - rect.size.height) <= 1) {
                         view.hidden = YES;
-                        self.panView = view;
+                        self.paningViewInCell = view;
                         break;
                     }
                 }
@@ -266,6 +266,10 @@ static int DefaultTag = 10;
                      animations:^{
         imageBrowserView.imageView.transform = transform;
         self.blackBackgroundView.alpha = alpha;
+    } completion:^(BOOL finished) {
+        if (alpha == 1 && self.paningViewInCell) {
+            self.paningViewInCell.hidden = NO;
+        }
     }];
 }
 
