@@ -15,7 +15,6 @@
 		BB7BECCC2390E40C00688028 /* QAImageBrowserView.m in Sources */ = {isa = PBXBuildFile; fileRef = BB7BECC82390E40C00688028 /* QAImageBrowserView.m */; };
 		BB7BECD723925B0000688028 /* 默认图@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB7BECD523925B0000688028 /* 默认图@3x.png */; };
 		BB7BECD823925B0000688028 /* 默认图@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB7BECD623925B0000688028 /* 默认图@2x.png */; };
-		BB7BECE12393E53600688028 /* TestView.m in Sources */ = {isa = PBXBuildFile; fileRef = BB7BECE02393E53600688028 /* TestView.m */; };
 		BB9F6C0A23838A7000F05116 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BB9F6C0923838A7000F05116 /* AppDelegate.m */; };
 		BB9F6C1523838A7200F05116 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB9F6C1423838A7200F05116 /* Assets.xcassets */; };
 		BB9F6C1B23838A7200F05116 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BB9F6C1A23838A7200F05116 /* main.m */; };
@@ -63,8 +62,6 @@
 		BB7BECC92390E40C00688028 /* QAImageBrowserView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QAImageBrowserView.h; sourceTree = "<group>"; };
 		BB7BECD523925B0000688028 /* 默认图@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "默认图@3x.png"; sourceTree = "<group>"; };
 		BB7BECD623925B0000688028 /* 默认图@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "默认图@2x.png"; sourceTree = "<group>"; };
-		BB7BECDF2393E53600688028 /* TestView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestView.h; sourceTree = "<group>"; };
-		BB7BECE02393E53600688028 /* TestView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestView.m; sourceTree = "<group>"; };
 		BB9F6C0523838A7000F05116 /* TableView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TableView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB9F6C0823838A7000F05116 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		BB9F6C0923838A7000F05116 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -202,8 +199,6 @@
 			children = (
 				BB7BECC92390E40C00688028 /* QAImageBrowserView.h */,
 				BB7BECC82390E40C00688028 /* QAImageBrowserView.m */,
-				BB7BECDF2393E53600688028 /* TestView.h */,
-				BB7BECE02393E53600688028 /* TestView.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -541,7 +536,6 @@
 				BB9F6C7123838BEB00F05116 /* QAAttributedLayer.m in Sources */,
 				BB9F6C7D23838BEB00F05116 /* QAEmojiTextManager.m in Sources */,
 				BB9F6C9223838BF300F05116 /* AdvancedViewController.m in Sources */,
-				BB7BECE12393E53600688028 /* TestView.m in Sources */,
 				BB9F6C7323838BEB00F05116 /* NSString+Md5.m in Sources */,
 				BB9F6C7A23838BEB00F05116 /* QAAttributedLabel.m in Sources */,
 				BB9F6C8923838BEB00F05116 /* ScratchablelatexViewController.m in Sources */,

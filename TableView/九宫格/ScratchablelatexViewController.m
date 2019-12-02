@@ -400,18 +400,16 @@
         cell = [[ScratchablelatexCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"ScratchablelatexCell"];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
-        cell.BaseCellTapAction = ^(BaseCell_TapedStyle style, NSString * _Nonnull content) {
+        cell.baseCellTapAction = ^(BaseCell_TapedStyle style, NSString * _Nonnull content) {
             NSLog(@"   AdvancedCell-TapAction  style: %lu; content: %@", (unsigned long)style, content);
         };
-        cell.ScratchablelatexCellTapAction = ^(id tapedObject, ScratchablelatexCell_TapedPosition position, NSDictionary * _Nonnull contentImageViewInfo) {
+        cell.scratchablelatexCellTapAction = ^(id tapedObject, ScratchablelatexCell_TapedPosition position, NSDictionary * _Nonnull contentImageViewInfo, NSIndexPath *indexPath) {
             NSDictionary *dic = [self.data objectAtIndex:indexPath.row];
             NSArray *images = [dic valueForKey:@"contentImageViews"];
             
             [self.imageBrowserManager showImageWithTapedObject:tapedObject
                                                         images:images
                                                currentPosition:position];
-            
-            NSLog(@" ");
         };
         cell.content.QAAttributedLabelTapAction = ^(NSString * _Nullable content, QAAttributedLabel_TapedStyle style) {
             NSLog(@"   AdvancedCell-Label-TapAction:  %@; style: %ld", content, style);
@@ -419,7 +417,7 @@
     }
     
     NSDictionary *dic = [self.data objectAtIndex:indexPath.row];
-    [cell showStytle:dic];
+    [cell showStytle:dic indexPath:indexPath];
     
     return cell;
 }

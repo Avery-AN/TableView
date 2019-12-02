@@ -7,6 +7,7 @@
 //
 
 #import "QAImageBrowserView.h"
+#import <SDWebImageManager.h>
 
 @interface QAImageBrowserView () <UIScrollViewDelegate>
 @property (nonatomic) UIActivityIndicatorView *activityIndicator;
@@ -16,7 +17,7 @@
 
 #pragma mark - Life Cycle -
 - (void)dealloc {
-    NSLog(@"%s",__func__);
+    // NSLog(@"%s",__func__);
 }
 - (instancetype)init {
     if (self = [super init]) {
@@ -45,28 +46,21 @@
     UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
     UITapGestureRecognizer *twoFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTwoFingerPan:)];
     UILongPressGestureRecognizer *longGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
-    UIPanGestureRecognizer *panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
     singleTap.numberOfTapsRequired = 1;
     singleTap.numberOfTouchesRequired = 1;
     doubleTap.numberOfTapsRequired = 2;
     doubleTap.numberOfTouchesRequired = 1;
     twoFingerTap.numberOfTouchesRequired = 2;
-//    [self.imageView addGestureRecognizer:singleTap];
-//    [self.imageView addGestureRecognizer:doubleTap];
-//    [self.imageView addGestureRecognizer:twoFingerTap];
-//    [self.imageView addGestureRecognizer:longGesture];
-//    [self.imageView addGestureRecognizer:panGestureRecognizer];
     
     [self addGestureRecognizer:singleTap];
-    [self addGestureRecognizer:doubleTap];
-    [self addGestureRecognizer:twoFingerTap];
-    [self addGestureRecognizer:longGesture];
-//    [self addGestureRecognizer:panGestureRecognizer];
+    [self.imageView addGestureRecognizer:doubleTap];
+    [self.imageView addGestureRecognizer:twoFingerTap];
+    [self.imageView addGestureRecognizer:longGesture];
 
     UITapGestureRecognizer *singleTap_2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
     [self addGestureRecognizer:singleTap_2];
 
-    [singleTap requireGestureRecognizerToFail:doubleTap]; // 处理双击时不响应单击
+    [singleTap requireGestureRecognizerToFail:doubleTap];   // 处理双击时不响应单击
     [singleTap_2 requireGestureRecognizerToFail:doubleTap]; // 处理双击时不响应单击
 }
 - (CGRect)caculateOriginImageSizeWith:(UIImage *)image {
@@ -119,8 +113,9 @@
     
     return newImage;
 }
-- (void)processWithImage:(UIImage *)image {
+- (void)updateImageViewWithImage:(UIImage *)image {
     self.imageView.frame = [self caculateOriginImageSizeWith:image];
+    self.imageView.image = image;
     [self.scrollView setZoomScale:1 animated:NO];
     
     CGFloat offsetX = (self.scrollView.bounds.size.width > self.scrollView.contentSize.width)?(self.scrollView.bounds.size.width - self.scrollView.contentSize.width) * 0.5 : 0.0;
@@ -143,12 +138,22 @@
 
 #pragma mark - Actions -
 - (void)handleSingleTap:(UITapGestureRecognizer *)gesture {
-    if (self.gestureActionBlock) {
-        self.gestureActionBlock(QAImageBrowserViewAction_SingleTap, self);
-    }
+    switch (gesture.state) {
+        case UIGestureRecognizerStateEnded: {
+            if (self.gestureActionBlock) {
+                self.gestureActionBlock(QAImageBrowserViewAction_SingleTap, self);
+            }
 
-    // 清除内存中的图片
-    [[SDWebImageManager sharedManager].imageCache clearMemory];
+            // 清除内存中的图片
+            [[SDWebImageManager sharedManager].imageCache clearMemory];
+        }
+            break;
+            
+        default:{
+            
+        }
+            break;
+    }
 }
 - (void)handleDoubleTap:(UITapGestureRecognizer *)gesture {
     if (gesture.numberOfTapsRequired == 2) {
@@ -169,89 +174,47 @@
     CGRect zoomRect = [self zoomRectWithScale:panScale centerPoint:[gesture locationInView:gesture.view]];
     [self.scrollView zoomToRect:zoomRect animated:YES];
 }
-- (void)handleLongPress:(UILongPressGestureRecognizer *)gesture {
-    if (self.gestureActionBlock) {
-        self.gestureActionBlock(QAImageBrowserViewAction_LongPress, self);
-    }
-}
-- (void)handlePan:(UIPanGestureRecognizer *)panGesture {
-    
-    NSLog(@"   handlePan   handlePan +++++++++ ");
-
-    CGPoint transPoint = [panGesture translationInView:self];
-    CGPoint velocity = [panGesture velocityInView:self];
-
-    switch (panGesture.state) {
-        case UIGestureRecognizerStateBegan: {
-
-        }
-        break;
-
-        case UIGestureRecognizerStateChanged: {
-            [self.scrollView setScrollEnabled:NO];
-
-            double alpha = 1 - fabs(transPoint.y) / self.frame.size.height;
-            alpha = MAX(alpha, 0);
-            double scale = MAX(alpha, 0.5);
-            CGAffineTransform translationTransform = CGAffineTransformMakeTranslation(transPoint.x/scale, transPoint.y/scale);
-            CGAffineTransform scaleTransform = CGAffineTransformMakeScale(scale, scale);
-            if (self.panGestureActionBlock) {
-                self.panGestureActionBlock(translationTransform, scaleTransform, alpha, self);
-            }
-        }
-        break;
-
-        case UIGestureRecognizerStateEnded: {
-            [self.scrollView setScrollEnabled:YES];
-
-            if (fabs(transPoint.y) > 220 || fabs(velocity.y) > 500) {
-                if (self.panGestureDoneActionBlock) {
-                    self.panGestureDoneActionBlock(YES, self);
+- (void)handleLongPress:(UILongPressGestureRecognizer *)longPressGesture {
+    switch (longPressGesture.state) {
+            case UIGestureRecognizerStateEnded: {
+                if (self.gestureActionBlock) {
+                    self.gestureActionBlock(QAImageBrowserViewAction_LongPress, self);
                 }
             }
-            else {
-                if (self.panGestureDoneActionBlock) {  // 返回到初始状态
-                    self.panGestureDoneActionBlock(NO, self);
-                }
+            break;
+            
+            default:{
+                
             }
-        }
-        break;
-
-        case UIGestureRecognizerStateCancelled: {
-            [self.scrollView setScrollEnabled:YES];
-            if (self.panGestureDoneActionBlock) {  // 返回到初始状态
-                self.panGestureDoneActionBlock(NO, self);
-            }
-        }
-        break;
-
-        default:{
-            if (self.panGestureDoneActionBlock) {  // 返回到初始状态
-                self.panGestureDoneActionBlock(NO, self);
-            }
-        }
-        break;
+            break;
     }
 }
 
 
 #pragma mark - Public Method -
-- (void)showImageWithImageUrl:(NSURL *)imageUrl {
+- (void)showImageWithUrl:(NSURL * _Nonnull)imageUrl contentModel:(UIViewContentMode)contentModel {
+    if (!imageUrl || imageUrl.absoluteString.length == 0) {
+        return;
+    }
+    
+    self.imageView.contentMode = contentModel;
     [self.activityIndicator startAnimating];
+    SDWebImageOptions opt = SDWebImageRetryFailed | SDWebImageAvoidAutoSetImage;
     [self.imageView sd_setImageWithURL:imageUrl
-                      placeholderImage:[UIImage imageNamed:@"默认图"]
-                               options:SDWebImageHighPriority
+                      placeholderImage:nil
+                               options:opt
                              completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-                                 [self.activityIndicator stopAnimating];
-                                 if (!error) {
-                                     [self processWithImage:image];
-                                 }
-                                 else {
-                                     NSLog(@" error : %@",error);
-                                     UIImage *defaultImage = [UIImage imageNamed:@"默认图"];
-                                     [self processWithImage:defaultImage];
-                                 }
-                             }];
+        [self.activityIndicator stopAnimating];
+
+        if (!error) {
+            [self updateImageViewWithImage:image];
+        }
+        else {
+            NSLog(@" error : %@",error);
+            UIImage *defaultImage = [UIImage imageNamed:@"默认图"];
+            [self updateImageViewWithImage:defaultImage];
+        }
+    }];
 }
 
 
@@ -283,8 +246,6 @@
         _scrollView.delegate = self;
         _scrollView.showsVerticalScrollIndicator = NO;
         _scrollView.showsHorizontalScrollIndicator = NO;
-        _scrollView.alwaysBounceHorizontal = YES;
-        _scrollView.pagingEnabled = YES;
         _scrollView.minimumZoomScale = 1;
         _scrollView.maximumZoomScale = 3;
         
@@ -301,7 +262,6 @@
 - (UIImageView *)imageView {
     if (!_imageView) {
         _imageView = [[UIImageView alloc] init];
-        _imageView.backgroundColor = [UIColor clearColor];
         _imageView.clipsToBounds = YES;
         _imageView.contentMode = UIViewContentModeScaleAspectFill;
         _imageView.userInteractionEnabled = YES;

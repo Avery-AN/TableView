@@ -357,7 +357,7 @@
         cell = [[AdvancedCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"AdvancedCell"];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
 
-        cell.BaseCellTapAction = ^(BaseCell_TapedStyle style, NSString * _Nonnull content) {
+        cell.baseCellTapAction = ^(BaseCell_TapedStyle style, NSString * _Nonnull content) {
             NSLog(@"   AdvancedCell-TapAction  style: %lu; content: %@", (unsigned long)style, content);
         };
         cell.content.QAAttributedLabelTapAction = ^(NSString * _Nullable content, QAAttributedLabel_TapedStyle style) {

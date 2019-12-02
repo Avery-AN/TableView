@@ -23,9 +23,7 @@ typedef NS_ENUM(NSUInteger, QAImageBrowserViewAction) {
 @property (nonatomic) UIScrollView * _Nonnull scrollView;
 @property (nonatomic) UIImageView * _Nonnull imageView;
 @property (nonatomic, copy) void(^ _Nullable gestureActionBlock) (QAImageBrowserViewAction action, QAImageBrowserView * _Nullable imageBrowserView);
-@property (nonatomic, copy) void(^ _Nullable panGestureActionBlock) (CGAffineTransform translation, CGAffineTransform scale, float alpha, QAImageBrowserView * _Nullable imageBrowserView);
-@property (nonatomic, copy) void(^ _Nullable panGestureDoneActionBlock) (BOOL finished, QAImageBrowserView * _Nullable imageBrowserView);
 
-- (void)showImageWithImageUrl:(NSURL * _Nonnull)imageUrl;
+- (void)showImageWithUrl:(NSURL * _Nonnull)imageUrl contentModel:(UIViewContentMode)contentModel;
 
 @end

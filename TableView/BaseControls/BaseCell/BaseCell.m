@@ -97,32 +97,32 @@ typedef union {
     
     if (!!(_bits_union.bits & BaseCell_Taped_Name_MASK)) {
         _bits_union.bits &= ~BaseCell_Taped_Name_MASK;
-        if (self.BaseCellTapAction) {
-            self.BaseCellTapAction(BaseCell_Taped_Name, [weakSelf.styleInfo valueForKey:@"name"]);
+        if (self.baseCellTapAction) {
+            self.baseCellTapAction(BaseCell_Taped_Name, [weakSelf.styleInfo valueForKey:@"name"]);
         }
     }
     else if (!!(_bits_union.bits & BaseCell_Taped_Desc_MASK)) {
         _bits_union.bits &= ~BaseCell_Taped_Desc_MASK;
-        if (self.BaseCellTapAction) {
-            self.BaseCellTapAction(BaseCell_Taped_Desc, [weakSelf.styleInfo valueForKey:@"desc"]);
+        if (self.baseCellTapAction) {
+            self.baseCellTapAction(BaseCell_Taped_Desc, [weakSelf.styleInfo valueForKey:@"desc"]);
         }
     }
     else if (!!(_bits_union.bits & BaseCell_Taped_Avatar_MASK)) {
         _bits_union.bits &= ~BaseCell_Taped_Avatar_MASK;
-        if (self.BaseCellTapAction) {
-            self.BaseCellTapAction(BaseCell_Taped_Avatar, [weakSelf.styleInfo valueForKey:@"avatar"]);
+        if (self.baseCellTapAction) {
+            self.baseCellTapAction(BaseCell_Taped_Avatar, [weakSelf.styleInfo valueForKey:@"avatar"]);
         }
     }
     else if (!!(_bits_union.bits & BaseCell_Taped_ContentImageView_MASK)) {
         _bits_union.bits &= ~BaseCell_Taped_ContentImageView_MASK;
-        if (self.BaseCellTapAction) {
-            self.BaseCellTapAction(BaseCell_Taped_ContentImageView, [weakSelf.styleInfo valueForKey:@"contentImageView"]);
+        if (self.baseCellTapAction) {
+            self.baseCellTapAction(BaseCell_Taped_ContentImageView, [weakSelf.styleInfo valueForKey:@"contentImageView"]);
         }
     }
     else if (!!(_bits_union.bits & BaseCell_Taped_Content_MASK)) {
         _bits_union.bits &= ~BaseCell_Taped_Content_MASK;
-        if (self.BaseCellTapAction) {
-            self.BaseCellTapAction(BaseCell_Taped_Content, [weakSelf.styleInfo valueForKey:@"content"]);
+        if (self.baseCellTapAction) {
+            self.baseCellTapAction(BaseCell_Taped_Content, [weakSelf.styleInfo valueForKey:@"content"]);
         }
     }
     

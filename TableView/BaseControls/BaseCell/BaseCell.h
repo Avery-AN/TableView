@@ -26,10 +26,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) UIImageView *contentImageView;
 @property (nonatomic) YYAnimatedImageView *yyImageView;
 @property (nonatomic) FLAnimatedImageView *flImageView;
-@property (nonatomic) CALayer *contentImageLayer; //如果不显示gif用这个layer即可、无需使用contentImageView、yyImageView、flImageView
+/**
+ 如果不显示gif用这个contentImageLayer即可、无需使用contentImageView、yyImageView、flImageView等UI控件
+ */
+@property (nonatomic) CALayer *contentImageLayer;
 @property (nonatomic) QAAttributedLabel *content;
-@property (nonatomic, copy) NSDictionary *styleInfo;
-@property (nonatomic, copy) void (^ _Nullable BaseCellTapAction)(BaseCell_TapedStyle style, NSString *content);
+@property (nonatomic, unsafe_unretained) NSDictionary *styleInfo;
+@property (nonatomic, copy) void (^ _Nullable baseCellTapAction)(BaseCell_TapedStyle style, NSString *content);
 
 
 /**
