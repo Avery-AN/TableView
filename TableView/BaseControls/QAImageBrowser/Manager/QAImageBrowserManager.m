@@ -38,6 +38,9 @@ static int DefaultTag = 10;
     if (!tapedObject || !images || ![images isKindOfClass:[NSArray class]] || images.count == 0) {
         return;
     }
+    else if (images.count <= currentPosition) {
+        return;
+    }
     
     self.tapedObject = tapedObject;
     CGRect newRect = [self getTapedImageFrame];
@@ -53,59 +56,8 @@ static int DefaultTag = 10;
     UIImageView *imageView = self.tapedObject;
     UIImage *image = imageView.image;
     
-    CGRect rect = [self caculateOriginImageSizeWith:image];
+    CGRect rect = [ImageProcesser caculateOriginImageSizeWith:image];
     return rect;
-}
-- (CGRect)caculateOriginImageSizeWith:(UIImage *)image {
-    CGFloat originImageHeight = [self processImage:image withTargetWidth:ScreenWidth].size.height;
-    CGRect frame = CGRectMake(0, (ScreenHeight-originImageHeight)*0.5, ScreenWidth, originImageHeight);
-    
-    return frame;
-}
-- (UIImage *)processImage:(UIImage *)sourceImage
-          withTargetWidth:(CGFloat)targetWidth {
-    UIImage *newImage = nil;
-    
-    CGSize imageSize = sourceImage.size;
-    CGFloat imageWidth = imageSize.width;
-    CGFloat imageHeight = imageSize.height;
-    CGFloat targetHeight = imageHeight / (imageWidth / targetWidth);
-    CGSize size = CGSizeMake(targetWidth, targetHeight);
-    CGFloat scaleFactor = 0.0;
-    CGFloat scaledWidth = targetWidth;
-    CGFloat scaledHeight = targetHeight;
-    CGPoint thumbnailPoint = CGPointMake(0.0, 0.0);
-    
-    if(CGSizeEqualToSize(imageSize, size) == NO) {
-        CGFloat widthFactor = targetWidth / imageWidth;
-        CGFloat heightFactor = targetHeight / imageHeight;
-        if(widthFactor > heightFactor) {
-            scaleFactor = widthFactor;
-        }
-        else {
-            scaleFactor = heightFactor;
-        }
-        scaledWidth = imageWidth * scaleFactor;
-        scaledHeight = imageHeight * scaleFactor;
-        
-        if(widthFactor > heightFactor) {
-            thumbnailPoint.y = (targetHeight - scaledHeight) * 0.5;
-        }
-        else if(widthFactor < heightFactor) {
-            thumbnailPoint.x = (targetWidth - scaledWidth) * 0.5;
-        }
-    }
-    
-    UIGraphicsBeginImageContext(size);
-    CGRect thumbnailRect = CGRectZero;
-    thumbnailRect.origin = thumbnailPoint;
-    thumbnailRect.size.width = scaledWidth;
-    thumbnailRect.size.height = scaledHeight;
-    [sourceImage drawInRect:thumbnailRect];
-    newImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    return newImage;
 }
 - (void)createImageBrowserView {
     UIWindow *window = [UIApplication sharedApplication].keyWindow;
@@ -160,7 +112,8 @@ static int DefaultTag = 10;
     for (int i = 0; i < self.images.count; i++) {
         NSDictionary *imageInfo = [self.images objectAtIndex:i];
         NSString *imageUrl = [imageInfo valueForKey:@"url"];
-        if (!imageUrl || ![imageUrl isKindOfClass:[NSString class]] || imageUrl.length == 0) {
+        UIImage *image = [imageInfo valueForKey:@"image"];
+        if (!image && (!imageUrl || ![imageUrl isKindOfClass:[NSString class]] || imageUrl.length == 0)) {
             return;
         }
 
@@ -185,7 +138,12 @@ static int DefaultTag = 10;
         };
         
         UIImageView *tapedImageView = self.tapedObject;
-        [imageBrowserView showImageWithUrl:[NSURL URLWithString:imageUrl] contentModel:tapedImageView.contentMode];
+        if (image) {
+            [imageBrowserView showImage:image contentModel:tapedImageView.contentMode];
+        }
+        else {
+            [imageBrowserView showImageWithUrl:[NSURL URLWithString:imageUrl] contentModel:tapedImageView.contentMode];
+        }
         blackBackgroundViewBounds.origin.x = blackBackgroundViewBounds.size.width * i;
         imageBrowserView.frame = CGRectOffset(blackBackgroundViewBounds, dx*i, 0);
         [self.scrollView addSubview:imageBrowserView];

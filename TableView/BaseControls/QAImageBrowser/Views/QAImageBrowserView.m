@@ -63,58 +63,8 @@
     [singleTap requireGestureRecognizerToFail:doubleTap];   // 处理双击时不响应单击
     [singleTap_2 requireGestureRecognizerToFail:doubleTap]; // 处理双击时不响应单击
 }
-- (CGRect)caculateOriginImageSizeWith:(UIImage *)image {
-    CGFloat originImageHeight = [self processImage:image withTargetWidth:ScreenWidth].size.height;
-    CGRect frame = CGRectMake(0, (ScreenHeight-originImageHeight)*0.5, ScreenWidth, originImageHeight);
-    
-    return frame;
-}
-- (UIImage *)processImage:(UIImage *)sourceImage
-          withTargetWidth:(CGFloat)targetWidth {
-    UIImage *newImage = nil;
-    CGSize imageSize = sourceImage.size;
-    CGFloat imageWidth = imageSize.width;
-    CGFloat imageHeight = imageSize.height;
-    CGFloat targetHeight = imageHeight / (imageWidth / targetWidth);
-    CGSize size = CGSizeMake(targetWidth, targetHeight);
-    CGFloat scaleFactor = 0.0;
-    CGFloat scaledWidth = targetWidth;
-    CGFloat scaledHeight = targetHeight;
-    CGPoint thumbnailPoint = CGPointMake(0.0, 0.0);
-    
-    if(CGSizeEqualToSize(imageSize, size) == NO) {
-        CGFloat widthFactor = targetWidth / imageWidth;
-        CGFloat heightFactor = targetHeight / imageHeight;
-        if(widthFactor > heightFactor) {
-            scaleFactor = widthFactor;
-        }
-        else {
-            scaleFactor = heightFactor;
-        }
-        scaledWidth = imageWidth * scaleFactor;
-        scaledHeight = imageHeight * scaleFactor;
-        
-        if(widthFactor > heightFactor) {
-            thumbnailPoint.y = (targetHeight - scaledHeight) * 0.5;
-        }
-        else if(widthFactor < heightFactor) {
-            thumbnailPoint.x = (targetWidth - scaledWidth) * 0.5;
-        }
-    }
-    
-    UIGraphicsBeginImageContext(size);
-    CGRect thumbnailRect = CGRectZero;
-    thumbnailRect.origin = thumbnailPoint;
-    thumbnailRect.size.width = scaledWidth;
-    thumbnailRect.size.height = scaledHeight;
-    [sourceImage drawInRect:thumbnailRect];
-    newImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    return newImage;
-}
 - (void)updateImageViewWithImage:(UIImage *)image {
-    self.imageView.frame = [self caculateOriginImageSizeWith:image];
+    self.imageView.frame = [ImageProcesser caculateOriginImageSizeWith:image];
     self.imageView.image = image;
     [self.scrollView setZoomScale:1 animated:NO];
     
@@ -198,6 +148,7 @@
     }
     
     self.imageView.contentMode = contentModel;
+    
     [self.activityIndicator startAnimating];
     SDWebImageOptions opt = SDWebImageRetryFailed | SDWebImageAvoidAutoSetImage;
     [self.imageView sd_setImageWithURL:imageUrl
@@ -210,11 +161,15 @@
             [self updateImageViewWithImage:image];
         }
         else {
-            NSLog(@" error : %@",error);
+            NSLog(@"%s-error: %@", __func__, error);
             UIImage *defaultImage = [UIImage imageNamed:@"默认图"];
             [self updateImageViewWithImage:defaultImage];
         }
     }];
+}
+- (void)showImage:(UIImage * _Nonnull)image contentModel:(UIViewContentMode)contentModel {
+    self.imageView.contentMode = contentModel;
+    [self updateImageViewWithImage:image];
 }
 
 

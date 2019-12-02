@@ -7,9 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
-#define ScreenWidth     [UIScreen mainScreen].bounds.size.width
-#define ScreenHeight    [UIScreen mainScreen].bounds.size.height
+#import "ImageProcesser.h"
 
 typedef NS_ENUM(NSUInteger, QAImageBrowserViewAction) {
     QAImageBrowserViewAction_SingleTap = 1,
@@ -25,5 +23,7 @@ typedef NS_ENUM(NSUInteger, QAImageBrowserViewAction) {
 @property (nonatomic, copy) void(^ _Nullable gestureActionBlock) (QAImageBrowserViewAction action, QAImageBrowserView * _Nullable imageBrowserView);
 
 - (void)showImageWithUrl:(NSURL * _Nonnull)imageUrl contentModel:(UIViewContentMode)contentModel;
+
+- (void)showImage:(UIImage * _Nonnull)image contentModel:(UIViewContentMode)contentModel;
 
 @end

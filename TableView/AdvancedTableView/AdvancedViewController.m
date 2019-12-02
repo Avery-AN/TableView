@@ -133,7 +133,7 @@
             NSLog(@"   AdvancedCell-TapAction  style: %lu; content: %@", (unsigned long)style, content);
         };
         cell.content.QAAttributedLabelTapAction = ^(NSString * _Nullable content, QAAttributedLabel_TapedStyle style) {
-            NSLog(@"   AdvancedCell-Label-TapAction:  %@; style: %ld", content, style);
+            NSLog(@"   AdvancedCell-Label-TapAction:  %@; style: %lu", content, (unsigned long)style);
         };
 
 
@@ -177,7 +177,7 @@
 
 #pragma mark - UITableView - Delegate -
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"tableView - didSelectRowAtIndexPath: %ld", indexPath.row);
+    NSLog(@"tableView - didSelectRowAtIndexPath: %ld", (long)indexPath.row);
 }
 
 /*

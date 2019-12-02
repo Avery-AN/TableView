@@ -81,7 +81,7 @@
         maxConcurrentOperationCount = originalDatas.count;
     }
     [ScratchablelatexCell getStytle:originalDatas maxConcurrentOperationCount:maxConcurrentOperationCount completion:^(NSInteger start, NSInteger end) {
-        NSLog(@"已获取到新数据: %ld - %ld", start , end);
+        NSLog(@"已获取到新数据: %ld - %ld", (long)start , (long)end);
         for (NSInteger i = start; i <= end; i++) {
             [self.showDatas addObject:[originalDatas objectAtIndex:i]];
         }
@@ -128,7 +128,7 @@
                                                currentPosition:position];
         };
         cell.content.QAAttributedLabelTapAction = ^(NSString * _Nullable content, QAAttributedLabel_TapedStyle style) {
-            NSLog(@"   AdvancedCell-Label-TapAction:  %@; style: %ld", content, style);
+            NSLog(@"   AdvancedCell-Label-TapAction:  %@; style: %lu", content, (unsigned long)style);
         };
     }
     
@@ -141,7 +141,7 @@
 
 #pragma mark - UITableView - Delegate -
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"tableView - didSelectRowAtIndexPath: %ld", indexPath.row);
+    NSLog(@"tableView - didSelectRowAtIndexPath: %ld", (long)indexPath.row);
 }
 
 
