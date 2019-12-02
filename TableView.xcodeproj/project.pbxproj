@@ -15,6 +15,8 @@
 		BB7BECCC2390E40C00688028 /* QAImageBrowserView.m in Sources */ = {isa = PBXBuildFile; fileRef = BB7BECC82390E40C00688028 /* QAImageBrowserView.m */; };
 		BB7BECD723925B0000688028 /* 默认图@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB7BECD523925B0000688028 /* 默认图@3x.png */; };
 		BB7BECD823925B0000688028 /* 默认图@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB7BECD623925B0000688028 /* 默认图@2x.png */; };
+		BB7BECE42394F6D400688028 /* AdvancedDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BB7BECE32394F6D400688028 /* AdvancedDataManager.m */; };
+		BB7BECE72394F81200688028 /* ScratchablelatexDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BB7BECE62394F81200688028 /* ScratchablelatexDataManager.m */; };
 		BB9F6C0A23838A7000F05116 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BB9F6C0923838A7000F05116 /* AppDelegate.m */; };
 		BB9F6C1523838A7200F05116 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB9F6C1423838A7200F05116 /* Assets.xcassets */; };
 		BB9F6C1B23838A7200F05116 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BB9F6C1A23838A7200F05116 /* main.m */; };
@@ -62,6 +64,10 @@
 		BB7BECC92390E40C00688028 /* QAImageBrowserView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QAImageBrowserView.h; sourceTree = "<group>"; };
 		BB7BECD523925B0000688028 /* 默认图@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "默认图@3x.png"; sourceTree = "<group>"; };
 		BB7BECD623925B0000688028 /* 默认图@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "默认图@2x.png"; sourceTree = "<group>"; };
+		BB7BECE22394F6D400688028 /* AdvancedDataManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AdvancedDataManager.h; sourceTree = "<group>"; };
+		BB7BECE32394F6D400688028 /* AdvancedDataManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AdvancedDataManager.m; sourceTree = "<group>"; };
+		BB7BECE52394F81200688028 /* ScratchablelatexDataManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScratchablelatexDataManager.h; sourceTree = "<group>"; };
+		BB7BECE62394F81200688028 /* ScratchablelatexDataManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScratchablelatexDataManager.m; sourceTree = "<group>"; };
 		BB9F6C0523838A7000F05116 /* TableView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TableView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB9F6C0823838A7000F05116 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		BB9F6C0923838A7000F05116 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -367,6 +373,8 @@
 			children = (
 				BB9F6C5823838BEB00F05116 /* ScratchablelatexViewController.h */,
 				BB9F6C6A23838BEB00F05116 /* ScratchablelatexViewController.m */,
+				BB7BECE52394F81200688028 /* ScratchablelatexDataManager.h */,
+				BB7BECE62394F81200688028 /* ScratchablelatexDataManager.m */,
 				BB9F6C6923838BEB00F05116 /* ScratchablelatexCell.h */,
 				BB9F6C5923838BEB00F05116 /* ScratchablelatexCell.m */,
 				BB9F6C6B23838BEB00F05116 /* ScratchablelatexCell+SelfManager.h */,
@@ -380,6 +388,8 @@
 			children = (
 				BB9F6C8D23838BF300F05116 /* AdvancedViewController.h */,
 				BB9F6C8F23838BF300F05116 /* AdvancedViewController.m */,
+				BB7BECE22394F6D400688028 /* AdvancedDataManager.h */,
+				BB7BECE32394F6D400688028 /* AdvancedDataManager.m */,
 				BB9F6C8C23838BF300F05116 /* AdvancedCell.h */,
 				BB9F6C9023838BF300F05116 /* AdvancedCell.m */,
 				BB9F6C8E23838BF300F05116 /* AdvancedCell+SelfManager.h */,
@@ -528,6 +538,7 @@
 				BB9F6C7223838BEB00F05116 /* NSData+Md5.m in Sources */,
 				BB7BECCA2390E40C00688028 /* QAImageBrowserManager.m in Sources */,
 				BB9F6C7B23838BEB00F05116 /* QATextDrawer.m in Sources */,
+				BB7BECE72394F81200688028 /* ScratchablelatexDataManager.m in Sources */,
 				BB9F6C7F23838BEB00F05116 /* QAAttributedStringSizeMeasurement.m in Sources */,
 				BB9F6C6F23838BEB00F05116 /* UIImage+ClipsToBounds.m in Sources */,
 				BB9F6C6C23838BEB00F05116 /* UIColor+Color.m in Sources */,
@@ -543,6 +554,7 @@
 				BB9F6C6D23838BEB00F05116 /* NSString+Additions.m in Sources */,
 				BB9F6C7423838BEB00F05116 /* UIImage+QACutImage.m in Sources */,
 				BB9F6C8123838BEB00F05116 /* ScratchablelatexCell+SelfManager.m in Sources */,
+				BB7BECE42394F6D400688028 /* AdvancedDataManager.m in Sources */,
 				BB9F6C7523838BEB00F05116 /* NSString+QAReplace.m in Sources */,
 				BB9F6C8223838BEB00F05116 /* ScratchablelatexCell.m in Sources */,
 				BB9F6C9123838BF300F05116 /* AdvancedCell+SelfManager.m in Sources */,
