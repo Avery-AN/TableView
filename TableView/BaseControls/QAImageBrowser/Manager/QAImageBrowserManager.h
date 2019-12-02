@@ -12,7 +12,7 @@
 @interface QAImageBrowserManager : NSObject
 
 - (void)showImageWithTapedObject:(id _Nonnull)tapedObject
-                          images:(NSArray * _Nonnull)objects
+                          images:(NSArray * _Nonnull)images
                  currentPosition:(NSInteger)currentPosition;
 
 @end
