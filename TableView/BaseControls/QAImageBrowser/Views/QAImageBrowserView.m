@@ -38,7 +38,7 @@
     self.frame = CGRectMake(0, 0, ScreenWidth, ScreenHeight);
     
     [self addSubview:self.scrollView];
-    [self addSubview:self.activityIndicator];
+    // [self addSubview:self.activityIndicator];
     [self.scrollView addSubview:self.imageView];
 
     // 添加手势:
@@ -93,9 +93,6 @@
             if (self.gestureActionBlock) {
                 self.gestureActionBlock(QAImageBrowserViewAction_SingleTap, self);
             }
-
-            // 清除内存中的图片
-            [[SDWebImageManager sharedManager].imageCache clearMemory];
         }
             break;
             
@@ -149,22 +146,17 @@
     
     self.imageView.contentMode = contentModel;
     
-    [self.activityIndicator startAnimating];
-    SDWebImageOptions opt = SDWebImageRetryFailed | SDWebImageAvoidAutoSetImage;
-    [self.imageView sd_setImageWithURL:imageUrl
-                      placeholderImage:nil
-                               options:opt
-                             completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-        [self.activityIndicator stopAnimating];
-
-        if (!error) {
-            [self updateImageViewWithImage:image];
-        }
-        else {
-            NSLog(@"%s-error: %@", __func__, error);
-            UIImage *defaultImage = [UIImage imageNamed:@"默认图"];
-            [self updateImageViewWithImage:defaultImage];
-        }
+    [[SDWebImageDownloader sharedDownloader]
+    downloadImageWithURL:imageUrl
+    options:SDWebImageDownloaderContinueInBackground progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+        
+    } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            UIImage *decodeImage = [ImageProcesser decodeImage:image];  // image的解码
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self updateImageViewWithImage:decodeImage];
+            });
+        });
     }];
 }
 - (void)showImage:(UIImage * _Nonnull)image contentModel:(UIViewContentMode)contentModel {
@@ -174,12 +166,12 @@
 
 
 #pragma mark - UIScrollView Delegate -
-// 返回要缩放的图片
+// 返回要缩放的UI控件
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
     return self.imageView;
 }
 
-// 让图片保持在屏幕中央，防止图片放大时，位置出现跑偏
+// 让图片保持在屏幕中央、防止图片放大时位置跑偏
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView {
     CGFloat offsetX = (self.scrollView.bounds.size.width > self.scrollView.contentSize.width)?(self.scrollView.bounds.size.width - self.scrollView.contentSize.width) * 0.5 : 0.0;
     CGFloat offsetY = (self.scrollView.bounds.size.height > self.scrollView.contentSize.height)?
@@ -230,13 +222,5 @@
     }
     return _activityIndicator;
 }
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
 
 @end

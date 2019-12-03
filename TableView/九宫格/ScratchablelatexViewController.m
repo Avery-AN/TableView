@@ -116,24 +116,27 @@
         cell = [[ScratchablelatexCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"ScratchablelatexCell"];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
-        cell.baseCellTapAction = ^(BaseCell_TapedStyle style, NSString * _Nonnull content) {
+        __weak typeof(self) weakSelf = self;
+        cell.baseCellTapAction = ^(BaseCell *cell, BaseCell_TapedStyle style, NSString * _Nonnull content) {
             NSLog(@"   AdvancedCell-TapAction  style: %lu; content: %@", (unsigned long)style, content);
         };
-        cell.scratchablelatexCellTapAction = ^(id tapedObject, ScratchablelatexCell_TapedPosition position, NSDictionary * _Nonnull contentImageViewInfo, NSIndexPath *indexPath) {
-            NSDictionary *dic = [self.showDatas objectAtIndex:indexPath.row];
-            NSArray *images = [dic valueForKey:@"contentImageViews"];
+        
+        cell.scratchablelatexCellTapAction = ^(ScratchablelatexCell *cell, id tapedObject, ScratchablelatexCell_TapedPosition position, NSDictionary * _Nonnull contentImageViewInfo) {
+            NSArray *images = [cell.styleInfo valueForKey:@"contentImageViews"];
             
-            [self.imageBrowserManager showImageWithTapedObject:tapedObject
-                                                        images:images
-                                               currentPosition:position];
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            [strongSelf.imageBrowserManager showImageWithTapedObject:tapedObject
+                                                              images:images
+                                                     currentPosition:position];
         };
+        
         cell.content.QAAttributedLabelTapAction = ^(NSString * _Nullable content, QAAttributedLabel_TapedStyle style) {
             NSLog(@"   AdvancedCell-Label-TapAction:  %@; style: %lu", content, (unsigned long)style);
         };
     }
     
     NSDictionary *dic = [self.showDatas objectAtIndex:indexPath.row];
-    [cell showStytle:dic indexPath:indexPath];
+    [cell showStytle:dic];
     
     return cell;
 }

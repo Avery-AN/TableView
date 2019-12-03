@@ -59,14 +59,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) UIImageView *contentImageView_7;
 @property (nonatomic) UIImageView *contentImageView_8;
 @property (nonatomic) UIImageView *contentImageView_9;
-@property (nonatomic) NSIndexPath *indexPath;
-@property (nonatomic, copy) void (^ _Nullable scratchablelatexCellTapAction)(id tapedObject, ScratchablelatexCell_TapedPosition position, NSDictionary *contentImageViewInfo, NSIndexPath *indexPath);
+@property (nonatomic, copy) void (^ _Nullable scratchablelatexCellTapAction)(ScratchablelatexCell *cell, id tapedObject, ScratchablelatexCell_TapedPosition position, NSDictionary *contentImageViewInfo);
 
 /**
  存放需要显示的控件以及控件的样式
  dic: key(property) - value(CGRectValue)
  */
-- (void)showStytle:(NSDictionary *)dic indexPath:(NSIndexPath *)indexPath;
+- (void)showStytle:(NSDictionary *)dic;
 
 @end
 

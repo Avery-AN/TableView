@@ -65,7 +65,7 @@ static BOOL openClipsToBounds = YES;
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event {
     if (self.tapedInfo) {
         if (self.scratchablelatexCellTapAction) {
-            self.scratchablelatexCellTapAction(self.tapedObject, self.tapedPosition, self.tapedInfo, self.indexPath);
+            self.scratchablelatexCellTapAction(self, self.tapedObject, self.tapedPosition, self.tapedInfo);
         }
         self.tapedInfo = nil;
         self.tapedPosition = ScratchablelatexCell_Taped_Null;
@@ -84,7 +84,7 @@ static BOOL openClipsToBounds = YES;
     
 
 #pragma mark - Public Methods -
-- (void)showStytle:(NSDictionary *)dic indexPath:(NSIndexPath *)indexPath {
+- (void)showStytle:(NSDictionary *)dic {
     if (!dic || ![dic isKindOfClass:[NSDictionary class]]) {
         return;
     }
@@ -98,7 +98,6 @@ static BOOL openClipsToBounds = YES;
         return;
     }
     self.styleInfo = dic;
-    self.indexPath = indexPath;
     
     // 设置cell的相关属性:
     [self setFunctions:self.styleInfo];

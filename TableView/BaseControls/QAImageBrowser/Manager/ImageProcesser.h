@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (CGRect)caculateOriginImageSizeWith:(UIImage *)image;
 
++ (UIImage *)decodeImage:(UIImage *)image;
+
 @end
 
 NS_ASSUME_NONNULL_END

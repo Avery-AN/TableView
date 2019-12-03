@@ -13,7 +13,7 @@ static int DefaultTag = 10;
 @interface QAImageBrowserManager () <UIScrollViewDelegate>
 @property (nonatomic) UIScrollView *scrollView;
 @property (nonatomic) UIView *blackBackgroundView;
-@property (nonatomic, unsafe_unretained) NSArray *images;
+@property (nonatomic, copy) NSArray *images;
 @property (nonatomic, assign) NSInteger currentPosition;
 @property (nonatomic, unsafe_unretained) id tapedObject;
 @property (nonatomic, unsafe_unretained) UIView *paningViewInCell;
@@ -29,6 +29,14 @@ static int DefaultTag = 10;
 - (void)dealloc {
     NSLog(@"  %s",__func__);
 }
+- (instancetype)init {
+    if (self = [super init]) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleMemoryWarning) name:UIApplicationDidReceiveMemoryWarningNotification
+                                                   object:nil];
+    }
+    return self;
+}
 
 
 #pragma mark - Public Methods -
@@ -43,10 +51,11 @@ static int DefaultTag = 10;
     }
     
     self.tapedObject = tapedObject;
-    CGRect newRect = [self getTapedImageFrame];
     self.images = images;
     self.currentPosition = currentPosition;
     [self createImageBrowserView];
+    
+    CGRect newRect = [self getTapedImageFrame];
     [self showImageBrowserViewWithNewFrame:newRect];
 }
 
@@ -54,9 +63,11 @@ static int DefaultTag = 10;
 #pragma mark - Private Methods -
 - (CGRect)getTapedImageFrame {
     UIImageView *imageView = self.tapedObject;
-    UIImage *image = imageView.image;
-    
-    CGRect rect = [ImageProcesser caculateOriginImageSizeWith:image];
+    UIImage *image = imageView.image;  // 缩略图的image
+    CGRect rect = CGRectZero;
+    if (image) {
+        rect = [ImageProcesser caculateOriginImageSizeWith:image];
+    }
     return rect;
 }
 - (void)createImageBrowserView {
@@ -89,7 +100,8 @@ static int DefaultTag = 10;
     UIImageView *currentImageView = [[UIImageView alloc] initWithFrame:CGRectMake(rect.origin.x, rect.origin.y, srcRect.size.width, srcRect.size.height)];
     currentImageView.contentMode = tapedImageView.contentMode;
     currentImageView.image = tapedImageView.image;
-    [self.blackBackgroundView addSubview:currentImageView];
+    currentImageView.clipsToBounds = YES;
+    [self.window addSubview:currentImageView];
     
     [UIView animateWithDuration:0.25
                      animations:^{
@@ -142,6 +154,9 @@ static int DefaultTag = 10;
             [imageBrowserView showImage:image contentModel:tapedImageView.contentMode];
         }
         else {
+            if (i == self.currentPosition) {
+                [imageBrowserView showImage:tapedImageView.image contentModel:tapedImageView.contentMode];
+            }
             [imageBrowserView showImageWithUrl:[NSURL URLWithString:imageUrl] contentModel:tapedImageView.contentMode];
         }
         blackBackgroundViewBounds.origin.x = blackBackgroundViewBounds.size.width * i;
@@ -150,6 +165,8 @@ static int DefaultTag = 10;
     }
 }
 - (void)singleTapAction:(QAImageBrowserView *)imageBrowserView {
+    [self hideImageViewInCell:YES];
+    
     CGRect originalFrame = [self getOriginalFrame];
     CGRect rectInScrollView = CGRectMake(originalFrame.origin.x + self.rectOffsetX, originalFrame.origin.y + self.rectOffsetY, originalFrame.size.width, originalFrame.size.height);
 
@@ -173,7 +190,7 @@ static int DefaultTag = 10;
     }
     completion:^(BOOL finished) {
         if (self.paningViewInCell) {
-            self.paningViewInCell.hidden = NO;
+            [self hideImageViewInCell:NO];
         }
         if (finished) {
             [self.scrollView removeFromSuperview];
@@ -198,26 +215,7 @@ static int DefaultTag = 10;
     switch (panGesture.state) {
         case UIGestureRecognizerStateBegan: {
             // 将cell中与其对应的imageView进行隐藏:
-            UIView *tapedView = (UIView *)self.tapedObject;
-            UIView *superView = tapedView.superview;
-            NSDictionary *info = [self.images objectAtIndex:self.currentPosition];
-            CGRect rect = [[info valueForKey:@"frame"] CGRectValue];
-            for (UIView *view in superView.subviews) {
-                if (view && [view isKindOfClass:[UIImageView class]]) {
-                    if (CGRectEqualToRect(view.frame, rect)) {   // NSDecimalNumber
-                        view.hidden = YES;
-                        break;
-                    }
-                    else if (fabs(view.frame.origin.x - rect.origin.x) <= 1 &&
-                             fabs(view.frame.origin.y - rect.origin.y) <= 1 &&
-                             fabs(view.frame.size.width - rect.size.width) <= 1 &&
-                             fabs(view.frame.size.height - rect.size.height) <= 1) {
-                        view.hidden = YES;
-                        self.paningViewInCell = view;
-                        break;
-                    }
-                }
-            }
+            [self hideImageViewInCell:YES];
         }
         break;
 
@@ -268,9 +266,36 @@ static int DefaultTag = 10;
         self.blackBackgroundView.alpha = alpha;
     } completion:^(BOOL finished) {
         if (alpha == 1 && self.paningViewInCell) {
-            self.paningViewInCell.hidden = NO;
+            [self hideImageViewInCell:NO];
         }
     }];
+}
+- (void)hideImageViewInCell:(BOOL)hidden {
+    if (hidden == NO) {
+        self.paningViewInCell.hidden = NO;
+    }
+    else {
+        UIView *tapedView = (UIView *)self.tapedObject;
+        UIView *superView = tapedView.superview;
+        NSDictionary *info = [self.images objectAtIndex:self.currentPosition];
+        CGRect rect = [[info valueForKey:@"frame"] CGRectValue];
+        for (UIView *view in superView.subviews) {
+            if (view && [view isKindOfClass:[UIImageView class]]) {
+                if (CGRectEqualToRect(view.frame, rect)) {   // NSDecimalNumber
+                    view.hidden = YES;
+                    break;
+                }
+                else if (fabs(view.frame.origin.x - rect.origin.x) <= 1 &&
+                         fabs(view.frame.origin.y - rect.origin.y) <= 1 &&
+                         fabs(view.frame.size.width - rect.size.width) <= 1 &&
+                         fabs(view.frame.size.height - rect.size.height) <= 1) {
+                    view.hidden = YES;
+                    self.paningViewInCell = view;
+                    break;
+                }
+            }
+        }
+    }
 }
 
 
@@ -288,6 +313,13 @@ static int DefaultTag = 10;
         [previousPageView.scrollView setZoomScale:1 animated:YES];
     }
     self.currentPosition = currentPage;
+}
+
+
+#pragma mark - MemoryWarning -
+- (void)handleMemoryWarning {
+    // 清除SDWebImageManager在内存中缓存的图片
+    [[SDWebImageManager sharedManager].imageCache clearMemory];
 }
 
 

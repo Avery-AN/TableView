@@ -98,31 +98,31 @@ typedef union {
     if (!!(_bits_union.bits & BaseCell_Taped_Name_MASK)) {
         _bits_union.bits &= ~BaseCell_Taped_Name_MASK;
         if (self.baseCellTapAction) {
-            self.baseCellTapAction(BaseCell_Taped_Name, [weakSelf.styleInfo valueForKey:@"name"]);
+            self.baseCellTapAction(self, BaseCell_Taped_Name, [weakSelf.styleInfo valueForKey:@"name"]);
         }
     }
     else if (!!(_bits_union.bits & BaseCell_Taped_Desc_MASK)) {
         _bits_union.bits &= ~BaseCell_Taped_Desc_MASK;
         if (self.baseCellTapAction) {
-            self.baseCellTapAction(BaseCell_Taped_Desc, [weakSelf.styleInfo valueForKey:@"desc"]);
+            self.baseCellTapAction(self, BaseCell_Taped_Desc, [weakSelf.styleInfo valueForKey:@"desc"]);
         }
     }
     else if (!!(_bits_union.bits & BaseCell_Taped_Avatar_MASK)) {
         _bits_union.bits &= ~BaseCell_Taped_Avatar_MASK;
         if (self.baseCellTapAction) {
-            self.baseCellTapAction(BaseCell_Taped_Avatar, [weakSelf.styleInfo valueForKey:@"avatar"]);
+            self.baseCellTapAction(self, BaseCell_Taped_Avatar, [weakSelf.styleInfo valueForKey:@"avatar"]);
         }
     }
     else if (!!(_bits_union.bits & BaseCell_Taped_ContentImageView_MASK)) {
         _bits_union.bits &= ~BaseCell_Taped_ContentImageView_MASK;
         if (self.baseCellTapAction) {
-            self.baseCellTapAction(BaseCell_Taped_ContentImageView, [weakSelf.styleInfo valueForKey:@"contentImageView"]);
+            self.baseCellTapAction(self, BaseCell_Taped_ContentImageView, [weakSelf.styleInfo valueForKey:@"contentImageView"]);
         }
     }
     else if (!!(_bits_union.bits & BaseCell_Taped_Content_MASK)) {
         _bits_union.bits &= ~BaseCell_Taped_Content_MASK;
         if (self.baseCellTapAction) {
-            self.baseCellTapAction(BaseCell_Taped_Content, [weakSelf.styleInfo valueForKey:@"content"]);
+            self.baseCellTapAction(self, BaseCell_Taped_Content, [weakSelf.styleInfo valueForKey:@"content"]);
         }
     }
     

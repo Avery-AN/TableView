@@ -10,6 +10,7 @@
 #import "AdvancedCell.h"
 #import "AdvancedCell+SelfManager.h"
 #import "AdvancedDataManager.h"
+#import "QAImageBrowserManager.h"
 
 
 @interface AdvancedViewController () <UITableViewDataSource, UITableViewDelegate> {
@@ -25,6 +26,7 @@
 @property (nonatomic, assign) NSTimeInterval lastTime;
 @property (nonatomic) __block CADisplayLink *displayLink;
 @property (nonatomic) dispatch_source_t timer;
+@property (nonatomic) QAImageBrowserManager *imageBrowserManager;
 @end
 
 
@@ -40,6 +42,7 @@
     
     self.view.backgroundColor = [UIColor whiteColor];
     
+    self.imageBrowserManager = [[QAImageBrowserManager alloc] init];
     [self performSelector:@selector(generateContent) withObject:nil afterDelay:0];  // 模拟服务器端数据(get数据)
 }
 - (void)viewWillAppear:(BOOL)animated {
@@ -129,8 +132,17 @@
         cell = [[AdvancedCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"AdvancedCell"];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
 
-        cell.baseCellTapAction = ^(BaseCell_TapedStyle style, NSString * _Nonnull content) {
+        __weak typeof(self) weakSelf = self;
+        cell.baseCellTapAction = ^(BaseCell *cell, BaseCell_TapedStyle style, NSString * _Nonnull content) {
             NSLog(@"   AdvancedCell-TapAction  style: %lu; content: %@", (unsigned long)style, content);
+
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+            [dic setValue:[cell.styleInfo valueForKey:@"contentImageView"] forKey:@"url"];
+            [dic setValue:[cell.styleInfo valueForKey:@"contentImageView-frame"] forKey:@"frame"];
+            [strongSelf.imageBrowserManager showImageWithTapedObject:cell.yyImageView
+                                                              images:[NSArray arrayWithObject:dic]
+                                                     currentPosition:0];
         };
         cell.content.QAAttributedLabelTapAction = ^(NSString * _Nullable content, QAAttributedLabel_TapedStyle style) {
             NSLog(@"   AdvancedCell-Label-TapAction:  %@; style: %lu", content, (unsigned long)style);

@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) CALayer *contentImageLayer;
 @property (nonatomic) QAAttributedLabel *content;
 @property (nonatomic, unsafe_unretained) NSDictionary *styleInfo;
-@property (nonatomic, copy) void (^ _Nullable baseCellTapAction)(BaseCell_TapedStyle style, NSString *content);
+@property (nonatomic, copy) void (^ _Nullable baseCellTapAction)(BaseCell *cell, BaseCell_TapedStyle style, NSString *content);
 
 
 /**
