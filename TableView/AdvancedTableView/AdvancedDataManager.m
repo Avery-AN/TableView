@@ -38,8 +38,7 @@
         [dic setValue:descDic forKey:@"desc-style"];
 
 
-        NSString *content = @"我们在Cell上添加系统控件的时候，实质上系统都需要调用底层的接口进行绘制，当我们大量添加控件时，对资源的开销也会是很大的，所以我们可以索性直接绘制，提高效率。你猜到底是不是这样的呢？https://www.baidu.com.cn/detail";
-        //NSString *content = @"我们在Cell上添加系统控件的时候，实质上系统都需要调用底层的接口进行绘制，当我们大量添加控件时，对资源的开销也会是很大的，所以我们可以索性直接绘制，提高效率。https://www.baidu.com.cn/detail";
+        NSString *content = @"我们在Cell上添加系统控件的时候，实质上系统都需要调用底层的接口进行绘制，当我们大量添加控件时，对资源的开销也是很大的，所以我们可以直接绘制，提高效率。你猜到底是不是这样的呢？https://github.com/Avery-AN";
         NSString *content_2 = @"我们在Cell上添加系统控件的时候，实质上系统都需要调用底层的接口进行绘制，当我们大量添加控件时，对资源的开销也会是很大的，所以我们可以索性直接绘制，提高效率。这里替换了原来的网址";
         if (i % 10 == 0) {
             [dic setValue:@"https://upload-images.jianshu.io/upload_images/15705790-16af8ef57a95f35a.jpg" forKey:@"avatar"];
@@ -62,7 +61,7 @@
             }
             content = [NSString stringWithFormat:@"【%d】#注意啦#%@", i, content];
             NSMutableString *string = [NSMutableString stringWithString:content];
-            [string insertString:@"[nezha][nezha][nezha][nezha][nezha][nezha][nezha][nezha][nezha]" atIndex:83];
+            [string insertString:@"[nezha][nezha][nezha][nezha][nezha][nezha][nezha][nezha][nezha]" atIndex:80];
             [string appendString:@"[nezha][nezha][nezha][nezha]"];
             [dic setValue:string forKey:@"content"];
 

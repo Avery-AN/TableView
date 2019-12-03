@@ -140,9 +140,11 @@
             NSMutableDictionary *dic = [NSMutableDictionary dictionary];
             [dic setValue:[cell.styleInfo valueForKey:@"contentImageView"] forKey:@"url"];
             [dic setValue:[cell.styleInfo valueForKey:@"contentImageView-frame"] forKey:@"frame"];
-            [strongSelf.imageBrowserManager showImageWithTapedObject:cell.yyImageView
-                                                              images:[NSArray arrayWithObject:dic]
-                                                     currentPosition:0];
+            if (![[dic valueForKey:@"url"] hasSuffix:@".gif"]) {
+                [strongSelf.imageBrowserManager showImageWithTapedObject:cell.yyImageView
+                         images:[NSArray arrayWithObject:dic]
+                currentPosition:0];
+            }
         };
         cell.content.QAAttributedLabelTapAction = ^(NSString * _Nullable content, QAAttributedLabel_TapedStyle style) {
             NSLog(@"   AdvancedCell-Label-TapAction:  %@; style: %lu", content, (unsigned long)style);
@@ -155,11 +157,12 @@
          这里仅仅是为了测试 QAAttributedLabel的 'searchTexts:' & '设置highLightTexts' 两个方法
          这里仅仅是为了测试 QAAttributedLabel的 'searchTexts:' & '设置highLightTexts' 两个方法
          */
+        cell.content.highLightTexts = nil;
         if (indexPath.row == 1) {
             [self performSelector:@selector(searchText:) withObject:cell afterDelay:.7];
         }
         else if (indexPath.row == 2) {
-            cell.content.highLightTexts = [NSArray arrayWithObjects:@"添加系统控件",@"索性直接绘制",@"大量添加控件", nil];
+            cell.content.highLightTexts = [NSArray arrayWithObjects:@"添加系统控件",@"直接绘制",@"大量添加控件", nil];
         }
         
     }

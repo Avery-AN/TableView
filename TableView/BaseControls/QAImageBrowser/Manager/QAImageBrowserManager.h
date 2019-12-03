@@ -17,10 +17,10 @@
  @param images 保存的是NSDictionary类型的数据、dic中有3个key: @"url" & @"frame" & @"image"、
                分别表示为需要显示的image的url和cell中显示该image的imageView的frame以及需要显示的image对象
                (若image和url同时存在则优先显示image)
- @param currentPosition 点中的视图控件的位置 (PS: 在九宫格中点击的是第几张图片)
+ @param currentPosition 点中的视图控件的位置 (PS: 在九宫格中点击的是第几张图片、若cell中只有一张图片此值传0即可)
  */
 - (void)showImageWithTapedObject:(id _Nonnull)tapedObject
                           images:(NSArray * _Nonnull)images
-                 currentPosition:(NSInteger)currentPosition;
+                 currentPosition:(int)currentPosition;
 
 @end

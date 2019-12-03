@@ -135,10 +135,40 @@
         };
     }
     
+
+    /**
+     这里仅仅是为了测试 QAAttributedLabel的 'searchTexts:' & '设置highLightTexts' 两个方法
+     这里仅仅是为了测试 QAAttributedLabel的 'searchTexts:' & '设置highLightTexts' 两个方法
+     这里仅仅是为了测试 QAAttributedLabel的 'searchTexts:' & '设置highLightTexts' 两个方法
+     */
+    cell.content.highLightTexts = nil;
+    if (indexPath.row == 0) {
+        [self performSelector:@selector(searchText:) withObject:cell afterDelay:.7];
+    }
+    else if (indexPath.row == 1) {
+        [self performSelector:@selector(searchText:) withObject:cell afterDelay:.7];
+    }
+    else if (indexPath.row == 2) {
+        cell.content.highLightTexts = [NSArray arrayWithObjects:@"添加系统控件",@"直接绘制",@"大量添加控件", nil];
+    }
+    
+    
     NSDictionary *dic = [self.showDatas objectAtIndex:indexPath.row];
     [cell showStytle:dic];
     
     return cell;
+}
+
+
+#pragma mark - SearchText 【【 仅仅用于验证方法的实现是否正确 】】 -
+- (void)searchText:(ScratchablelatexCell *)cell {
+    [cell.content searchTexts:[NSArray arrayWithObjects:@"是另外的", @"需要注意的", @"创建动画", @"添加控件", nil]
+        resetSearchResultInfo:^NSDictionary * _Nullable {
+            NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+            [dic setValue:[UIColor whiteColor] forKey:@"textColor"];
+            [dic setValue:[UIColor orangeColor] forKey:@"textBackgroundColor"];
+            return dic;
+        }];
 }
 
 

@@ -68,19 +68,19 @@
     self.imageView.image = image;
     [self.scrollView setZoomScale:1 animated:NO];
     
-    CGFloat offsetX = (self.scrollView.bounds.size.width > self.scrollView.contentSize.width)?(self.scrollView.bounds.size.width - self.scrollView.contentSize.width) * 0.5 : 0.0;
-    CGFloat offsetY = (self.scrollView.bounds.size.height > self.scrollView.contentSize.height)?
+    CGFloat offsetX = (self.scrollView.bounds.size.width > self.scrollView.contentSize.width) ? (self.scrollView.bounds.size.width - self.scrollView.contentSize.width) * 0.5 : 0.0;
+    CGFloat offsetY = (self.scrollView.bounds.size.height > self.scrollView.contentSize.height) ?
     (self.scrollView.bounds.size.height - self.scrollView.contentSize.height) * 0.5 : 0.0;
     self.imageView.center = CGPointMake(self.scrollView.contentSize.width * 0.5 + offsetX,self.scrollView.contentSize.height * 0.5 + offsetY);
 }
 - (CGRect)zoomRectWithScale:(CGFloat)scale centerPoint:(CGPoint)center {
     CGRect zoomRect;
 
-    zoomRect.size.height = [self.scrollView frame].size.height/scale;
-    zoomRect.size.width = [self.scrollView frame].size.width/scale;
+    zoomRect.size.height = [self.scrollView frame].size.height / scale;
+    zoomRect.size.width = [self.scrollView frame].size.width / scale;
 
-    zoomRect.origin.x = center.x - zoomRect.size.width/2;
-    zoomRect.origin.y = center.y - zoomRect.size.height/2;
+    zoomRect.origin.x = center.x - zoomRect.size.width / 2;
+    zoomRect.origin.y = center.y - zoomRect.size.height / 2;
 
     return zoomRect;
 }
@@ -104,20 +104,22 @@
 }
 - (void)handleDoubleTap:(UITapGestureRecognizer *)gesture {
     if (gesture.numberOfTapsRequired == 2) {
+        NSLog(@"self.imageView.frame(0): %@", NSStringFromCGRect(self.imageView.frame));
         if (self.scrollView.zoomScale == 1) {
-            float newScale = [self.scrollView zoomScale]*2;
+            float newScale = [self.scrollView zoomScale] * 2;
             CGRect zoomRect = [self zoomRectWithScale:newScale centerPoint:[gesture locationInView:gesture.view]];
             [self.scrollView zoomToRect:zoomRect animated:YES];
         }
         else {
-            float newScale = [self.scrollView zoomScale]/2;
+            float newScale = [self.scrollView zoomScale] / 2;
             CGRect zoomRect = [self zoomRectWithScale:newScale centerPoint:[gesture locationInView:gesture.view]];
             [self.scrollView zoomToRect:zoomRect animated:YES];
         }
+        NSLog(@"self.imageView.frame(1): %@", NSStringFromCGRect(self.imageView.frame));
     }
 }
 - (void)handleTwoFingerPan:(UITapGestureRecognizer *)gesture {
-    CGFloat panScale = [self.scrollView zoomScale]/2;
+    CGFloat panScale = [self.scrollView zoomScale] / 2;
     CGRect zoomRect = [self zoomRectWithScale:panScale centerPoint:[gesture locationInView:gesture.view]];
     [self.scrollView zoomToRect:zoomRect animated:YES];
 }

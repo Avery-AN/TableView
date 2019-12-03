@@ -27,6 +27,8 @@
     UINavigationController *navVC = [[UINavigationController alloc] initWithRootViewController:rootVC];
     self.window.rootViewController = navVC;
     
+    [[UIView appearance] setExclusiveTouch:YES];
+    
     return YES;
 }
 

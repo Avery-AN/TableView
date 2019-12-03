@@ -14,13 +14,15 @@ static int DefaultTag = 10;
 @property (nonatomic) UIScrollView *scrollView;
 @property (nonatomic) UIView *blackBackgroundView;
 @property (nonatomic, copy) NSArray *images;
-@property (nonatomic, assign) NSInteger currentPosition;
+@property (nonatomic, assign) int currentPosition;
 @property (nonatomic, unsafe_unretained) id tapedObject;
 @property (nonatomic, unsafe_unretained) UIView *paningViewInCell;
 @property (nonatomic, assign) CGFloat rectOffsetX;
 @property (nonatomic, assign) CGFloat rectOffsetY;
 @property (nonatomic, unsafe_unretained) UIWindow *window;
+@property (nonatomic, assign) CGRect windowBounds;
 @property (nonatomic) UIPanGestureRecognizer *panGestureRecognizer;
+@property (nonatomic) UIImageView *currentImageView;
 @end
 
 @implementation QAImageBrowserManager
@@ -42,7 +44,7 @@ static int DefaultTag = 10;
 #pragma mark - Public Methods -
 - (void)showImageWithTapedObject:(id _Nonnull)tapedObject
                           images:(NSArray * _Nonnull)images
-                 currentPosition:(NSInteger)currentPosition {
+                 currentPosition:(int)currentPosition {
     if (!tapedObject || !images || ![images isKindOfClass:[NSArray class]] || images.count == 0) {
         return;
     }
@@ -72,11 +74,12 @@ static int DefaultTag = 10;
 }
 - (void)createImageBrowserView {
     UIWindow *window = [UIApplication sharedApplication].keyWindow;
-    self.window = window;
     window.windowLevel = UIWindowLevelStatusBar + 1;
+    self.window = window;
+    self.windowBounds = self.window.bounds;
     
     if (!self.blackBackgroundView) {
-        self.blackBackgroundView = [[UIView alloc] initWithFrame:window.bounds];
+        self.blackBackgroundView = [[UIView alloc] initWithFrame:self.windowBounds];
         self.blackBackgroundView.backgroundColor = [UIColor blackColor];
     }
     self.blackBackgroundView.alpha = 0.1;
@@ -85,8 +88,8 @@ static int DefaultTag = 10;
     
     if (!self.panGestureRecognizer) {
         self.panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
+        [window addGestureRecognizer:self.panGestureRecognizer];
     }
-    [window addGestureRecognizer:self.panGestureRecognizer];
 }
 - (void)showImageBrowserViewWithNewFrame:(CGRect)newFrame {
     UIImageView *tapedImageView = self.tapedObject;
@@ -97,20 +100,24 @@ static int DefaultTag = 10;
     CGRect rect = [tapedImageView convertRect:tapedObjectSuperView.frame toView:self.blackBackgroundView];
     self.rectOffsetX = rect.origin.x - srcRect.origin.x;
     self.rectOffsetY = rect.origin.y - srcRect.origin.y;
-    UIImageView *currentImageView = [[UIImageView alloc] initWithFrame:CGRectMake(rect.origin.x, rect.origin.y, srcRect.size.width, srcRect.size.height)];
-    currentImageView.contentMode = tapedImageView.contentMode;
-    currentImageView.image = tapedImageView.image;
-    currentImageView.clipsToBounds = YES;
-    [self.window addSubview:currentImageView];
+    if (self.currentImageView == nil) {
+        UIImageView *currentImageView = [[UIImageView alloc] initWithFrame:CGRectMake(rect.origin.x, rect.origin.y, srcRect.size.width, srcRect.size.height)];
+        currentImageView.contentMode = tapedImageView.contentMode;
+        currentImageView.image = tapedImageView.image;
+        currentImageView.clipsToBounds = YES;
+        self.currentImageView = currentImageView;
+        [self.window addSubview:currentImageView];
+    }
     
     [UIView animateWithDuration:0.25
                      animations:^{
                          self.blackBackgroundView.alpha = 1;
-                         currentImageView.frame = newFrame;
+                         self.currentImageView.frame = newFrame;
     } completion:^(BOOL finished) {
         [self processImagesBrowser];
         tapedImageView.hidden = NO;
-        [currentImageView removeFromSuperview];
+        [self.currentImageView removeFromSuperview];
+        self.currentImageView = nil;
     }];
 }
 - (void)processImagesBrowser {
@@ -164,111 +171,28 @@ static int DefaultTag = 10;
         [self.scrollView addSubview:imageBrowserView];
     }
 }
-- (void)singleTapAction:(QAImageBrowserView *)imageBrowserView {
-    [self hideImageViewInCell:YES];
-    
-    CGRect originalFrame = [self getOriginalFrame];
-    CGRect rectInScrollView = CGRectMake(originalFrame.origin.x + self.rectOffsetX, originalFrame.origin.y + self.rectOffsetY, originalFrame.size.width, originalFrame.size.height);
-
-    if (imageBrowserView.scrollView.zoomScale - 1. > 0) {
-        [imageBrowserView.scrollView setZoomScale:1 animated:NO];
-    }
-    [self moveView:imageBrowserView toFrame:rectInScrollView];
-}
-- (CGRect)getOriginalFrame {
-    CGRect rect = CGRectZero;
-    NSDictionary *info = [self.images objectAtIndex:self.currentPosition];
-    rect = [[info valueForKey:@"frame"] CGRectValue];
-    
-    return rect;
-}
-- (void)moveView:(QAImageBrowserView *)imageBrowserView toFrame:(CGRect)rectInScrollView {  // 退出图片浏览器
-    [UIView animateWithDuration:0.2
-    animations:^{
-        self.blackBackgroundView.alpha = 0.;
-        imageBrowserView.imageView.frame = rectInScrollView;
-    }
-    completion:^(BOOL finished) {
-        if (self.paningViewInCell) {
-            [self hideImageViewInCell:NO];
-        }
-        if (finished) {
-            [self.scrollView removeFromSuperview];
-            self.scrollView = nil;
-            [self.blackBackgroundView removeFromSuperview];
-            self.blackBackgroundView = nil;
-            
-            if (self.window) {
-                [self.window removeGestureRecognizer:self.panGestureRecognizer];
-            }
-        }
-    }];
-}
-- (void)longPressAction:(QAImageBrowserView *)imageBrowserView {
-    NSLog(@"%s",__func__);
-}
-- (void)handlePan:(UIPanGestureRecognizer *)panGesture {
-    CGPoint transPoint = [panGesture translationInView:self.window];
-    CGPoint velocity = [panGesture velocityInView:self.window];
-    CGRect rect = self.window.bounds;
-
-    switch (panGesture.state) {
-        case UIGestureRecognizerStateBegan: {
-            // 将cell中与其对应的imageView进行隐藏:
-            [self hideImageViewInCell:YES];
-        }
-        break;
-
-        case UIGestureRecognizerStateChanged: {
-            [self.scrollView setScrollEnabled:NO];
-
-            double alpha = 1 - fabs(transPoint.y) / rect.size.height;
-            alpha = MAX(alpha, 0);
-            double scale = MAX(alpha, 0.5);
-            CGAffineTransform translationTransform = CGAffineTransformMakeTranslation(transPoint.x/scale, transPoint.y/scale);
-            CGAffineTransform scaleTransform = CGAffineTransformMakeScale(scale, scale);
-            [self setTransform:CGAffineTransformConcat(translationTransform, scaleTransform) alpha:alpha];
-        }
-        break;
-
-        case UIGestureRecognizerStateEnded: {
-            [self.scrollView setScrollEnabled:YES];
-
-            if (fabs(transPoint.y) > 220 || fabs(velocity.y) > 500) {
-                QAImageBrowserView *imageBrowserView = [self.scrollView viewWithTag:(self.currentPosition + DefaultTag)];
-                [self singleTapAction:imageBrowserView];
-            }
-            else {
-                [self setTransform:CGAffineTransformIdentity alpha:1];  // 返回到初始状态
-            }
-        }
-        break;
-
-        case UIGestureRecognizerStateCancelled: {
-            [self.scrollView setScrollEnabled:YES];
-            [self setTransform:CGAffineTransformIdentity alpha:1];  // 返回到初始状态
-        }
-        break;
-
-        default:{
-            [self.scrollView setScrollEnabled:YES];
-            [self setTransform:CGAffineTransformIdentity alpha:1];  // 返回到初始状态
-        }
-        break;
-    }
-}
-- (void)setTransform:(CGAffineTransform)transform alpha:(CGFloat)alpha {
-    QAImageBrowserView *imageBrowserView = [self.scrollView viewWithTag:(self.currentPosition + DefaultTag)];
-    
-    [UIView animateWithDuration:0.2
-                     animations:^{
-        imageBrowserView.imageView.transform = transform;
+- (void)panViewWithTransform:(CGAffineTransform)transform
+                       alpha:(CGFloat)alpha
+                      paning:(BOOL)paning {
+    if (paning) {
+        self.currentImageView.transform = transform;
         self.blackBackgroundView.alpha = alpha;
-    } completion:^(BOOL finished) {
-        if (alpha == 1 && self.paningViewInCell) {
-            [self hideImageViewInCell:NO];
-        }
-    }];
+    }
+    else {
+        [UIView animateWithDuration:0.2
+                         animations:^{
+            self.currentImageView.transform = transform;
+            self.blackBackgroundView.alpha = alpha;
+        } completion:^(BOOL finished) {
+            if (alpha == 1 && self.paningViewInCell) {
+                QAImageBrowserView *imageBrowserView = [self.scrollView viewWithTag:(self.currentPosition + DefaultTag)];
+                imageBrowserView.hidden = NO;
+                [self hideImageViewInCell:NO];
+                [self.currentImageView removeFromSuperview];
+                self.currentImageView = nil;
+            }
+        }];
+    }
 }
 - (void)hideImageViewInCell:(BOOL)hidden {
     if (hidden == NO) {
@@ -289,21 +213,159 @@ static int DefaultTag = 10;
                          fabs(view.frame.origin.y - rect.origin.y) <= 1 &&
                          fabs(view.frame.size.width - rect.size.width) <= 1 &&
                          fabs(view.frame.size.height - rect.size.height) <= 1) {
-                    view.hidden = YES;
                     self.paningViewInCell = view;
+                    self.paningViewInCell.hidden = YES;
                     break;
                 }
             }
         }
     }
 }
+- (void)quitImageBrowser:(UIImageView *)imageView {
+    [self hideImageViewInCell:YES];
+    
+    CGRect originalFrame = [self getOriginalFrame];
+    CGRect rectInScrollView = CGRectMake(originalFrame.origin.x + self.rectOffsetX, originalFrame.origin.y + self.rectOffsetY, originalFrame.size.width, originalFrame.size.height);
+    [self moveView:imageView toFrame:rectInScrollView];
+}
+- (CGRect)getOriginalFrame {
+    CGRect rect = CGRectZero;
+    NSDictionary *info = [self.images objectAtIndex:self.currentPosition];
+    rect = [[info valueForKey:@"frame"] CGRectValue];
+    
+    return rect;
+}
+- (void)moveView:(UIImageView *)imageView toFrame:(CGRect)rectInScrollView {  // 退出图片浏览器
+    [UIView animateWithDuration:0.2
+    animations:^{
+        self.blackBackgroundView.alpha = 0.;
+        imageView.frame = rectInScrollView;
+    }
+    completion:^(BOOL finished) {
+        if (finished) {
+            [self cleanupTheBattlefield];
+        }
+    }];
+}
+- (void)quitImageBrowser_directly {
+    [UIView animateWithDuration:0.2
+                     animations:^{
+        self.blackBackgroundView.alpha = 0;
+        self.scrollView.alpha = 0;
+    } completion:^(BOOL finished) {
+        [self cleanupTheBattlefield];
+    }];
+}
+- (void)cleanupTheBattlefield {
+    if (self.paningViewInCell) {
+        [self hideImageViewInCell:NO];
+    }
+    if (self.currentImageView) {
+        [self.currentImageView removeFromSuperview];
+        self.currentImageView = nil;
+    }
+    
+    [self.scrollView removeFromSuperview];
+    self.scrollView = nil;
+    [self.blackBackgroundView removeFromSuperview];
+    self.blackBackgroundView = nil;
+    
+    if (self.window) {
+        [self.window removeGestureRecognizer:self.panGestureRecognizer];
+        self.panGestureRecognizer = nil;
+    }
+}
+
+
+#pragma mark - Gesture Actions -
+- (void)singleTapAction:(QAImageBrowserView *)imageBrowserView {
+    UIImageView *imageView = imageBrowserView.imageView;
+    
+    [self quitImageBrowser:imageView];
+}
+- (void)longPressAction:(QAImageBrowserView *)imageBrowserView {
+    NSLog(@"%s",__func__);
+}
+- (void)handlePan:(UIPanGestureRecognizer *)panGesture {
+    CGPoint transPoint = [panGesture translationInView:self.window];
+    CGPoint velocity = [panGesture velocityInView:self.window];
+    
+    switch (panGesture.state) {
+        case UIGestureRecognizerStateBegan: {
+            // 将cell中与其对应的imageView进行隐藏:
+            [self hideImageViewInCell:YES];
+            
+            // 创建一个临时imageView:
+            if (self.currentImageView == nil) {
+                QAImageBrowserView *imageBrowserView = [self.scrollView viewWithTag:(self.currentPosition + DefaultTag)];
+                CGRect imageViewFrame = imageBrowserView.imageView.frame;
+                CGFloat width = imageViewFrame.size.width;
+                CGFloat height = imageViewFrame.size.height;
+                CGFloat offsetX = (imageBrowserView.scrollView.contentSize.width - ScreenWidth) / 2. - imageBrowserView.scrollView.contentOffset.x;
+                CGFloat originX = (ScreenWidth - width) / 2. + offsetX;
+                CGFloat originY = (ScreenHeight - height) / 2.;
+                UIImageView *currentImageView = [[UIImageView alloc] initWithFrame:CGRectMake(originX, originY, width, height)];
+                currentImageView.contentMode = imageBrowserView.imageView.contentMode;
+                currentImageView.image = imageBrowserView.imageView.image;
+                currentImageView.clipsToBounds = YES;
+                self.currentImageView = currentImageView;
+                [self.window addSubview:currentImageView];
+                imageBrowserView.hidden = YES;
+            }
+        }
+        break;
+
+        case UIGestureRecognizerStateChanged: {
+            [self.scrollView setScrollEnabled:NO];
+
+            float alpha = 1 - fabs(transPoint.y) / self.windowBounds.size.height;
+            alpha = MAX(alpha, 0.1);  // 保证"alpha >= 0.1"
+            float scale = MAX(alpha, 0.6);  // 保证scale的最小值为原图的0.6倍
+            CGAffineTransform translationTransform = CGAffineTransformMakeTranslation(transPoint.x / scale, transPoint.y / scale);
+            CGAffineTransform scaleTransform = CGAffineTransformMakeScale(scale, scale);
+            [self panViewWithTransform:CGAffineTransformConcat(translationTransform, scaleTransform) alpha:alpha paning:YES];
+        }
+        break;
+
+        case UIGestureRecognizerStateEnded: {
+            if (fabs(transPoint.y) > 220 || fabs(velocity.y) > 500) {
+                [self quitImageBrowser:self.currentImageView];
+            }
+            else {
+                [self panViewWithTransform:CGAffineTransformIdentity alpha:1 paning:NO];  // 返回到初始状态
+            }
+            
+            [self.scrollView setScrollEnabled:YES];
+        }
+        break;
+
+        case UIGestureRecognizerStateCancelled: {
+            [self panViewWithTransform:CGAffineTransformIdentity alpha:1 paning:NO];  // 返回到初始状态
+            [self.scrollView setScrollEnabled:YES];
+        }
+        break;
+
+        default:{
+            [self panViewWithTransform:CGAffineTransformIdentity alpha:1 paning:NO];  // 返回到初始状态
+            [self.scrollView setScrollEnabled:YES];
+        }
+        break;
+    }
+}
 
 
 #pragma mark - UIScrollView Delegate -
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    if (scrollView.contentOffset.x <= -88) {
+        [self quitImageBrowser_directly];
+    }
+    else if (ScreenWidth - (scrollView.contentSize.width - scrollView.contentOffset.x) >= 88) {
+        [self quitImageBrowser_directly];
+    }
+}
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     CGFloat pageWidth = scrollView.frame.size.width;
-    NSInteger currentPage = floor((scrollView.contentOffset.x - pageWidth / 2) / pageWidth) + 1;
-    
+    int currentPage = floor((scrollView.contentOffset.x - pageWidth / 2) / pageWidth) + 1;
     if (currentPage < 0 || currentPage >= self.images.count) {
         return;
     }
@@ -318,8 +380,15 @@ static int DefaultTag = 10;
 
 #pragma mark - MemoryWarning -
 - (void)handleMemoryWarning {
-    // 清除SDWebImageManager在内存中缓存的图片
+    // 清除SDWebImageManager在内存中缓存的图片:
     [[SDWebImageManager sharedManager].imageCache clearMemory];
+    
+    /*
+     // 清除SDWebImageManager在磁盘中缓存的图片:
+     [[SDWebImageManager sharedManager].imageCache clearDiskOnCompletion:^{
+         
+     }];
+     */
 }
 
 
