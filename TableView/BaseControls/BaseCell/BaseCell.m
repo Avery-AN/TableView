@@ -336,7 +336,7 @@ typedef union {
             // *** 【5】contentImageView
             if ([[dic allKeys] indexOfObject:NSStringFromSelector(@selector(contentImageView))] != NSNotFound) {
                 NSString *imageUrl = [dic valueForKey:@"contentImageView"];
-                if ([imageUrl hasSuffix:@".gif"]) {  // 本例中只是加载了本地的gif
+                if ([imageUrl isEqualToString:@"https://qq.yh31.com/tp/zjbq/201711142021166458.gif"]) {  // 本例中只是加载了本地的gif
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                         NSBundle *bundle = [NSBundle mainBundle];
                         NSString *resourcePath = [bundle resourcePath];
@@ -354,11 +354,12 @@ typedef union {
                                                       options:opt
                                                     completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
                                                         if ([imageUrl hasSuffix:@".gif"]) { dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                                                            /*
-                                                             NSString *path = [[SDImageCache sharedImageCache] defaultCachePathForKey:imageURL.absoluteString];
-                                                             NSData *data = [NSData dataWithContentsOfFile:path];
-                                                             YYImage *yyImage = [YYImage imageWithData:data];
-                                                             */
+                                                            NSString *path = [[SDImageCache sharedImageCache] defaultCachePathForKey:imageURL.absoluteString];
+                                                            NSData *data = [NSData dataWithContentsOfFile:path];
+                                                            YYImage *yyImage = [YYImage imageWithData:data];
+                                                            dispatch_async(dispatch_get_main_queue(), ^{
+                                                                self.yyImageView.image = yyImage;
+                                                            });
                                                             
                                                             /*
                                                              FLAnimatedImage *flImage = [FLAnimatedImage animatedImageWithGIFData:data];
