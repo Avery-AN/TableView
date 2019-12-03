@@ -229,21 +229,6 @@ static BOOL openClipsToBounds = YES;
         _contentImageView_1 = [UIImageView new];
         if (openClipsToBounds) {
             _contentImageView_1.clipsToBounds = YES;
-            
-            /** UIImageView 进行如下设置并不会引起离屏渲染 ~~~
-             // _contentImageView_1.clipsToBounds = YES;
-             _contentImageView_1.layer.masksToBounds = YES;
-             _contentImageView_1.layer.cornerRadius = 50;
-             */
-            
-            /** UIButton 进行如下设置会引起离屏渲染 !!!
-             UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-             button.frame = CGRectMake(15, 43, 80, 30);
-             button.backgroundColor = [UIColor redColor];
-             button.layer.masksToBounds = YES;
-             button.layer.cornerRadius = 16;
-             [_contentImageView_1 addSubview:button];
-             */
         }
         _contentImageView_1.contentMode = UIViewContentModeScaleAspectFill;
         _contentImageView_1.tag = DefaultTag_contentImageView;

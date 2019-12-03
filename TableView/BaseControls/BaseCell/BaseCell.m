@@ -336,31 +336,44 @@ typedef union {
             // *** 【5】contentImageView
             if ([[dic allKeys] indexOfObject:NSStringFromSelector(@selector(contentImageView))] != NSNotFound) {
                 NSString *imageUrl = [dic valueForKey:@"contentImageView"];
-                
-                SDWebImageOptions opt = SDWebImageRetryFailed | SDWebImageAvoidAutoSetImage;
-                [self.yyImageView sd_setImageWithURL:[NSURL URLWithString:imageUrl]
-                                         placeholderImage:nil
-                                                  options:opt
-                                                completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-                                                    if ([imageUrl hasSuffix:@".gif"]) { dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                                                        NSString *path = [[SDImageCache sharedImageCache] defaultCachePathForKey:imageURL.absoluteString];
-                                                        NSData *data = [NSData dataWithContentsOfFile:path];
-//                                                        FLAnimatedImage *flImage = [FLAnimatedImage animatedImageWithGIFData:data];
-//                                                        dispatch_async(dispatch_get_main_queue(), ^{
-//                                                            self.flImageView.animatedImage = flImage;
-//                                                        });
-                                                        YYImage *yyImage = [YYImage imageWithData:data];
-                                                        dispatch_async(dispatch_get_main_queue(), ^{
-                                                            self.yyImageView.image = yyImage;
-                                                        });
-                                                    });
-                                                    }
-                                                    else {
-//                                                        self.contentImageView.image = image;
-                                                        self.yyImageView.image = image;
-                                                    }
-                                                }];
-                
+                if ([imageUrl hasSuffix:@".gif"]) {  // 本例中只是加载了本地的gif
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                        NSBundle *bundle = [NSBundle mainBundle];
+                        NSString *resourcePath = [bundle resourcePath];
+                        NSString *filePath = [resourcePath stringByAppendingPathComponent:@"demo.GIF"];
+                        YYImage *yyImage = [YYImage imageWithContentsOfFile:filePath];
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            self.yyImageView.image = yyImage;
+                        });
+                    });
+                }
+                else {
+                    SDWebImageOptions opt = SDWebImageRetryFailed | SDWebImageAvoidAutoSetImage;
+                    [self.yyImageView sd_setImageWithURL:[NSURL URLWithString:imageUrl]
+                                             placeholderImage:nil
+                                                      options:opt
+                                                    completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                                                        if ([imageUrl hasSuffix:@".gif"]) { dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                                                            /*
+                                                             NSString *path = [[SDImageCache sharedImageCache] defaultCachePathForKey:imageURL.absoluteString];
+                                                             NSData *data = [NSData dataWithContentsOfFile:path];
+                                                             YYImage *yyImage = [YYImage imageWithData:data];
+                                                             */
+                                                            
+                                                            /*
+                                                             FLAnimatedImage *flImage = [FLAnimatedImage animatedImageWithGIFData:data];
+                                                             dispatch_async(dispatch_get_main_queue(), ^{
+                                                                 self.flImageView.animatedImage = flImage;
+                                                             });
+                                                             */
+                                                            });
+                                                        }
+                                                        else {
+                                                            // self.contentImageView.image = image;
+                                                            self.yyImageView.image = image;
+                                                        }
+                                                    }];
+                }
                 
                 /*
                 [self.contentImageView sd_setImageWithURL:[NSURL URLWithString:imageUrl]
@@ -474,24 +487,47 @@ typedef union {
 //- (UIImageView *)contentImageView {
 //    if (!_contentImageView) {
 //        _contentImageView = [[UIImageView alloc] init];
+//        _contentImageView.contentMode = UIViewContentModeScaleAspectFill;
+//        _contentImageView.clipsToBounds = YES;
+//
+//        /** UIImageView 进行如下设置并不会引起离屏渲染 ~~~
+//         // _contentImageView_1.clipsToBounds = YES;
+//         _contentImageView_1.layer.masksToBounds = YES;
+//         _contentImageView_1.layer.cornerRadius = 50;
+//         */
+//
+//        /** UIButton 进行如下设置会引起离屏渲染 !!!
+//         UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+//         button.frame = CGRectMake(15, 43, 80, 30);
+//         button.backgroundColor = [UIColor redColor];
+//         button.layer.masksToBounds = YES;
+//         button.layer.cornerRadius = 16;
+//         [_contentImageView_1 addSubview:button];
+//         */
 //    }
 //    return _contentImageView;
 //}
 - (YYAnimatedImageView *)yyImageView {
     if (!_yyImageView) {
         _yyImageView = [[YYAnimatedImageView alloc] init];
+        _yyImageView.contentMode = UIViewContentModeScaleAspectFill;
+        _yyImageView.clipsToBounds = YES;
+        _yyImageView.layer.cornerRadius = 3;
     }
     return _yyImageView;
 }
 //- (FLAnimatedImageView *)flImageView {
 //    if (!_flImageView) {
 //        _flImageView = [[FLAnimatedImageView alloc] init];
+//        _flImageView.contentMode = UIViewContentModeScaleAspectFill;
+//        _flImageView.clipsToBounds = YES;
 //    }
 //    return _flImageView;
 //}
 //- (CALayer *)contentImageLayer {
 //    if (!_contentImageLayer) {
 //        _contentImageLayer = [[CALayer alloc] init];
+//        _contentImageLayer.contentsGravity = kCAGravityResizeAspectFill;
 //    }
 //    return _contentImageLayer;
 //}

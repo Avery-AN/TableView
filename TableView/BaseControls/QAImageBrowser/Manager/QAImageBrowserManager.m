@@ -221,6 +221,22 @@ static int DefaultTag = 10;
         }
     }
 }
+- (void)createCurrentImageView {
+    QAImageBrowserView *imageBrowserView = [self.scrollView viewWithTag:(self.currentPosition + DefaultTag)];
+    CGRect imageViewFrame = imageBrowserView.imageView.frame;
+    CGFloat width = imageViewFrame.size.width;
+    CGFloat height = imageViewFrame.size.height;
+    CGFloat offsetX = (imageBrowserView.scrollView.contentSize.width - ScreenWidth) / 2. - imageBrowserView.scrollView.contentOffset.x;
+    CGFloat originX = (ScreenWidth - width) / 2. + offsetX;
+    CGFloat originY = (ScreenHeight - height) / 2.;
+    UIImageView *currentImageView = [[UIImageView alloc] initWithFrame:CGRectMake(originX, originY, width, height)];
+    currentImageView.contentMode = imageBrowserView.imageView.contentMode;
+    currentImageView.image = imageBrowserView.imageView.image;
+    currentImageView.clipsToBounds = YES;
+    self.currentImageView = currentImageView;
+    [self.window addSubview:currentImageView];
+    imageBrowserView.hidden = YES;
+}
 - (void)quitImageBrowser:(UIImageView *)imageView {
     [self hideImageViewInCell:YES];
     
@@ -279,9 +295,16 @@ static int DefaultTag = 10;
 
 #pragma mark - Gesture Actions -
 - (void)singleTapAction:(QAImageBrowserView *)imageBrowserView {
-    UIImageView *imageView = imageBrowserView.imageView;
-    
-    [self quitImageBrowser:imageView];
+    if (imageBrowserView.scrollView.zoomScale - 1 >= 0.01) {
+        if (self.currentImageView == nil) {
+            [self createCurrentImageView];
+            [self quitImageBrowser:self.currentImageView];
+        }
+    }
+    else {
+        UIImageView *imageView = imageBrowserView.imageView;
+        [self quitImageBrowser:imageView];
+    }
 }
 - (void)longPressAction:(QAImageBrowserView *)imageBrowserView {
     NSLog(@"%s",__func__);
@@ -297,20 +320,7 @@ static int DefaultTag = 10;
             
             // 创建一个临时imageView:
             if (self.currentImageView == nil) {
-                QAImageBrowserView *imageBrowserView = [self.scrollView viewWithTag:(self.currentPosition + DefaultTag)];
-                CGRect imageViewFrame = imageBrowserView.imageView.frame;
-                CGFloat width = imageViewFrame.size.width;
-                CGFloat height = imageViewFrame.size.height;
-                CGFloat offsetX = (imageBrowserView.scrollView.contentSize.width - ScreenWidth) / 2. - imageBrowserView.scrollView.contentOffset.x;
-                CGFloat originX = (ScreenWidth - width) / 2. + offsetX;
-                CGFloat originY = (ScreenHeight - height) / 2.;
-                UIImageView *currentImageView = [[UIImageView alloc] initWithFrame:CGRectMake(originX, originY, width, height)];
-                currentImageView.contentMode = imageBrowserView.imageView.contentMode;
-                currentImageView.image = imageBrowserView.imageView.image;
-                currentImageView.clipsToBounds = YES;
-                self.currentImageView = currentImageView;
-                [self.window addSubview:currentImageView];
-                imageBrowserView.hidden = YES;
+                [self createCurrentImageView];
             }
         }
         break;
