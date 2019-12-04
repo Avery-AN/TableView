@@ -35,6 +35,7 @@
 //        _styleLabel.shortLink = @"这里就是网址呀";
 //        _styleLabel.numberOfLines = 3;
         _styleLabel.numberOfLines = 21;
+        _styleLabel.lineBreakMode = NSLineBreakByWordWrapping;
         _styleLabel.topicHighlight = YES;
         _styleLabel.showMoreText = YES;
         _styleLabel.seeMoreText = @"...查看全文";

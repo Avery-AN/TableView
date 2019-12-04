@@ -13,9 +13,7 @@
 #import "QAImageBrowserManager.h"
 
 
-@interface AdvancedViewController () <UITableViewDataSource, UITableViewDelegate> {
-    
-}
+@interface AdvancedViewController () <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic) NSMutableArray *showDatas;
 @property (nonatomic, assign) __block BOOL setOldValue;  // 监听时使用
 @property (nonatomic, assign) __block CGFloat oldValue;  // 监听时使用
@@ -140,7 +138,10 @@
             NSMutableDictionary *dic = [NSMutableDictionary dictionary];
             [dic setValue:[cell.styleInfo valueForKey:@"contentImageView"] forKey:@"url"];
             [dic setValue:[cell.styleInfo valueForKey:@"contentImageView-frame"] forKey:@"frame"];
-            if (![[dic valueForKey:@"url"] hasSuffix:@".gif"]) {
+            if ([dic valueForKey:@"url"] && [dic valueForKey:@"frame"]) {
+                if ([[dic valueForKey:@"url"] hasSuffix:@".gif"]) {  // 本DEMO中的gif显示的均是本地的demo.GIF (可删除dic中的image)
+                    [dic setValue:cell.yyImageView.image forKey:@"image"];
+                }
                 [strongSelf.imageBrowserManager showImageWithTapedObject:cell.yyImageView
                          images:[NSArray arrayWithObject:dic]
                 currentPosition:0];
@@ -149,7 +150,6 @@
         cell.content.QAAttributedLabelTapAction = ^(NSString * _Nullable content, QAAttributedLabel_TapedStyle style) {
             NSLog(@"   AdvancedCell-Label-TapAction:  %@; style: %lu", content, (unsigned long)style);
         };
-
 
 
         /**

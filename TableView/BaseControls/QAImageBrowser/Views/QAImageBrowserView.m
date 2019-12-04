@@ -154,10 +154,20 @@
         
     } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            UIImage *decodeImage = [ImageProcesser decodeImage:image];  // image的解码
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self updateImageViewWithImage:decodeImage];
-            });
+            if ([imageUrl.absoluteString hasSuffix:@".gif"]) {
+                NSString *path = [[SDImageCache sharedImageCache] defaultCachePathForKey:imageUrl.absoluteString];
+                NSData *data = [NSData dataWithContentsOfFile:path];
+                YYImage *yyImage = [YYImage imageWithData:data];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self updateImageViewWithImage:yyImage];
+                });
+            }
+            else {
+                UIImage *decodeImage = [ImageProcesser decodeImage:image];  // image的解码
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self updateImageViewWithImage:decodeImage];
+                });
+            }
         });
     }];
 }
@@ -208,15 +218,24 @@
     }
     return _scrollView;
 }
-- (UIImageView *)imageView {
+- (YYAnimatedImageView *)imageView {
     if (!_imageView) {
-        _imageView = [[UIImageView alloc] init];
+        _imageView = [[YYAnimatedImageView alloc] init];
         _imageView.clipsToBounds = YES;
         _imageView.contentMode = UIViewContentModeScaleAspectFill;
         _imageView.userInteractionEnabled = YES;
     }
     return _imageView;
 }
+//- (UIImageView *)imageView {
+//    if (!_imageView) {
+//        _imageView = [[UIImageView alloc] init];
+//        _imageView.clipsToBounds = YES;
+//        _imageView.contentMode = UIViewContentModeScaleAspectFill;
+//        _imageView.userInteractionEnabled = YES;
+//    }
+//    return _imageView;
+//}
 - (UIActivityIndicatorView *)activityIndicator {
     if (!_activityIndicator) {
         _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];

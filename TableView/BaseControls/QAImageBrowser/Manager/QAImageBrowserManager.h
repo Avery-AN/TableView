@@ -12,6 +12,11 @@
 @interface QAImageBrowserManager : NSObject
 
 /**
+ 本DEMO中使用了 SDWebImageManager & YYImage
+ */
+
+
+/**
  显示给定的image  (cell中显示的缩略图和此处要准备浏览的大图最好要保持宽高比一致)
  @param tapedObject 点中的cell里的视图控件
  @param images 保存的是NSDictionary类型的数据、dic中有3个key: @"url" & @"frame" & @"image"、

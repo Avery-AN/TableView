@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <YYImage/YYImage.h>
 #import "ImageProcesser.h"
 
 typedef NS_ENUM(NSUInteger, QAImageBrowserViewAction) {
@@ -19,7 +20,8 @@ typedef NS_ENUM(NSUInteger, QAImageBrowserViewAction) {
 @interface QAImageBrowserView : UIView
 
 @property (nonatomic) UIScrollView * _Nonnull scrollView;
-@property (nonatomic) UIImageView * _Nonnull imageView;
+//@property (nonatomic) UIImageView * _Nonnull imageView;
+@property (nonatomic) YYAnimatedImageView * _Nonnull imageView;
 @property (nonatomic, copy) void(^ _Nullable gestureActionBlock) (QAImageBrowserViewAction action, QAImageBrowserView * _Nullable imageBrowserView);
 
 - (void)showImageWithUrl:(NSURL * _Nonnull)imageUrl contentModel:(UIViewContentMode)contentModel;
