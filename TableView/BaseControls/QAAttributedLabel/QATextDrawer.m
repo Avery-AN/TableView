@@ -353,9 +353,6 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
     NSRange currentRunRange = NSMakeRange(runRange.location, runRange.length);
     NSString *runContent = [attributedString.string substringWithRange:currentRunRange];
     NSMutableString *currentRunString = [NSMutableString stringWithString:runContent];
-    if ([attributedString.string hasPrefix:@"【1】"]) {
-        NSLog(@"attributedString: %@",attributedString.string);
-    }
     
     for (int i = 0; i < self.highlightRanges.count; i++) {
         NSString *rangeString = [self.highlightRanges objectAtIndex:i];
@@ -413,14 +410,6 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
                     if (highlightText_previous_saved) {
                         NSInteger length_previousSaved_last = highlightText_previous.length - highlightText_previous_saved.length;
                         NSRange subRange_previous = NSMakeRange(0, length_previousSaved_last);
-                        
-                        if ([runContent isEqualToString:@"@"] && [currentRunString isEqualToString:@"@"]) {
-                            NSLog(@"_saveUnfinishedDic: %@",_saveUnfinishedDic);
-                            NSArray *arr = [_saveUnfinishedDic allValues];
-                            for (NSString *string in arr) {
-                                NSLog(@"string: %@",string);
-                            }
-                        }
                         NSString *subHighlightText = [currentRunString substringWithRange:subRange_previous];
                         
                         // 获取高亮文案的Rect:
@@ -535,10 +524,6 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
             }
         }
     }
-    if ([attributedString.string hasPrefix:@"【1】"]) {
-        NSLog(@"self.highlightFrameDic: %@",self.highlightFrameDic);
-        NSLog(@"self.textNewlineDic: %@",self.textNewlineDic);
-    }
     
     return 0;
 }
@@ -556,10 +541,12 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
     
     if (highlightRects.count > 0) {
         NSValue *value = [highlightRects lastObject];
+        NSString *text = [newlineTexts lastObject];
         CGRect rect = value.CGRectValue;
-        if (fabs(highlightRect.origin.y - rect.origin.y) <= 0.1 ) {  // 仍处在同一line里
+        if (fabs(highlightRect.origin.y - rect.origin.y) <= 3 ) {  // 仍处在同一line里
             CGRect newRect = CGRectMake(rect.origin.x, highlightRect.origin.y, (rect.size.width + highlightRect.size.width), highlightRect.size.height);
             [highlightRects replaceObjectAtIndex:(highlightRects.count-1) withObject:[NSValue valueWithCGRect:newRect]];
+            [newlineTexts replaceObjectAtIndex:(highlightRects.count-1) withObject:[NSString stringWithFormat:@"%@%@",text,highlightText]];
         }
         else {
             [highlightRects addObject:[NSValue valueWithCGRect:highlightRect]];
@@ -576,9 +563,6 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
 - (void)check_saveUnfinishedDicWithHighlightRange:(NSRange)highlightRange
                                     highlightText:(NSString *)highlightText
                                  subHighlightText:(NSString *)subHighlightText {
-    if ([NSStringFromRange(highlightRange) isEqualToString:@"{237, 16}"]) {
-        NSLog(@" ");
-    }
     NSArray *array = [self.textNewlineDic valueForKey:NSStringFromRange(highlightRange)];
     NSInteger totalLength = 0;
     for (NSString *text in array) {
