@@ -65,7 +65,6 @@
         styleLabelBounds = cell.styleLabel.bounds;
     }
     
-    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         dispatch_queue_t dispatchQueue = dispatch_queue_create("com.avery.parseDataQueue", DISPATCH_QUEUE_CONCURRENT);
         dispatch_group_t dispatchGroup = dispatch_group_create();
@@ -73,6 +72,7 @@
         NSDictionary *styleProperties = nil;
         __block NSInteger start = 0;
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+        
         for (int i = 0; i < datas.count; i++) {
             NSMutableDictionary *dic_item = [datas objectAtIndex:i];
             
@@ -121,24 +121,26 @@
                    bounds:(CGRect)bounds
                     layer:(QAAttributedLayer *)layer {
     NSString *content = [dic valueForKey:@"content"];
+    CGFloat maxWidth = bounds.size.width;
+    
     dispatch_group_enter(dispatchGroup);
     dispatch_async(dispatchQueue, ^{
         [self.styleLabel getTextContentSizeWithLayer:layer
                                              content:content
-                                            maxWidth:bounds.size.width
+                                            maxWidth:maxWidth
                                      completionBlock:^(CGSize size, NSMutableAttributedString *attributedString) {
                                          [dic setValue:attributedString forKey:@"content-attributed"];
                                          if ([dic valueForKey:@"contentImageView-frame"]) {
                                              CGRect frame = [[dic valueForKey:@"contentImageView-frame"] CGRectValue];
                                              NSInteger contentTop = frame.origin.y + frame.size.height + ContentImageView_bottomControl_gap;
-                                             [dic setValue:[NSValue valueWithCGRect:CGRectMake(Avatar_left_gap, contentTop, bounds.size.width, size.height)] forKey:@"content-frame"];
+                                             [dic setValue:[NSValue valueWithCGRect:CGRectMake(Avatar_left_gap, contentTop, maxWidth, size.height)] forKey:@"content-frame"];
                                              
                                              CGFloat totalHeight = contentTop + size.height + Content_bottom_gap;
                                              [dic setValue:[NSValue valueWithCGRect:CGRectMake(0, 0, UIWidth, totalHeight)] forKey:@"cell-frame"];
                                          }
                                          else {
                                              NSInteger contentTop = Avatar_top_gap + AvatarSize + Avatar_bottomControl_gap;
-                                             [dic setValue:[NSValue valueWithCGRect:CGRectMake(Avatar_left_gap, contentTop, bounds.size.width, size.height)] forKey:@"content-frame"];
+                                             [dic setValue:[NSValue valueWithCGRect:CGRectMake(Avatar_left_gap, contentTop, maxWidth, size.height)] forKey:@"content-frame"];
                                              
                                              CGFloat totalHeight = contentTop + size.height + Content_bottom_gap;
                                              [dic setValue:[NSValue valueWithCGRect:CGRectMake(0, 0, UIWidth, totalHeight)] forKey:@"cell-frame"];

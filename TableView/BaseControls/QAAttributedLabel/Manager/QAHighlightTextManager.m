@@ -30,7 +30,7 @@
         // 处理link短链接:
         if (*highlightContents && (*highlightContents).count > 0 && isShowShortLink) {
             if (!shortLink || shortLink.length == 0) {
-                shortLink = @"网页链接";
+                shortLink = ShortLink_Default;
             }
             
             for (int i = 0; i < links.count ; i++) {

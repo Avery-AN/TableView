@@ -206,7 +206,8 @@ static int DefaultTag = 10;
         for (UIView *view in superView.subviews) {
             if (view && [view isKindOfClass:[UIImageView class]]) {
                 if (CGRectEqualToRect(view.frame, rect)) {   // NSDecimalNumber
-                    view.hidden = YES;
+                    self.paningViewInCell = view;
+                    self.paningViewInCell.hidden = YES;
                     break;
                 }
                 else if (fabs(view.frame.origin.x - rect.origin.x) <= 1 &&

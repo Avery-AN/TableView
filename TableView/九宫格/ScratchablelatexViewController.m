@@ -38,7 +38,6 @@
     self.view.backgroundColor = [UIColor whiteColor];
     
     self.imageBrowserManager = [[QAImageBrowserManager alloc] init];
-    self.showDatas = [NSMutableArray arrayWithCapacity:0];
     [self performSelector:@selector(generateContent) withObject:nil afterDelay:0];  // 模拟服务器端数据(get数据)
 }
 - (void)viewWillAppear:(BOOL)animated {
@@ -72,6 +71,13 @@
     [self processDatas:originalDatas];
 }
 - (void)processDatas:(NSMutableArray *)originalDatas {
+    if (!self.showDatas) {
+        self.showDatas = [NSMutableArray arrayWithCapacity:0];
+    }
+    else {
+        [self.showDatas removeAllObjects];
+    }
+    
     /*
      maxConcurrentOperationCount的主要作用是加快首屏cell的渲染
      maxConcurrentOperationCount的值可以根据cell的height以及tableView.contentView.height来计算
@@ -125,9 +131,10 @@
             NSArray *images = [cell.styleInfo valueForKey:@"contentImageViews"];
             
             __strong typeof(weakSelf) strongSelf = weakSelf;
+            int tapPosition = position;
             [strongSelf.imageBrowserManager showImageWithTapedObject:tapedObject
                                                               images:images
-                                                     currentPosition:position];
+                                                     currentPosition:tapPosition];
         };
         
         cell.content.QAAttributedLabelTapAction = ^(NSString * _Nullable content, QAAttributedLabel_TapedStyle style) {

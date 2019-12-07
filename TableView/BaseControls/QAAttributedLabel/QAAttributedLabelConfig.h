@@ -18,3 +18,11 @@
 #import "QAHighlightTextManager.h"
 #import "UIImage+DecodeImage.h"
 #import "NSString+Md5.h"
+
+
+#define HighlightTextColor_DEFAULT                      [UIColor whiteColor]
+#define HighlightTextBackgroundColor_DEFAULT            [UIColor clearColor]
+#define MoreTextColor_DEFAULT                           [UIColor greenColor]
+#define MoreTextBackgroundColor_DEFAULT                 [UIColor clearColor]
+static NSString *SeeMoreText_DEFAULT = @"...查看全文";
+static NSString *ShortLink_Default = @"网页短链接";
