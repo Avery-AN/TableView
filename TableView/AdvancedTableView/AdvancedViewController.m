@@ -177,8 +177,7 @@
                 [dic setValue:cell.yyImageView.image forKey:@"image"];
             }
             [self.imageBrowserManager showImageWithTapedObject:cell.yyImageView
-                                                        images:[NSArray arrayWithObject:dic]
-                                               currentPosition:0];
+                                                        images:[NSArray arrayWithObject:dic]];
         }
     }
 }

@@ -43,18 +43,17 @@ static int DefaultTag = 10;
 
 #pragma mark - Public Methods -
 - (void)showImageWithTapedObject:(id _Nonnull)tapedObject
-                          images:(NSArray * _Nonnull)images
-                 currentPosition:(int)currentPosition {
+                          images:(NSArray * _Nonnull)images {
     if (!tapedObject || !images || ![images isKindOfClass:[NSArray class]] || images.count == 0) {
         return;
     }
-    else if (images.count <= currentPosition) {
+    else if (images.count < 1) {
         return;
     }
     
     self.tapedObject = tapedObject;
     self.images = images;
-    self.currentPosition = currentPosition;
+    self.currentPosition = [self getTapedPosition];
     [self createImageBrowserView];
     
     CGRect newRect = [self getTapedImageFrame];
@@ -63,12 +62,39 @@ static int DefaultTag = 10;
 
 
 #pragma mark - Private Methods -
+- (int)getTapedPosition {
+    int result = -1;
+    UIImageView *imageView = self.tapedObject;
+    CGRect tapedRect = imageView.frame;
+    for (int i = 0; i < self.images.count; i++) {
+        NSDictionary *info = [self.images objectAtIndex:i];
+        if ([info isKindOfClass:[NSDictionary class]]) {
+            CGRect rect = [[info valueForKey:@"frame"] CGRectValue];
+            if (CGRectEqualToRect(tapedRect, rect)) {   // NSDecimalNumber
+                result = i;
+                break;
+            }
+            else if (fabs(tapedRect.origin.x - rect.origin.x) <= 1 &&
+                     fabs(tapedRect.origin.y - rect.origin.y) <= 1 &&
+                     fabs(tapedRect.size.width - rect.size.width) <= 1 &&
+                     fabs(tapedRect.size.height - rect.size.height) <= 1) {
+                result = i;
+                break;
+            }
+        }
+        else {
+            NSLog(@"QAImageBrowserManager - 传入参数有误!");
+            break;
+        }
+    }
+    return result;
+}
 - (CGRect)getTapedImageFrame {
     UIImageView *imageView = self.tapedObject;
     UIImage *image = imageView.image;  // 缩略图的image
     CGRect rect = CGRectZero;
     if (image) {
-        rect = [ImageProcesser caculateOriginImageSizeWith:image];
+        rect = [ImageProcesser caculateOriginImageSize:image];
     }
     return rect;
 }

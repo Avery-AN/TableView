@@ -64,7 +64,7 @@
     [singleTap_2 requireGestureRecognizerToFail:doubleTap]; // 处理双击时不响应单击
 }
 - (void)updateImageViewWithImage:(UIImage *)image {
-    self.imageView.frame = [ImageProcesser caculateOriginImageSizeWith:image];
+    self.imageView.frame = [ImageProcesser caculateOriginImageSize:image];
     self.imageView.image = image;
     [self.scrollView setZoomScale:1 animated:NO];
     

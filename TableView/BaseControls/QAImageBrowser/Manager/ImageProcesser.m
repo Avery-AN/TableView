@@ -13,7 +13,7 @@ static BOOL ProcessBytesPerRowAlignment = YES;  // 是否要进行字节对齐
 @implementation ImageProcesser
 
 #pragma mark - Public Methods -
-+ (CGRect)caculateOriginImageSizeWith:(UIImage *)image {
++ (CGRect)caculateOriginImageSize:(UIImage *)image {
     CGFloat width = ScreenWidth;  // 固定宽度为屏幕的宽度
     CGFloat height = width / (image.size.width / image.size.height);
     return CGRectMake(0, (ScreenHeight - height)/2., width, height);

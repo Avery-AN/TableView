@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ImageProcesser : NSObject
 
-+ (CGRect)caculateOriginImageSizeWith:(UIImage *)image;
++ (CGRect)caculateOriginImageSize:(UIImage *)image;
 
 + (UIImage *)decodeImage:(UIImage *)image;
 

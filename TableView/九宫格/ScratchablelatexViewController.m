@@ -165,10 +165,8 @@
                     tapedPosition:(ScratchablelatexCell_TapedPosition)position
              contentImageViewInfo:(NSDictionary * _Nonnull)contentImageViewInfo {
     NSArray *images = [cell.styleInfo valueForKey:@"contentImageViews"];
-    int tapPosition = position;
     [self.imageBrowserManager showImageWithTapedObject:tapedObject
-                                                images:images
-                                       currentPosition:tapPosition];
+                                                images:images];
 }
 
 
