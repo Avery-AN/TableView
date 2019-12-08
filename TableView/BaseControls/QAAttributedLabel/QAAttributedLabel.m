@@ -541,15 +541,6 @@ static void *TouchingContext = &TouchingContext;
 - (void)setText:(NSString *)text {
     _text = text;
     self.attributedText = nil;
-
-    if ([NSThread isMainThread]) {
-        [self.layer setNeedsDisplay];
-    }
-    else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.layer setNeedsDisplay];
-        });
-    }
 }
 - (void)setAttributedText:(NSMutableAttributedString *)attributedText {
     if (!attributedText || attributedText.length == 0) {
