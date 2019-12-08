@@ -83,12 +83,13 @@ typedef union {
         _bits_union.bits |= BaseCell_Taped_ContentImageView_MASK;
         return;
     }
-    
-    CGRect contentFrame = [[self.styleInfo valueForKey:@"content-frame"] CGRectValue];
-    if (CGRectContainsPoint(contentFrame, point)) {
-       _bits_union.bits |= BaseCell_Taped_Content_MASK;
-       return;
-    }
+    /*
+     CGRect contentFrame = [[self.styleInfo valueForKey:@"content-frame"] CGRectValue];
+     if (CGRectContainsPoint(contentFrame, point)) {
+        _bits_union.bits |= BaseCell_Taped_Content_MASK;
+        return;
+     }
+     */
     
     [self.nextResponder touchesBegan:touches withEvent:event];
 }
@@ -99,32 +100,39 @@ typedef union {
         _bits_union.bits &= ~BaseCell_Taped_Name_MASK;
         if (self.baseCellTapAction) {
             self.baseCellTapAction(self, BaseCell_Taped_Name, [weakSelf.styleInfo valueForKey:@"name"]);
+            return;
         }
     }
     else if (!!(_bits_union.bits & BaseCell_Taped_Desc_MASK)) {
         _bits_union.bits &= ~BaseCell_Taped_Desc_MASK;
         if (self.baseCellTapAction) {
             self.baseCellTapAction(self, BaseCell_Taped_Desc, [weakSelf.styleInfo valueForKey:@"desc"]);
+            return;
         }
     }
     else if (!!(_bits_union.bits & BaseCell_Taped_Avatar_MASK)) {
         _bits_union.bits &= ~BaseCell_Taped_Avatar_MASK;
         if (self.baseCellTapAction) {
             self.baseCellTapAction(self, BaseCell_Taped_Avatar, [weakSelf.styleInfo valueForKey:@"avatar"]);
+            return;
         }
     }
     else if (!!(_bits_union.bits & BaseCell_Taped_ContentImageView_MASK)) {
         _bits_union.bits &= ~BaseCell_Taped_ContentImageView_MASK;
         if (self.baseCellTapAction) {
             self.baseCellTapAction(self, BaseCell_Taped_ContentImageView, [weakSelf.styleInfo valueForKey:@"contentImageView"]);
+            return;
         }
     }
-    else if (!!(_bits_union.bits & BaseCell_Taped_Content_MASK)) {
-        _bits_union.bits &= ~BaseCell_Taped_Content_MASK;
-        if (self.baseCellTapAction) {
-            self.baseCellTapAction(self, BaseCell_Taped_Content, [weakSelf.styleInfo valueForKey:@"content"]);
-        }
-    }
+    /*
+     else if (!!(_bits_union.bits & BaseCell_Taped_Content_MASK)) {
+         _bits_union.bits &= ~BaseCell_Taped_Content_MASK;
+         if (self.baseCellTapAction) {
+             self.baseCellTapAction(self, BaseCell_Taped_Content, [weakSelf.styleInfo valueForKey:@"content"]);
+             return;
+         }
+     }
+     */
     
     [self.nextResponder touchesEnded:touches withEvent:event];
 }

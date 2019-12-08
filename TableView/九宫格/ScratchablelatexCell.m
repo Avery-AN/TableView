@@ -44,7 +44,6 @@ static BOOL openClipsToBounds = YES;
 #pragma mark - Override Methods -
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     CGPoint point = [[touches anyObject] locationInView:self];
-    
     NSArray *contentImageViews = [self.styleInfo valueForKey:@"contentImageViews"];
     if (contentImageViews && [contentImageViews isKindOfClass:[NSArray class]]) {
         for (int i = 0; i < contentImageViews.count; i++) {
@@ -60,6 +59,8 @@ static BOOL openClipsToBounds = YES;
         }
     }
     
+    [super touchesBegan:touches withEvent:event];
+    
     [self.nextResponder touchesBegan:touches withEvent:event];
 }
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event {
@@ -70,7 +71,10 @@ static BOOL openClipsToBounds = YES;
         self.tapedInfo = nil;
         self.tapedPosition = ScratchablelatexCell_Taped_Null;
         self.tapedObject = nil;
+        return;
     }
+    
+    [super touchesEnded:touches withEvent:event];
     
     [self.nextResponder touchesEnded:touches withEvent:event];
 }
@@ -78,6 +82,8 @@ static BOOL openClipsToBounds = YES;
     self.tapedInfo = nil;
     self.tapedPosition = ScratchablelatexCell_Taped_Null;
     self.tapedObject = nil;
+    
+    [super touchesCancelled:touches withEvent:event];
     
     [self.nextResponder touchesCancelled:touches withEvent:event];
 }
