@@ -255,10 +255,6 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
                             CFRelease(ctFrame);
                             CFRelease(ctFramesetter);
                             
-                            [_saveUnfinishedDic removeAllObjects];
-                            _currentPositionInRun = 0;
-                            _currentPosition_offsetXInRun = 0;
-                            
                             return -1;
                         }
                     }
@@ -375,9 +371,6 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
             
             // 异常处理:
             if (checkAttributedText && checkAttributedText(attributedString.string)) {
-                [_saveUnfinishedDic removeAllObjects];
-                _currentPositionInRun = 0;
-                _currentPosition_offsetXInRun = 0;
                 return -1;
             }
             

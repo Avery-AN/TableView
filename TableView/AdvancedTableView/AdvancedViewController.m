@@ -133,19 +133,8 @@
         __weak typeof(self) weakSelf = self;
         cell.baseCellTapAction = ^(BaseCell *cell, BaseCell_TapedStyle style, NSString * _Nonnull content) {
             NSLog(@"   AdvancedCell-TapAction  style: %lu; content: %@", (unsigned long)style, content);
-
             __strong typeof(weakSelf) strongSelf = weakSelf;
-            NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-            [dic setValue:[cell.styleInfo valueForKey:@"contentImageView"] forKey:@"url"];
-            [dic setValue:[cell.styleInfo valueForKey:@"contentImageView-frame"] forKey:@"frame"];
-            if ([dic valueForKey:@"url"] && [dic valueForKey:@"frame"]) {
-                if ([[dic valueForKey:@"url"] hasSuffix:@".gif"]) {  // 本DEMO中的gif显示的均是本地的demo.GIF (可删除dic中的image)
-                    [dic setValue:cell.yyImageView.image forKey:@"image"];
-                }
-                [strongSelf.imageBrowserManager showImageWithTapedObject:cell.yyImageView
-                         images:[NSArray arrayWithObject:dic]
-                currentPosition:0];
-            }
+            [strongSelf tapedAdvancedCell:cell tapedStyle:style content:content];
         };
         cell.content.QAAttributedLabelTapAction = ^(NSString * _Nullable content, QAAttributedLabel_TapedStyle style) {
             NSLog(@"   AdvancedCell-Label-TapAction:  %@; style: %lu", content, (unsigned long)style);
@@ -175,7 +164,27 @@
 }
 
 
-#pragma mark - SearchText 【【 仅仅用于验证方法的实现是否正确 】】 -
+#pragma mark - Actions -
+- (void)tapedAdvancedCell:(BaseCell *)cell
+               tapedStyle:(BaseCell_TapedStyle)tapedStyle
+                  content:(NSString * _Nonnull)content {
+    if (BaseCell_Taped_ContentImageView == tapedStyle) {
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        [dic setValue:[cell.styleInfo valueForKey:@"contentImageView"] forKey:@"url"];
+        [dic setValue:[cell.styleInfo valueForKey:@"contentImageView-frame"] forKey:@"frame"];
+        if ([dic valueForKey:@"url"] && [dic valueForKey:@"frame"]) {
+            if ([[dic valueForKey:@"url"] hasSuffix:@".gif"]) {  // 本DEMO中的gif显示的均是本地的demo.GIF (可删除dic中的image)
+                [dic setValue:cell.yyImageView.image forKey:@"image"];
+            }
+            [self.imageBrowserManager showImageWithTapedObject:cell.yyImageView
+                                                        images:[NSArray arrayWithObject:dic]
+                                               currentPosition:0];
+        }
+    }
+}
+
+
+#pragma mark - SearchText 【【 仅仅用于验证label的"searchTexts:方法"是否能正确工作 】】 -
 - (void)searchText:(AdvancedCell *)cell {
     [cell.content searchTexts:[NSArray arrayWithObjects:@"是另外的", @"需要注意的", @"提高效率", nil]
         resetSearchResultInfo:^NSDictionary * _Nullable {

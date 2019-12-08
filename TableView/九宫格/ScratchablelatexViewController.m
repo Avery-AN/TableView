@@ -124,21 +124,16 @@
         
         __weak typeof(self) weakSelf = self;
         cell.baseCellTapAction = ^(BaseCell *cell, BaseCell_TapedStyle style, NSString * _Nonnull content) {
-            NSLog(@"   AdvancedCell-TapAction  style: %lu; content: %@", (unsigned long)style, content);
+            NSLog(@"   ScratchablelatexCell-TapAction style: %lu; content: %@", (unsigned long)style, content);
         };
         
-        cell.scratchablelatexCellTapAction = ^(ScratchablelatexCell *cell, id tapedObject, ScratchablelatexCell_TapedPosition position, NSDictionary * _Nonnull contentImageViewInfo) {
-            NSArray *images = [cell.styleInfo valueForKey:@"contentImageViews"];
-            
+        cell.scratchablelatexCellTapImageAction = ^(ScratchablelatexCell *cell, id tapedObject, ScratchablelatexCell_TapedPosition tapedPosition, NSDictionary * _Nonnull contentImageViewInfo) {
             __strong typeof(weakSelf) strongSelf = weakSelf;
-            int tapPosition = position;
-            [strongSelf.imageBrowserManager showImageWithTapedObject:tapedObject
-                                                              images:images
-                                                     currentPosition:tapPosition];
+            [strongSelf tapedScratchablelatexCell:cell tapedObject:tapedObject tapedPosition:tapedPosition contentImageViewInfo:contentImageViewInfo];
         };
         
         cell.content.QAAttributedLabelTapAction = ^(NSString * _Nullable content, QAAttributedLabel_TapedStyle style) {
-            NSLog(@"   AdvancedCell-Label-TapAction:  %@; style: %lu", content, (unsigned long)style);
+            NSLog(@"   ScratchablelatexCell-Label-TapAction: %@; style: %lu", content, (unsigned long)style);
         };
     }
     
@@ -164,7 +159,20 @@
 }
 
 
-#pragma mark - SearchText 【【 仅仅用于验证方法的实现是否正确 】】 -
+#pragma mark - Actions -
+- (void)tapedScratchablelatexCell:(ScratchablelatexCell *)cell
+                      tapedObject:(id)tapedObject
+                    tapedPosition:(ScratchablelatexCell_TapedPosition)position
+             contentImageViewInfo:(NSDictionary * _Nonnull)contentImageViewInfo {
+    NSArray *images = [cell.styleInfo valueForKey:@"contentImageViews"];
+    int tapPosition = position;
+    [self.imageBrowserManager showImageWithTapedObject:tapedObject
+                                                images:images
+                                       currentPosition:tapPosition];
+}
+
+
+#pragma mark - SearchText 【【 仅仅用于验证label的"searchTexts:方法"是否能正确工作 】】 -
 - (void)searchText:(ScratchablelatexCell *)cell {
     [cell.content searchTexts:[NSArray arrayWithObjects:@"是另外的", @"需要注意的", @"提高效率", nil]
         resetSearchResultInfo:^NSDictionary * _Nullable {

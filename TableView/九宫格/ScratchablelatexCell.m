@@ -64,8 +64,8 @@ static BOOL openClipsToBounds = YES;
 }
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event {
     if (self.tapedInfo) {
-        if (self.scratchablelatexCellTapAction) {
-            self.scratchablelatexCellTapAction(self, self.tapedObject, self.tapedPosition, self.tapedInfo);
+        if (self.scratchablelatexCellTapImageAction) {
+            self.scratchablelatexCellTapImageAction(self, self.tapedObject, self.tapedPosition, self.tapedInfo);
         }
         self.tapedInfo = nil;
         self.tapedPosition = ScratchablelatexCell_Taped_Null;

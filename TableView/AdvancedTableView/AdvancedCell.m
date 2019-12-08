@@ -45,14 +45,14 @@
         _styleLabel.textAlignment = NSTextAlignmentJustified;
 //        _styleLabel.textAlignment = NSTextAlignmentLeft;
         _styleLabel.highLightTexts = [NSArray arrayWithObjects:@"大量添加控件",@"直接绘制", nil];
-        _styleLabel.highlightTextColor = [UIColor blueColor];
+        _styleLabel.highlightTextColor = [UIColor purpleColor];
         _styleLabel.highlightTapedTextColor = [UIColor greenColor];
 //        _styleLabel.highlightTapedBackgroundColor = [UIColor grayColor];
         _styleLabel.highlightAtTextColor = [UIColor greenColor];
         _styleLabel.highlightLinkTextColor = [UIColor orangeColor];
         _styleLabel.highlightTopicTextColor = [UIColor magentaColor];
         _styleLabel.highlightAtTapedTextColor = [UIColor redColor];
-        _styleLabel.highlightLinkTapedTextColor = [UIColor purpleColor];
+        _styleLabel.highlightLinkTapedTextColor = [UIColor blueColor];
         _styleLabel.highlightTopicTapedTextColor = [UIColor greenColor];
     }
     return _styleLabel;

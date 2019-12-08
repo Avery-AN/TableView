@@ -9,25 +9,25 @@
 #import "BaseCell.h"
 #import "QAAttributedLabel.h"
 
-static NSInteger MaxLines = 3;  // 最多显示3行
-static NSInteger MaxItems = 3;  // 一行最多显示3张
+static NSInteger MaxLines = 3;      // 最多显示3行
+static NSInteger MaxItems = 3;      // 一行最多显示3张
 static NSInteger AvatarSize = 38;
 static NSInteger Avatar_left_gap = 13;
 static NSInteger Avatar_top_gap = 10;
 static NSInteger Avatar_title_gap = 13;
 static NSInteger Title_gap_right = 13;
-static NSInteger Avatar_bottomControl_gap = 10;  // 头像与其下方的控件之间的间隔
+static NSInteger Avatar_bottomControl_gap = 10;     // 头像与其下方的控件之间的间隔
 static NSInteger Content_bottom_gap = 10;
 static NSInteger Title_height = 18;
 static NSInteger Desc_height = 18;
 
 static NSInteger ContentImageView_left = 13;
 static NSInteger ContentImageView_right = 13;
-static NSInteger ContentImageView_gap = 6;  // 九宫格之间的间隔
-static NSInteger ContentImageView_bottomControl_gap = 10;  // ContentImageView与其下方的控件之间的间隔
+static NSInteger ContentImageView_gap = 6;                  // 九宫格之间的间隔
+static NSInteger ContentImageView_bottomControl_gap = 10;   // ContentImageView与其下方的控件之间的间隔
 static CGFloat ContentImageView_width_height_rate = 16/9.;
 
-typedef NS_ENUM(NSInteger, ScratchablelatexCell_TapedPosition) {
+typedef NS_ENUM(int, ScratchablelatexCell_TapedPosition) {
     ScratchablelatexCell_Taped_Null = -1,
     ScratchablelatexCell_Taped_First = 0,       // 点中了第1张图片
     ScratchablelatexCell_Taped_Second,          // 点中了第2张图片
@@ -59,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) UIImageView *contentImageView_7;
 @property (nonatomic) UIImageView *contentImageView_8;
 @property (nonatomic) UIImageView *contentImageView_9;
-@property (nonatomic, copy) void (^ _Nullable scratchablelatexCellTapAction)(ScratchablelatexCell *cell, id tapedObject, ScratchablelatexCell_TapedPosition position, NSDictionary *contentImageViewInfo);
+@property (nonatomic, copy) void (^ _Nullable scratchablelatexCellTapImageAction)(ScratchablelatexCell *cell, id tapedObject, ScratchablelatexCell_TapedPosition tapedPosition, NSDictionary *contentImageViewInfo);
 
 /**
  存放需要显示的控件以及控件的样式
