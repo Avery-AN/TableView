@@ -99,8 +99,9 @@ static int DefaultTag = 10;
     return rect;
 }
 - (void)createImageBrowserView {
-    UIWindow *window = [UIApplication sharedApplication].keyWindow;
-    window.windowLevel = UIWindowLevelStatusBar + 1;
+//  UIWindow *window = [UIApplication sharedApplication].keyWindow;  // keyWindow会变
+//  window.windowLevel = UIWindowLevelStatusBar + 1;
+    UIWindow *window = [UIApplication sharedApplication].delegate.window;
     self.window = window;
     self.windowBounds = self.window.bounds;
     
