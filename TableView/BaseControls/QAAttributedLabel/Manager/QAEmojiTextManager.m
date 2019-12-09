@@ -53,7 +53,6 @@ static CGFloat qa_widthCallback(void *ref) {
         if (matches.count > 0) {
             for (NSTextCheckingResult *result in [matches reverseObjectEnumerator]) {
                 NSString *emojiText = [attributedString.string substringWithRange:result.range];
-                UIImage *image = nil;
                 CGSize size = CGSizeZero;
                 if (emojiText && emojiText.length > 2) { // [...]
                     success = YES;
@@ -79,7 +78,7 @@ static CGFloat qa_widthCallback(void *ref) {
                     }
                     
                     NSString *imageName = [emojiText substringWithRange:NSMakeRange(1, emojiText.length-2)];
-                    image = [UIImage imageNamed:imageName];
+                    UIImage *image = [UIImage imageNamed:imageName];
                     if (!image) {
                         image = [UIImage imageNamed:@"emoji_default"];  // 默认emoji表情(表示没有匹配到emoji的image)
                     }

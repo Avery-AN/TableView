@@ -9,6 +9,7 @@
 #import "QAImageBrowserManager.h"
 
 static int DefaultTag = 10;
+static CGFloat dx = 5;
 
 @interface QAImageBrowserManager () <UIScrollViewDelegate>
 @property (nonatomic) UIScrollView *scrollView;
@@ -149,54 +150,77 @@ static int DefaultTag = 10;
 }
 - (void)processImagesBrowser {
     CGRect blackBackgroundViewBounds = self.blackBackgroundView.bounds;
-    CGFloat dx = 5;
     CGFloat itemWidth = blackBackgroundViewBounds.size.width + dx;
     self.scrollView.frame = CGRectMake(0, 0, itemWidth, blackBackgroundViewBounds.size.height);
     [self.scrollView setContentSize:CGSizeMake(itemWidth * self.images.count, blackBackgroundViewBounds.size.height)];
     [self.scrollView setContentOffset:CGPointMake(itemWidth * self.currentPosition, 0) animated:NO];
 
+    int previous = self.currentPosition - 1;
+    int next = self.currentPosition + 1;
     for (int i = 0; i < self.images.count; i++) {
         NSDictionary *imageInfo = [self.images objectAtIndex:i];
         NSString *imageUrl = [imageInfo valueForKey:@"url"];
         UIImage *image = [imageInfo valueForKey:@"image"];
         if (!image && (!imageUrl || ![imageUrl isKindOfClass:[NSString class]] || imageUrl.length == 0)) {
+            NSLog(@"QAImageBrowserView入参有误!");
             return;
         }
-
-        QAImageBrowserView *imageBrowserView = [[QAImageBrowserView alloc] init];
-        imageBrowserView.tag = i + DefaultTag;
-        __weak typeof(self) weakself = self;
-        imageBrowserView.gestureActionBlock = ^(QAImageBrowserViewAction action, QAImageBrowserView * _Nullable imageBrowserView) {
-            __strong typeof(self) strongSelf = weakself;
-            switch (action) {
-                case QAImageBrowserViewAction_SingleTap: {
-                    [strongSelf singleTapAction:imageBrowserView];
-                }
-                    break;
-                case QAImageBrowserViewAction_LongPress: {
-                    [strongSelf longPressAction:imageBrowserView];
-                }
-                    break;
-
-                default:
-                    break;
-            }
-        };
         
-        UIImageView *tapedImageView = self.tapedObject;
-        if (image) {
-            [imageBrowserView showImage:image contentModel:tapedImageView.contentMode];
-        }
-        else {
-            if (i == self.currentPosition) {
-                [imageBrowserView showImage:tapedImageView.image contentModel:tapedImageView.contentMode];
+        // 最多只创建3个QAImageBrowserView对象:
+        if (i != self.currentPosition) {
+            if (previous >= 0) {
+                if (i != previous && i != next) {
+                    continue;
+                }
             }
-            [imageBrowserView showImageWithUrl:[NSURL URLWithString:imageUrl] contentModel:tapedImageView.contentMode];
+            else {
+                if (i != next && i != next+1) {
+                    continue;
+                }
+            }
         }
+        
+        QAImageBrowserView *imageBrowserView = [self createQAImageBrowserViewWithUrl:imageUrl image:image atIndex:i];
         blackBackgroundViewBounds.origin.x = blackBackgroundViewBounds.size.width * i;
         imageBrowserView.frame = CGRectOffset(blackBackgroundViewBounds, dx*i, 0);
         [self.scrollView addSubview:imageBrowserView];
     }
+}
+- (QAImageBrowserView *)createQAImageBrowserViewWithUrl:(NSString *)imageUrl
+                                                  image:(UIImage *)image
+                                                atIndex:(unsigned long)index {
+    QAImageBrowserView *imageBrowserView = [[QAImageBrowserView alloc] init];
+    imageBrowserView.tag = index + DefaultTag;
+    __weak typeof(self) weakself = self;
+    imageBrowserView.gestureActionBlock = ^(QAImageBrowserViewAction action, QAImageBrowserView * _Nullable imageBrowserView) {
+        __strong typeof(self) strongSelf = weakself;
+        switch (action) {
+            case QAImageBrowserViewAction_SingleTap: {
+                [strongSelf singleTapAction:imageBrowserView];
+            }
+                break;
+            case QAImageBrowserViewAction_LongPress: {
+                [strongSelf longPressAction:imageBrowserView];
+            }
+                break;
+
+            default:
+                break;
+        }
+    };
+    
+    UIImageView *tapedImageView = self.tapedObject;
+    if (image) {
+        [imageBrowserView showImage:image contentModel:tapedImageView.contentMode];
+    }
+    else {
+        if (index == self.currentPosition) {
+            [imageBrowserView showImage:tapedImageView.image contentModel:tapedImageView.contentMode];
+        }
+        [imageBrowserView showImageWithUrl:[NSURL URLWithString:imageUrl] contentModel:tapedImageView.contentMode];
+    }
+    
+    return imageBrowserView;
 }
 - (void)panViewWithTransform:(CGAffineTransform)transform
                        alpha:(CGFloat)alpha
@@ -319,6 +343,95 @@ static int DefaultTag = 10;
         self.panGestureRecognizer = nil;
     }
 }
+// 修改QAImageBrowserView在scrollView中的位置并修改其tag值:
+- (void)processImageBrowserViewAfterPagingWithPosition:(int)previous_currentPosition {
+    if (previous_currentPosition != self.currentPosition) {
+        NSDictionary *imageInfo = [self.images objectAtIndex:self.currentPosition];
+        NSString *imageUrl = [imageInfo valueForKey:@"url"];
+        UIImage *image = [imageInfo valueForKey:@"image"];
+        
+        int currentView_tag = (previous_currentPosition + DefaultTag);
+        QAImageBrowserView *currentPageView = [self.scrollView viewWithTag:currentView_tag];
+        int rightView_tag = (previous_currentPosition + DefaultTag) + 1;
+        QAImageBrowserView *rightPageView = nil;
+        if (self.images.count - (rightView_tag - DefaultTag) > 0) {
+            rightPageView = [self.scrollView viewWithTag:rightView_tag];
+        }
+        int leftView_tag = (previous_currentPosition + DefaultTag) - 1;
+        QAImageBrowserView *leftPageView = nil;
+        if (leftView_tag - DefaultTag >= 0) {
+            leftPageView = [self.scrollView viewWithTag:leftView_tag];
+        }
+        
+        if (self.currentPosition - previous_currentPosition > 0) {  // 手指往左滑
+            currentPageView.tag = (self.currentPosition + DefaultTag) - 1;  // currentPageViiew -> leftPageView
+            rightPageView.tag = (self.currentPosition + DefaultTag);  // rightPageView -> currentPageViiew
+            
+            if (leftPageView) {
+                if (self.currentPosition == self.images.count - 1) {  // 最后一页
+                    leftPageView.tag = (self.currentPosition + DefaultTag) - 1 - 1;  // leftPageView -> left-leftPageView
+                }
+                else {
+                    leftPageView.tag = (self.currentPosition + DefaultTag) + 1;  // leftPageView -> rightPageView
+                    
+                    // 重新加载新的URL:
+                    UIImageView *tapedImageView = self.tapedObject;
+                    if (image) {
+                        [leftPageView showImage:image contentModel:tapedImageView.contentMode];
+                    }
+                    else {
+                        [leftPageView showImageWithUrl:[NSURL URLWithString:imageUrl] contentModel:tapedImageView.contentMode];
+                    }
+                    
+                    // 修改leftPageView在scrollView中的位置:
+                    CGRect frame = leftPageView.frame;
+                    frame.origin.x = self.scrollView.bounds.size.width * (self.currentPosition + 1);
+                    leftPageView.frame = frame;
+                }
+            }
+            else {
+                leftPageView = [self createQAImageBrowserViewWithUrl:imageUrl image:image atIndex:0];
+                [self.scrollView addSubview:leftPageView];
+            }
+        }
+        else {  // 手指往右滑
+            currentPageView.tag = (self.currentPosition + DefaultTag) + 1;  // currentPageViiew -> rightPageView
+            leftPageView.tag = (self.currentPosition + DefaultTag);  // leftPageView -> currentPageViiew
+            
+            if (rightPageView) {
+                if (self.currentPosition == 0) {  // 第一页
+                    rightPageView.tag = (self.currentPosition + DefaultTag) + 1 + 1;  // rightPageView -> rightt-rightPageView
+                }
+                else {
+                    rightPageView.tag = (self.currentPosition + DefaultTag) - 1;  // rightPageView -> leftPageView
+                    
+                    // 重新加载新的URL:
+                    UIImageView *tapedImageView = self.tapedObject;
+                    if (image) {
+                        [rightPageView showImage:image contentModel:tapedImageView.contentMode];
+                    }
+                    else {
+                        [rightPageView showImageWithUrl:[NSURL URLWithString:imageUrl] contentModel:tapedImageView.contentMode];
+                    }
+                    
+                    // 修改rightPageView在scrollView中的位置:
+                    CGRect frame = rightPageView.frame;
+                    frame.origin.x = self.scrollView.bounds.size.width * (self.currentPosition - 1);
+                    rightPageView.frame = frame;
+                    NSLog(@"");
+                }
+            }
+            else {
+                rightPageView = [self createQAImageBrowserViewWithUrl:imageUrl image:image atIndex:self.currentPosition-1];
+                CGRect frame = rightPageView.frame;
+                frame.origin.x = (self.scrollView.bounds.size.width) * (self.currentPosition-1);
+                rightPageView.frame = frame;
+                [self.scrollView addSubview:rightPageView];
+            }
+        }
+    }
+}
+
 
 
 #pragma mark - Gesture Actions -
@@ -408,11 +521,14 @@ static int DefaultTag = 10;
         return;
     }
     
-    QAImageBrowserView *previousPageView = [scrollView viewWithTag:(self.currentPosition+DefaultTag)];
+    int previous_currentPosition = self.currentPosition;
+    QAImageBrowserView *previousPageView = [scrollView viewWithTag:(previous_currentPosition+DefaultTag)];
     if (previousPageView) {
         [previousPageView.scrollView setZoomScale:1 animated:YES];
     }
     self.currentPosition = currentPage;
+    
+    [self processImageBrowserViewAfterPagingWithPosition:previous_currentPosition];
 }
 
 

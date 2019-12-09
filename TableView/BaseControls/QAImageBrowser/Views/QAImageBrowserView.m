@@ -96,7 +96,7 @@
         }
             break;
             
-        default:{
+        default: {
             
         }
             break;
@@ -104,7 +104,6 @@
 }
 - (void)handleDoubleTap:(UITapGestureRecognizer *)gesture {
     if (gesture.numberOfTapsRequired == 2) {
-        NSLog(@"self.imageView.frame(0): %@", NSStringFromCGRect(self.imageView.frame));
         if (self.scrollView.zoomScale == 1) {
             float newScale = [self.scrollView zoomScale] * 2;
             CGRect zoomRect = [self zoomRectWithScale:newScale centerPoint:[gesture locationInView:gesture.view]];
@@ -115,7 +114,6 @@
             CGRect zoomRect = [self zoomRectWithScale:newScale centerPoint:[gesture locationInView:gesture.view]];
             [self.scrollView zoomToRect:zoomRect animated:YES];
         }
-        NSLog(@"self.imageView.frame(1): %@", NSStringFromCGRect(self.imageView.frame));
     }
 }
 - (void)handleTwoFingerPan:(UITapGestureRecognizer *)gesture {
@@ -132,7 +130,7 @@
             }
             break;
             
-            default:{
+            default: {
                 
             }
             break;
