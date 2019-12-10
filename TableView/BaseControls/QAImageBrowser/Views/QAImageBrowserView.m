@@ -56,12 +56,8 @@
     [self.imageView addGestureRecognizer:doubleTap];
     [self.imageView addGestureRecognizer:twoFingerTap];
     [self.imageView addGestureRecognizer:longGesture];
-
-    UITapGestureRecognizer *singleTap_2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
-    [self addGestureRecognizer:singleTap_2];
-
+    
     [singleTap requireGestureRecognizerToFail:doubleTap];   // 处理双击时不响应单击
-    [singleTap_2 requireGestureRecognizerToFail:doubleTap]; // 处理双击时不响应单击
 }
 - (void)updateImageViewWithImage:(UIImage *)image {
     self.imageView.frame = [ImageProcesser caculateOriginImageSize:image];
@@ -225,15 +221,6 @@
     }
     return _imageView;
 }
-//- (UIImageView *)imageView {
-//    if (!_imageView) {
-//        _imageView = [[UIImageView alloc] init];
-//        _imageView.clipsToBounds = YES;
-//        _imageView.contentMode = UIViewContentModeScaleAspectFill;
-//        _imageView.userInteractionEnabled = YES;
-//    }
-//    return _imageView;
-//}
 - (UIActivityIndicatorView *)activityIndicator {
     if (!_activityIndicator) {
         _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];

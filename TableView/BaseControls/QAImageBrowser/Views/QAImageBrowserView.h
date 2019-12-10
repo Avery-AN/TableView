@@ -20,7 +20,6 @@ typedef NS_ENUM(NSUInteger, QAImageBrowserViewAction) {
 @interface QAImageBrowserView : UIView
 
 @property (nonatomic) UIScrollView * _Nonnull scrollView;
-//@property (nonatomic) UIImageView * _Nonnull imageView;
 @property (nonatomic) YYAnimatedImageView * _Nonnull imageView;
 @property (nonatomic, copy) void(^ _Nullable gestureActionBlock) (QAImageBrowserViewAction action, QAImageBrowserView * _Nullable imageBrowserView);
 
