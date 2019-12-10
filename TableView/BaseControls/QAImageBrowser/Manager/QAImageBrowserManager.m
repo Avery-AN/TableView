@@ -9,7 +9,7 @@
 #import "QAImageBrowserManager.h"
 
 static int DefaultTag = 10;
-static CGFloat dx = 5;
+static int dx = 10;
 
 @interface QAImageBrowserManager () <UIScrollViewDelegate>
 @property (nonatomic) UIScrollView *scrollView;
@@ -174,7 +174,7 @@ static CGFloat dx = 5;
                 }
             }
             else {
-                if (i != next && i != next+1) {
+                if (i != next) {
                     continue;
                 }
             }
@@ -390,7 +390,10 @@ static CGFloat dx = 5;
                 }
             }
             else {
-                leftPageView = [self createQAImageBrowserViewWithUrl:imageUrl image:image atIndex:0];
+                leftPageView = [self createQAImageBrowserViewWithUrl:imageUrl image:image atIndex:self.currentPosition+1];
+                CGRect frame = leftPageView.frame;
+                frame.origin.x = (self.scrollView.bounds.size.width) * (self.currentPosition+1);
+                leftPageView.frame = frame;
                 [self.scrollView addSubview:leftPageView];
             }
         }
@@ -418,7 +421,6 @@ static CGFloat dx = 5;
                     CGRect frame = rightPageView.frame;
                     frame.origin.x = self.scrollView.bounds.size.width * (self.currentPosition - 1);
                     rightPageView.frame = frame;
-                    NSLog(@"");
                 }
             }
             else {
@@ -431,7 +433,6 @@ static CGFloat dx = 5;
         }
     }
 }
-
 
 
 #pragma mark - Gesture Actions -
@@ -507,11 +508,18 @@ static CGFloat dx = 5;
 
 #pragma mark - UIScrollView Delegate -
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    scrollView.userInteractionEnabled = NO;
+    [self.window removeGestureRecognizer:self.panGestureRecognizer];
+    
     if (scrollView.contentOffset.x <= -88) {
         [self quitImageBrowser_directly];
     }
     else if (ScreenWidth - (scrollView.contentSize.width - scrollView.contentOffset.x) >= 88) {
         [self quitImageBrowser_directly];
+    }
+    
+    if (decelerate == NO) {
+        scrollView.userInteractionEnabled = YES;
     }
 }
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
@@ -529,6 +537,8 @@ static CGFloat dx = 5;
     self.currentPosition = currentPage;
     
     [self processImageBrowserViewAfterPagingWithPosition:previous_currentPosition];
+    scrollView.userInteractionEnabled = YES;
+    [self.window addGestureRecognizer:self.panGestureRecognizer];
 }
 
 
