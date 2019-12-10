@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "QAImageBrowserView.h"
 
 @interface QAImageBrowserManager : NSObject
 

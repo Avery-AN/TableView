@@ -1,41 +1,55 @@
 //
-//  QAImageBrowserView.m
-//  Avery
+//  QAImageBrowserCell.m
+//  TableView
 //
-//  Created by Avery on 2018/8/31.
-//  Copyright © 2018年 Avery. All rights reserved.
+//  Created by Avery An on 2019/12/10.
+//  Copyright © 2019 Avery. All rights reserved.
 //
 
-#import "QAImageBrowserView.h"
-#import <SDWebImageManager.h>
+#import "QAImageBrowserCell.h"
 
-@interface QAImageBrowserView () <UIScrollViewDelegate>
-@property (nonatomic) UIActivityIndicatorView *activityIndicator;
+@interface QAImageBrowserCell () <UIScrollViewDelegate>
+@property(nonatomic) UIActivityIndicatorView *activityIndicator;
 @end
 
-@implementation QAImageBrowserView
+@implementation QAImageBrowserCell
 
 #pragma mark - Life Cycle -
 - (void)dealloc {
-    // NSLog(@"%s",__func__);
-}
-- (instancetype)init {
-    if (self = [super init]) {
-        [self setUp];
-    }
-    return self;
+    NSLog(@"   %s",__func__);
 }
 - (instancetype)initWithFrame:(CGRect)frame {
-    if (self = [super initWithFrame:frame]) {
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.backgroundColor = [UIColor redColor];
         [self setUp];
     }
+    
     return self;
+}
+
+ 
+#pragma mark - Public Methods -
+- (void)configContent:(NSDictionary * _Nonnull)dic contentMode:(UIViewContentMode)contentMode {
+    NSString *imageUrl = [dic valueForKey:@"url"];
+    UIImage *image = [dic valueForKey:@"image"];
+    NSLog(@"imageUrl: %@",imageUrl);
+    if (image) {
+        [self showImage:image contentModel:contentMode];
+    }
+    else if (imageUrl) {
+        [self showImageWithUrl:[NSURL URLWithString:imageUrl] contentModel:contentMode];
+    }
+    else {
+        NSLog(@"QAImageBrowser入参有误!");
+        return;
+    }
 }
 
 
 #pragma mark - Private Methods -
 - (void)setUp {
-    self.frame = CGRectMake(0, 0, ScreenWidth, ScreenHeight);
+    self.frame = self.bounds;
     
     [self addSubview:self.scrollView];
     // [self addSubview:self.activityIndicator];
@@ -90,9 +104,9 @@
 - (void)handleSingleTap:(UITapGestureRecognizer *)gesture {
     switch (gesture.state) {
         case UIGestureRecognizerStateEnded: {
-            if (self.gestureActionBlock) {
-                self.gestureActionBlock(QAImageBrowserViewAction_SingleTap, self);
-            }
+//            if (self.gestureActionBlock) {
+//                self.gestureActionBlock(QAImageBrowserViewAction_SingleTap, self);
+//            }
         }
             break;
             
@@ -122,19 +136,19 @@
     [self.scrollView zoomToRect:zoomRect animated:YES];
 }
 - (void)handleLongPress:(UILongPressGestureRecognizer *)longPressGesture {
-    switch (longPressGesture.state) {
-            case UIGestureRecognizerStateEnded: {
-                if (self.gestureActionBlock) {
-                    self.gestureActionBlock(QAImageBrowserViewAction_LongPress, self);
-                }
-            }
-            break;
-            
-            default: {
-                
-            }
-            break;
-    }
+//    switch (longPressGesture.state) {
+//            case UIGestureRecognizerStateEnded: {
+//                if (self.gestureActionBlock) {
+//                    self.gestureActionBlock(QAImageBrowserViewAction_LongPress, self);
+//                }
+//            }
+//            break;
+//
+//            default: {
+//
+//            }
+//            break;
+//    }
 }
 
 
@@ -199,7 +213,7 @@
 #pragma mark - Property -
 - (UIScrollView *)scrollView {
     if (!_scrollView) {
-        _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
+        _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, UIWidth, UIHeight)];
         _scrollView.delegate = self;
         _scrollView.showsVerticalScrollIndicator = NO;
         _scrollView.showsHorizontalScrollIndicator = NO;
@@ -225,15 +239,6 @@
     }
     return _imageView;
 }
-//- (UIImageView *)imageView {
-//    if (!_imageView) {
-//        _imageView = [[UIImageView alloc] init];
-//        _imageView.clipsToBounds = YES;
-//        _imageView.contentMode = UIViewContentModeScaleAspectFill;
-//        _imageView.userInteractionEnabled = YES;
-//    }
-//    return _imageView;
-//}
 - (UIActivityIndicatorView *)activityIndicator {
     if (!_activityIndicator) {
         _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
@@ -241,5 +246,6 @@
     }
     return _activityIndicator;
 }
+
 
 @end
