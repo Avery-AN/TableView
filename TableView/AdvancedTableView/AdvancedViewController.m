@@ -40,7 +40,6 @@
     
     self.view.backgroundColor = [UIColor whiteColor];
     
-    self.imageBrowserManager = [[QAImageBrowserManager alloc] init];
     [self performSelector:@selector(generateContent) withObject:nil afterDelay:0];  // 模拟服务器端数据(get数据)
 }
 - (void)viewWillAppear:(BOOL)animated {
@@ -175,6 +174,9 @@
         if ([dic valueForKey:@"url"] && [dic valueForKey:@"frame"]) {
             if ([[dic valueForKey:@"url"] hasSuffix:@".gif"]) {  // 本DEMO中的gif显示的均是本地的demo.GIF (可删除dic中的image)
                 [dic setValue:cell.yyImageView.image forKey:@"image"];
+            }
+            if (!self.imageBrowserManager) {
+                self.imageBrowserManager = [[QAImageBrowserManager alloc] init];
             }
             [self.imageBrowserManager showImageWithTapedObject:cell.yyImageView
                                                         images:[NSArray arrayWithObject:dic]];
