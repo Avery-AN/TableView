@@ -37,7 +37,6 @@
     
     self.view.backgroundColor = [UIColor whiteColor];
     
-    self.imageBrowserManager = [[QAImageBrowserManager alloc] init];
     [self performSelector:@selector(generateContent) withObject:nil afterDelay:0];  // 模拟服务器端数据(get数据)
 }
 - (void)viewWillAppear:(BOOL)animated {
@@ -165,6 +164,9 @@
                     tapedPosition:(ScratchablelatexCell_TapedPosition)position
              contentImageViewInfo:(NSDictionary * _Nonnull)contentImageViewInfo {
     NSArray *images = [cell.styleInfo valueForKey:@"contentImageViews"];
+    if (!self.imageBrowserManager) {
+        self.imageBrowserManager = [[QAImageBrowserManager alloc] init];
+    }
     [self.imageBrowserManager showImageWithTapedObject:tapedObject
                                                 images:images];
 }

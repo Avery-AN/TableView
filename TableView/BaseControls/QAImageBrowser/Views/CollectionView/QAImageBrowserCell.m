@@ -1,44 +1,98 @@
 //
-//  QAImageBrowserView.m
-//  Avery
+//  QAImageBrowserCell.m
+//  TableView
 //
-//  Created by Avery on 2018/8/31.
-//  Copyright © 2018年 Avery. All rights reserved.
+//  Created by Avery An on 2019/12/10.
+//  Copyright © 2019 Avery. All rights reserved.
 //
 
-#import "QAImageBrowserView.h"
-#import <SDWebImageManager.h>
+#import "QAImageBrowserCell.h"
 
-@interface QAImageBrowserView () <UIScrollViewDelegate>
-@property (nonatomic) UIActivityIndicatorView *activityIndicator;
+@interface QAImageBrowserCell () <UIScrollViewDelegate>
+@property(nonatomic) UIActivityIndicatorView *activityIndicator;
 @end
 
-@implementation QAImageBrowserView
+@implementation QAImageBrowserCell
 
 #pragma mark - Life Cycle -
 - (void)dealloc {
-    // NSLog(@"%s",__func__);
-}
-- (instancetype)init {
-    if (self = [super init]) {
-        [self setUp];
-    }
-    return self;
+    NSLog(@"   %s",__func__);
 }
 - (instancetype)initWithFrame:(CGRect)frame {
-    if (self = [super initWithFrame:frame]) {
+    self = [super initWithFrame:frame];
+    if (self) {
         [self setUp];
     }
+    
     return self;
+}
+
+ 
+#pragma mark - Public Methods -
+- (void)configContent:(NSDictionary * _Nonnull)dic
+         defaultImage:(UIImage * _Nullable)defaultImage
+          contentMode:(UIViewContentMode)contentMode {
+    NSString *imageUrl = [dic valueForKey:@"url"];
+    UIImage *image = [dic valueForKey:@"image"];
+    if (image) {
+        [self showImage:image contentModel:contentMode];
+    }
+    else if (imageUrl) {
+        [self showImageWithUrl:[NSURL URLWithString:imageUrl] defaultImage:defaultImage contentModel:contentMode];
+    }
+    else {
+        NSLog(@"QAImageBrowser入参有误!");
+        return;
+    }
+}
+
+
+#pragma mark - ShowImages Method -
+- (void)showImageWithUrl:(NSURL * _Nonnull)imageUrl
+            defaultImage:(UIImage * _Nullable)defaultImage
+            contentModel:(UIViewContentMode)contentModel {
+    if (!imageUrl || imageUrl.absoluteString.length == 0) {
+        return;
+    }
+    
+    self.imageView.contentMode = contentModel;
+    if (defaultImage) {
+        [self updateImageViewWithImage:defaultImage];
+    }
+    
+    [[SDWebImageDownloader sharedDownloader]
+    downloadImageWithURL:imageUrl
+    options:SDWebImageDownloaderContinueInBackground progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+        
+    } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            if ([imageUrl.absoluteString hasSuffix:@".gif"]) {
+                NSString *path = [[SDImageCache sharedImageCache] defaultCachePathForKey:imageUrl.absoluteString];
+                NSData *data = [NSData dataWithContentsOfFile:path];
+                YYImage *yyImage = [YYImage imageWithData:data];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self updateImageViewWithImage:yyImage];
+                });
+            }
+            else {
+                UIImage *decodeImage = [ImageProcesser decodeImage:image];  // image的解码
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self updateImageViewWithImage:decodeImage];
+                });
+            }
+        });
+    }];
+}
+- (void)showImage:(UIImage * _Nonnull)image contentModel:(UIViewContentMode)contentModel {
+    self.imageView.contentMode = contentModel;
+    [self updateImageViewWithImage:image];
 }
 
 
 #pragma mark - Private Methods -
 - (void)setUp {
-    self.frame = CGRectMake(0, 0, ScreenWidth, ScreenHeight);
-    
-    [self addSubview:self.scrollView];
-    // [self addSubview:self.activityIndicator];
+    [self.contentView addSubview:self.scrollView];
+    // [self.contentView addSubview:self.activityIndicator];
     [self.scrollView addSubview:self.imageView];
 
     // 添加手势:
@@ -125,49 +179,12 @@
                 }
             }
             break;
-            
+
             default: {
-                
+
             }
             break;
     }
-}
-
-
-#pragma mark - Public Method -
-- (void)showImageWithUrl:(NSURL * _Nonnull)imageUrl contentModel:(UIViewContentMode)contentModel {
-    if (!imageUrl || imageUrl.absoluteString.length == 0) {
-        return;
-    }
-    
-    self.imageView.contentMode = contentModel;
-    
-    [[SDWebImageDownloader sharedDownloader]
-    downloadImageWithURL:imageUrl
-    options:SDWebImageDownloaderContinueInBackground progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
-        
-    } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            if ([imageUrl.absoluteString hasSuffix:@".gif"]) {
-                NSString *path = [[SDImageCache sharedImageCache] defaultCachePathForKey:imageUrl.absoluteString];
-                NSData *data = [NSData dataWithContentsOfFile:path];
-                YYImage *yyImage = [YYImage imageWithData:data];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self updateImageViewWithImage:yyImage];
-                });
-            }
-            else {
-                UIImage *decodeImage = [ImageProcesser decodeImage:image];  // image的解码
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self updateImageViewWithImage:decodeImage];
-                });
-            }
-        });
-    }];
-}
-- (void)showImage:(UIImage * _Nonnull)image contentModel:(UIViewContentMode)contentModel {
-    self.imageView.contentMode = contentModel;
-    [self updateImageViewWithImage:image];
 }
 
 
@@ -195,7 +212,7 @@
 #pragma mark - Property -
 - (UIScrollView *)scrollView {
     if (!_scrollView) {
-        _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
+        _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, UIWidth, UIHeight)];
         _scrollView.delegate = self;
         _scrollView.showsVerticalScrollIndicator = NO;
         _scrollView.showsHorizontalScrollIndicator = NO;

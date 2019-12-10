@@ -7,12 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BB48B567239F431D005D53A3 /* QAImageBrowserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BB48B566239F431D005D53A3 /* QAImageBrowserCell.m */; };
+		BB48B56A239F434A005D53A3 /* QAImageBrowserLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = BB48B569239F434A005D53A3 /* QAImageBrowserLayout.m */; };
 		BB58E08A238B7CD0005C4EA9 /* emoji偷笑@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB58E086238B7CD0005C4EA9 /* emoji偷笑@2x.png */; };
 		BB58E08B238B7CD0005C4EA9 /* emoji偷笑@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB58E087238B7CD0005C4EA9 /* emoji偷笑@3x.png */; };
 		BB58E08C238B7CD0005C4EA9 /* nezha@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB58E088238B7CD0005C4EA9 /* nezha@2x.png */; };
 		BB58E08D238B7CD0005C4EA9 /* nezha@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB58E089238B7CD0005C4EA9 /* nezha@3x.png */; };
 		BB7BECCA2390E40C00688028 /* QAImageBrowserManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BB7BECC22390E40C00688028 /* QAImageBrowserManager.m */; };
-		BB7BECCC2390E40C00688028 /* QAImageBrowserView.m in Sources */ = {isa = PBXBuildFile; fileRef = BB7BECC82390E40C00688028 /* QAImageBrowserView.m */; };
 		BB7BECD723925B0000688028 /* 默认图@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB7BECD523925B0000688028 /* 默认图@3x.png */; };
 		BB7BECD823925B0000688028 /* 默认图@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB7BECD623925B0000688028 /* 默认图@2x.png */; };
 		BB7BECE42394F6D400688028 /* AdvancedDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BB7BECE32394F6D400688028 /* AdvancedDataManager.m */; };
@@ -56,14 +57,16 @@
 /* Begin PBXFileReference section */
 		175F2055E5583335E94BE624 /* Pods_TableView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TableView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		62D176DA0D2F114333645CB8 /* Pods-TableView.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TableView.debug.xcconfig"; path = "Target Support Files/Pods-TableView/Pods-TableView.debug.xcconfig"; sourceTree = "<group>"; };
+		BB48B565239F431D005D53A3 /* QAImageBrowserCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QAImageBrowserCell.h; sourceTree = "<group>"; };
+		BB48B566239F431D005D53A3 /* QAImageBrowserCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QAImageBrowserCell.m; sourceTree = "<group>"; };
+		BB48B568239F434A005D53A3 /* QAImageBrowserLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QAImageBrowserLayout.h; sourceTree = "<group>"; };
+		BB48B569239F434A005D53A3 /* QAImageBrowserLayout.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QAImageBrowserLayout.m; sourceTree = "<group>"; };
 		BB58E086238B7CD0005C4EA9 /* emoji偷笑@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "emoji偷笑@2x.png"; sourceTree = "<group>"; };
 		BB58E087238B7CD0005C4EA9 /* emoji偷笑@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "emoji偷笑@3x.png"; sourceTree = "<group>"; };
 		BB58E088238B7CD0005C4EA9 /* nezha@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nezha@2x.png"; sourceTree = "<group>"; };
 		BB58E089238B7CD0005C4EA9 /* nezha@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nezha@3x.png"; sourceTree = "<group>"; };
 		BB7BECC22390E40C00688028 /* QAImageBrowserManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QAImageBrowserManager.m; sourceTree = "<group>"; };
 		BB7BECC32390E40C00688028 /* QAImageBrowserManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QAImageBrowserManager.h; sourceTree = "<group>"; };
-		BB7BECC82390E40C00688028 /* QAImageBrowserView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QAImageBrowserView.m; sourceTree = "<group>"; };
-		BB7BECC92390E40C00688028 /* QAImageBrowserView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QAImageBrowserView.h; sourceTree = "<group>"; };
 		BB7BECD523925B0000688028 /* 默认图@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "默认图@3x.png"; sourceTree = "<group>"; };
 		BB7BECD623925B0000688028 /* 默认图@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "默认图@2x.png"; sourceTree = "<group>"; };
 		BB7BECE22394F6D400688028 /* AdvancedDataManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AdvancedDataManager.h; sourceTree = "<group>"; };
@@ -176,6 +179,17 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		BB48B55E239F429B005D53A3 /* CollectionView */ = {
+			isa = PBXGroup;
+			children = (
+				BB48B568239F434A005D53A3 /* QAImageBrowserLayout.h */,
+				BB48B569239F434A005D53A3 /* QAImageBrowserLayout.m */,
+				BB48B565239F431D005D53A3 /* QAImageBrowserCell.h */,
+				BB48B566239F431D005D53A3 /* QAImageBrowserCell.m */,
+			);
+			path = CollectionView;
+			sourceTree = "<group>";
+		};
 		BB58E085238B7CD0005C4EA9 /* EmojiImages */ = {
 			isa = PBXGroup;
 			children = (
@@ -211,8 +225,7 @@
 		BB7BECC72390E40C00688028 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				BB7BECC92390E40C00688028 /* QAImageBrowserView.h */,
-				BB7BECC82390E40C00688028 /* QAImageBrowserView.m */,
+				BB48B55E239F429B005D53A3 /* CollectionView */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -544,6 +557,7 @@
 				BB9F6C7623838BEB00F05116 /* UIImage+DecodeImage.m in Sources */,
 				BB9F6C7E23838BEB00F05116 /* QATextLayout.m in Sources */,
 				BB9F6C7723838BEB00F05116 /* NSMutableAttributedString+QAAttributedString.m in Sources */,
+				BB48B56A239F434A005D53A3 /* QAImageBrowserLayout.m in Sources */,
 				BB9F6C7223838BEB00F05116 /* NSData+Md5.m in Sources */,
 				BB7BECCA2390E40C00688028 /* QAImageBrowserManager.m in Sources */,
 				BB9F6C7B23838BEB00F05116 /* QATextDrawer.m in Sources */,
@@ -566,13 +580,13 @@
 				BB9F6C8123838BEB00F05116 /* ScratchablelatexCell+SelfManager.m in Sources */,
 				BB7BECE42394F6D400688028 /* AdvancedDataManager.m in Sources */,
 				BB9F6C7523838BEB00F05116 /* NSString+QAReplace.m in Sources */,
+				BB48B567239F431D005D53A3 /* QAImageBrowserCell.m in Sources */,
 				BB9F6C8223838BEB00F05116 /* ScratchablelatexCell.m in Sources */,
 				BB9F6C9123838BF300F05116 /* AdvancedCell+SelfManager.m in Sources */,
 				BB9F6C7023838BEB00F05116 /* QATextRunDelegate.m in Sources */,
 				BB9F6C2323838B8E00F05116 /* RootViewController.m in Sources */,
 				BB9F6C8023838BEB00F05116 /* BaseCell.m in Sources */,
 				BB9F6C6E23838BEB00F05116 /* UIImage+RoundedImage.m in Sources */,
-				BB7BECCC2390E40C00688028 /* QAImageBrowserView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
