@@ -23,9 +23,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) UIScrollView * _Nonnull scrollView;
 @property (nonatomic) YYAnimatedImageView * _Nonnull imageView;
-//@property (nonatomic, copy) void(^ _Nullable gestureActionBlock) (QAImageBrowserViewAction action, QAImageBrowserView * _Nullable imageBrowserView);
+@property (nonatomic, copy) void(^ _Nullable gestureActionBlock) (QAImageBrowserViewAction action, QAImageBrowserCell * _Nullable imageBrowserCell);
 
-- (void)configContent:(NSDictionary * _Nonnull)dic contentMode:(UIViewContentMode)contentMode;
+- (void)configContent:(NSDictionary * _Nonnull)dic
+         defaultImage:(UIImage * _Nullable)defaultImage
+          contentMode:(UIViewContentMode)contentMode;
 
 @end
 

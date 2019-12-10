@@ -10,8 +10,8 @@
 
 @interface QAImageBrowserLayout ()
 @property (nonatomic, copy) NSMutableDictionary *cellLayoutInfo;    // 存放cell的布局
-@property (nonatomic, copy) NSMutableDictionary *headerLayoutInfo;  // 存放cell的布局
-@property (nonatomic, copy) NSMutableDictionary *footerLayoutInfo;  // 存放cell的布局
+@property (nonatomic, copy) NSMutableDictionary *headerLayoutInfo;  // 存放header的布局
+@property (nonatomic, copy) NSMutableDictionary *footerLayoutInfo;  // 存放footer的布局
 @property (nonatomic, copy) NSMutableDictionary *bottomYForItem;
 @property (nonatomic, copy) NSMutableDictionary *bottomRightForItem;
 @property (nonatomic, assign) CGFloat currentContentHeight;         // 当前内容的高度
@@ -25,11 +25,12 @@
 - (void)prepareLayout {
     [super prepareLayout];
     
-    //重新布局、需要清空数据:
+    // 重新布局、需要清空数据:
     [self.cellLayoutInfo removeAllObjects];
     [self.headerLayoutInfo removeAllObjects];
     [self.footerLayoutInfo removeAllObjects];
     self.currentContentHeight = 0;
+    self.currentContentWidth = 0;
     
     if (self.scrollDirection == UICollectionViewScrollDirectionVertical) {
         [self processVerticalLayout];
@@ -38,8 +39,66 @@
         [self processHorizontalLayout];
     }
 }
+
+/**
+ * 决定cell的布局属性
+ */
+- (nullable NSArray<UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect {
+    NSMutableArray *allAttributes = [NSMutableArray array];
+    
+    // 添加当前屏幕可见的cell的布局:
+    [self.cellLayoutInfo enumerateKeysAndObjectsUsingBlock:^(NSIndexPath *indexPath, UICollectionViewLayoutAttributes *attribute, BOOL *stop) {
+        if (CGRectIntersectsRect(rect, attribute.frame)) {
+            [allAttributes addObject:attribute];
+        }
+     }];
+    
+    // 添加当前屏幕可见的头视图的布局:
+    [self.headerLayoutInfo enumerateKeysAndObjectsUsingBlock:^(NSIndexPath *indexPath, UICollectionViewLayoutAttributes *attribute, BOOL *stop) {
+         if (CGRectIntersectsRect(rect, attribute.frame)) {
+             [allAttributes addObject:attribute];
+         }
+     }];
+    
+    // 添加当前屏幕可见的尾部的布局:
+    [self.footerLayoutInfo enumerateKeysAndObjectsUsingBlock:^(NSIndexPath *indexPath, UICollectionViewLayoutAttributes *attribute, BOOL *stop) {
+         if (CGRectIntersectsRect(rect, attribute.frame)) {
+             [allAttributes addObject:attribute];
+         }
+     }];
+    
+    return allAttributes;
+}
+
+- (UICollectionViewLayoutAttributes *)layoutAttributesForSupplementaryViewOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath {
+    UICollectionViewLayoutAttributes *attribute = nil;
+    if ([elementKind isEqualToString:@"UICollectionElementKindSectionHeader"]) {
+        attribute = self.headerLayoutInfo[indexPath];
+    }
+    else if ([elementKind isEqualToString:@"UICollectionElementKindSectionFooter"]){
+        attribute = self.footerLayoutInfo[indexPath];
+    }
+    
+    return attribute;
+}
+
+/**
+ * 内容的高度
+ */
+- (CGSize)collectionViewContentSize {
+    if (self.scrollDirection == UICollectionViewScrollDirectionVertical) {
+        return CGSizeMake(self.collectionView.frame.size.width, MAX(self.currentContentHeight, self.collectionView.frame.size.height));
+    }
+    else {
+        return CGSizeMake(MAX(self.currentContentWidth, self.collectionView.frame.size.width), self.collectionView.frame.size.height);
+    }
+}
+
+
+#pragma mark - Private Method -
 - (void)processHorizontalLayout {
-    CGFloat collectionViewW = self.collectionView.frame.size.width;
+    CGFloat collectionViewW = self.collectionView.bounds.size.width;
+    collectionViewW = collectionViewW - PagesGap;
     NSInteger sectionsCount = [self.collectionView numberOfSections];  //获取section的个数
     
     for (NSInteger section = 0; section < sectionsCount; section++) {
@@ -67,7 +126,7 @@
                     itemSpace = totalWidth / (self.itemCountsPerLine-1);
                 }
                 else {
-                    itemSpace = (collectionViewW - totalWidth) / 2;
+                    itemSpace = totalWidth / 2;
                 }
             }
         }
@@ -79,8 +138,10 @@
             CGFloat startY = self.topSpace;
             CGFloat startX = self.leftSpace + (itemSpace + itemWidth) * (row%self.itemCountsPerLine);
             startX = startX + (itemSpace + itemWidth) * (row/self.itemCountsPerLine);
-            attribute.frame = CGRectMake(startX, startY, itemWidth, itemHeight);
-            self.bottomRightForItem[@(row)] = @(startX + (itemSpace + itemWidth));
+            CGFloat offsetX = row * PagesGap;
+            CGFloat offsetWidth = (row+1) * PagesGap;
+            attribute.frame = CGRectMake(startX+offsetX, startY, itemWidth, itemHeight);
+            self.bottomRightForItem[@(row)] = @(startX + (itemSpace + itemWidth) + offsetWidth);
             
             //保存cell的布局对象:
             self.cellLayoutInfo[cellIndexPath] = attribute;
@@ -139,7 +200,7 @@
                     itemSpace = totalWidth / (self.itemCountsPerLine-1);
                 }
                 else {
-                    itemSpace = (collectionViewW - totalWidth) / 2;
+                    itemSpace = totalWidth / 2;
                 }
             }
         }
@@ -174,60 +235,6 @@
              self.currentContentHeight = self.currentContentHeight + _footViewHeight;
          }
          */
-    }
-}
-
-/**
- * 决定cell的布局属性
- */
-- (nullable NSArray<UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect {
-    NSMutableArray *allAttributes = [NSMutableArray array];
-    
-    // 添加当前屏幕可见的cell的布局:
-    [self.cellLayoutInfo enumerateKeysAndObjectsUsingBlock:^(NSIndexPath *indexPath, UICollectionViewLayoutAttributes *attribute, BOOL *stop) {
-        if (CGRectIntersectsRect(rect, attribute.frame)) {
-            [allAttributes addObject:attribute];
-        }
-     }];
-    
-    // 添加当前屏幕可见的头视图的布局:
-    [self.headerLayoutInfo enumerateKeysAndObjectsUsingBlock:^(NSIndexPath *indexPath, UICollectionViewLayoutAttributes *attribute, BOOL *stop) {
-         if (CGRectIntersectsRect(rect, attribute.frame)) {
-             [allAttributes addObject:attribute];
-         }
-     }];
-    
-    // 添加当前屏幕可见的尾部的布局:
-    [self.footerLayoutInfo enumerateKeysAndObjectsUsingBlock:^(NSIndexPath *indexPath, UICollectionViewLayoutAttributes *attribute, BOOL *stop) {
-         if (CGRectIntersectsRect(rect, attribute.frame)) {
-             [allAttributes addObject:attribute];
-         }
-     }];
-    
-    return allAttributes;
-}
-
-- (UICollectionViewLayoutAttributes *)layoutAttributesForSupplementaryViewOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath {
-    UICollectionViewLayoutAttributes *attribute = nil;
-    if ([elementKind isEqualToString:@"UICollectionElementKindSectionHeader"]) {
-        attribute = self.headerLayoutInfo[indexPath];
-    }
-    else if ([elementKind isEqualToString:@"UICollectionElementKindSectionFooter"]){
-        attribute = self.footerLayoutInfo[indexPath];
-    }
-    
-    return attribute;
-}
-
-/**
- * 内容的高度
- */
-- (CGSize)collectionViewContentSize {
-    if (self.scrollDirection == UICollectionViewScrollDirectionVertical) {
-        return CGSizeMake(self.collectionView.frame.size.width, MAX(self.currentContentHeight, self.collectionView.frame.size.height));
-    }
-    else {
-        return CGSizeMake(MAX(self.currentContentWidth, self.collectionView.frame.size.width), self.collectionView.frame.size.height);
     }
 }
 

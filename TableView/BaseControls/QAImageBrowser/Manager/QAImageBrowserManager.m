@@ -10,13 +10,10 @@
 #import "QAImageBrowserLayout.h"
 #import "QAImageBrowserCell.h"
 
-static int PagesGap = 10;
-
 @interface QAImageBrowserManager () <UICollectionViewDelegate, UICollectionViewDataSource>
 @property (nonatomic) QAImageBrowserLayout *layout;
 @property (nonatomic) UICollectionView *collectionView;
-//@property (nonatomic, unsafe_unretained) UIWindow *window;
-@property (nonatomic) UIWindow *window;
+@property (nonatomic, unsafe_unretained) UIWindow *window;
 @property (nonatomic) UIView *blackBackgroundView;
 @property (nonatomic, copy) NSArray *images;
 @property (nonatomic, assign) int currentPosition;
@@ -27,6 +24,7 @@ static int PagesGap = 10;
 @property (nonatomic, assign) CGRect windowBounds;
 @property (nonatomic) UIPanGestureRecognizer *panGestureRecognizer;
 @property (nonatomic) UIImageView *currentImageView;
+@property (nonatomic, unsafe_unretained) QAImageBrowserCell *previousImageBrowserCell;
 @end
 
 @implementation QAImageBrowserManager
@@ -113,10 +111,10 @@ static int PagesGap = 10;
     self.blackBackgroundView.alpha = 0.1;
     [window addSubview:self.blackBackgroundView];
     
-//    if (!self.panGestureRecognizer) {
-//        self.panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
-//        [window addGestureRecognizer:self.panGestureRecognizer];
-//    }
+    if (!self.panGestureRecognizer) {
+        self.panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
+        [window addGestureRecognizer:self.panGestureRecognizer];
+    }
 }
 - (void)showImageBrowserViewWithNewFrame:(CGRect)newFrame {
     UIImageView *tapedImageView = self.tapedObject;
@@ -141,16 +139,13 @@ static int PagesGap = 10;
                          self.blackBackgroundView.alpha = 1;
                          self.currentImageView.frame = newFrame;
     } completion:^(BOOL finished) {
-        [self processImagesBrowser];
+        [self.window addSubview:self.collectionView];
+        [self.collectionView setContentOffset:CGPointMake(self.currentPosition*self.collectionView.bounds.size.width, 0)];
         tapedImageView.hidden = NO;
         [self.currentImageView removeFromSuperview];
         self.currentImageView = nil;
     }];
 }
-- (void)processImagesBrowser {
-    [self.window addSubview:self.collectionView];
-}
-
 - (void)panViewWithTransform:(CGAffineTransform)transform
                        alpha:(CGFloat)alpha
                       paning:(BOOL)paning {
@@ -165,8 +160,9 @@ static int PagesGap = 10;
             self.blackBackgroundView.alpha = alpha;
         } completion:^(BOOL finished) {
             if (alpha == 1 && self.paningViewInCell) {
-//                QAImageBrowserView *imageBrowserView = [self.scrollView viewWithTag:(self.currentPosition + DefaultTag)];
-//                imageBrowserView.hidden = NO;
+                NSArray *visibleCells = [self.collectionView visibleCells];
+                QAImageBrowserCell *imageBrowserCell = [visibleCells firstObject];
+                imageBrowserCell.hidden = NO;
                 [self hideImageViewInCell:NO];
                 [self.currentImageView removeFromSuperview];
                 self.currentImageView = nil;
@@ -202,21 +198,20 @@ static int PagesGap = 10;
         }
     }
 }
-- (void)createCurrentImageView {
-//    QAImageBrowserView *imageBrowserView = [self.scrollView viewWithTag:(self.currentPosition + DefaultTag)];
-//    CGRect imageViewFrame = imageBrowserView.imageView.frame;
-//    CGFloat width = imageViewFrame.size.width;
-//    CGFloat height = imageViewFrame.size.height;
-//    CGFloat offsetX = (imageBrowserView.scrollView.contentSize.width - ScreenWidth) / 2. - imageBrowserView.scrollView.contentOffset.x;
-//    CGFloat originX = (ScreenWidth - width) / 2. + offsetX;
-//    CGFloat originY = (ScreenHeight - height) / 2.;
-//    UIImageView *currentImageView = [[UIImageView alloc] initWithFrame:CGRectMake(originX, originY, width, height)];
-//    currentImageView.contentMode = imageBrowserView.imageView.contentMode;
-//    currentImageView.image = imageBrowserView.imageView.image;
-//    currentImageView.clipsToBounds = YES;
-//    self.currentImageView = currentImageView;
-//    [self.window addSubview:currentImageView];
-//    imageBrowserView.hidden = YES;
+- (void)createCurrentImageView:(QAImageBrowserCell *)imageBrowserCell {
+    CGRect imageViewFrame = imageBrowserCell.imageView.frame;
+    CGFloat width = imageViewFrame.size.width;
+    CGFloat height = imageViewFrame.size.height;
+    CGFloat offsetX = (imageBrowserCell.scrollView.contentSize.width - ScreenWidth) / 2. - imageBrowserCell.scrollView.contentOffset.x;
+    CGFloat originX = (ScreenWidth - width) / 2. + offsetX;
+    CGFloat originY = (ScreenHeight - height) / 2.;
+    UIImageView *currentImageView = [[UIImageView alloc] initWithFrame:CGRectMake(originX, originY, width, height)];
+    currentImageView.contentMode = imageBrowserCell.imageView.contentMode;
+    currentImageView.image = imageBrowserCell.imageView.image;
+    currentImageView.clipsToBounds = YES;
+    self.currentImageView = currentImageView;
+    [self.window addSubview:currentImageView];
+    imageBrowserCell.hidden = YES;
 }
 - (void)quitImageBrowser:(UIImageView *)imageView {
     [self hideImageViewInCell:YES];
@@ -248,7 +243,7 @@ static int PagesGap = 10;
     [UIView animateWithDuration:0.2
                      animations:^{
         self.blackBackgroundView.alpha = 0;
-//        self.scrollView.alpha = 0;
+        self.collectionView.alpha = 0;
     } completion:^(BOOL finished) {
         [self cleanupTheBattlefield];
     }];
@@ -262,8 +257,8 @@ static int PagesGap = 10;
         self.currentImageView = nil;
     }
     
-//    [self.scrollView removeFromSuperview];
-//    self.scrollView = nil;
+    [self.collectionView removeFromSuperview];
+    self.collectionView = nil;
     [self.blackBackgroundView removeFromSuperview];
     self.blackBackgroundView = nil;
     
@@ -272,167 +267,79 @@ static int PagesGap = 10;
         self.panGestureRecognizer = nil;
     }
 }
-//// 修改QAImageBrowserView在scrollView中的位置并修改其tag值:
-//- (void)processImageBrowserViewAfterPagingWithPosition:(int)previous_currentPosition {
-//    if (previous_currentPosition != self.currentPosition) {
-//        NSDictionary *imageInfo = [self.images objectAtIndex:self.currentPosition];
-//        NSString *imageUrl = [imageInfo valueForKey:@"url"];
-//        UIImage *image = [imageInfo valueForKey:@"image"];
-//
-//        int currentView_tag = (previous_currentPosition + DefaultTag);
-//        QAImageBrowserView *currentPageView = [self.scrollView viewWithTag:currentView_tag];
-//        int rightView_tag = (previous_currentPosition + DefaultTag) + 1;
-//        QAImageBrowserView *rightPageView = nil;
-//        if (self.images.count - (rightView_tag - DefaultTag) > 0) {
-//            rightPageView = [self.scrollView viewWithTag:rightView_tag];
-//        }
-//        int leftView_tag = (previous_currentPosition + DefaultTag) - 1;
-//        QAImageBrowserView *leftPageView = nil;
-//        if (leftView_tag - DefaultTag >= 0) {
-//            leftPageView = [self.scrollView viewWithTag:leftView_tag];
-//        }
-//
-//        if (self.currentPosition - previous_currentPosition > 0) {  // 手指往左滑
-//            currentPageView.tag = (self.currentPosition + DefaultTag) - 1;  // currentPageViiew -> leftPageView
-//            rightPageView.tag = (self.currentPosition + DefaultTag);  // rightPageView -> currentPageViiew
-//
-//            if (leftPageView) {
-//                if (self.currentPosition == self.images.count - 1) {  // 最后一页
-//                    leftPageView.tag = (self.currentPosition + DefaultTag) - 1 - 1;  // leftPageView -> left-leftPageView
-//                }
-//                else {
-//                    leftPageView.tag = (self.currentPosition + DefaultTag) + 1;  // leftPageView -> rightPageView
-//
-//                    // 重新加载新的URL:
-//                    UIImageView *tapedImageView = self.tapedObject;
-//                    if (image) {
-//                        [leftPageView showImage:image contentModel:tapedImageView.contentMode];
-//                    }
-//                    else {
-//                        [leftPageView showImageWithUrl:[NSURL URLWithString:imageUrl] contentModel:tapedImageView.contentMode];
-//                    }
-//
-//                    // 修改leftPageView在scrollView中的位置:
-//                    CGRect frame = leftPageView.frame;
-//                    frame.origin.x = self.scrollView.bounds.size.width * (self.currentPosition + 1);
-//                    leftPageView.frame = frame;
-//                }
-//            }
-//            else {
-//                leftPageView = [self createQAImageBrowserViewWithUrl:imageUrl image:image atIndex:self.currentPosition+1];
-//                CGRect frame = leftPageView.frame;
-//                frame.origin.x = (self.scrollView.bounds.size.width) * (self.currentPosition+1);
-//                leftPageView.frame = frame;
-//                [self.scrollView addSubview:leftPageView];
-//            }
-//        }
-//        else {  // 手指往右滑
-//            currentPageView.tag = (self.currentPosition + DefaultTag) + 1;  // currentPageViiew -> rightPageView
-//            leftPageView.tag = (self.currentPosition + DefaultTag);  // leftPageView -> currentPageViiew
-//
-//            if (rightPageView) {
-//                if (self.currentPosition == 0) {  // 第一页
-//                    rightPageView.tag = (self.currentPosition + DefaultTag) + 1 + 1;  // rightPageView -> rightt-rightPageView
-//                }
-//                else {
-//                    rightPageView.tag = (self.currentPosition + DefaultTag) - 1;  // rightPageView -> leftPageView
-//
-//                    // 重新加载新的URL:
-//                    UIImageView *tapedImageView = self.tapedObject;
-//                    if (image) {
-//                        [rightPageView showImage:image contentModel:tapedImageView.contentMode];
-//                    }
-//                    else {
-//                        [rightPageView showImageWithUrl:[NSURL URLWithString:imageUrl] contentModel:tapedImageView.contentMode];
-//                    }
-//
-//                    // 修改rightPageView在scrollView中的位置:
-//                    CGRect frame = rightPageView.frame;
-//                    frame.origin.x = self.scrollView.bounds.size.width * (self.currentPosition - 1);
-//                    rightPageView.frame = frame;
-//                }
-//            }
-//            else {
-//                rightPageView = [self createQAImageBrowserViewWithUrl:imageUrl image:image atIndex:self.currentPosition-1];
-//                CGRect frame = rightPageView.frame;
-//                frame.origin.x = (self.scrollView.bounds.size.width) * (self.currentPosition-1);
-//                rightPageView.frame = frame;
-//                [self.scrollView addSubview:rightPageView];
-//            }
-//        }
-//    }
-//}
 
 
 #pragma mark - Gesture Actions -
-//- (void)singleTapAction:(QAImageBrowserView *)imageBrowserView {
-//    if (imageBrowserView.scrollView.zoomScale - 1 >= 0.01) {
-//        if (self.currentImageView == nil) {
-//            [self createCurrentImageView];
-//            [self quitImageBrowser:self.currentImageView];
-//        }
-//    }
-//    else {
-//        UIImageView *imageView = imageBrowserView.imageView;
-//        [self quitImageBrowser:imageView];
-//    }
-//}
-//- (void)longPressAction:(QAImageBrowserView *)imageBrowserView {
-//    NSLog(@"%s",__func__);
-//}
-//- (void)handlePan:(UIPanGestureRecognizer *)panGesture {
-//    CGPoint transPoint = [panGesture translationInView:self.window];
-//    CGPoint velocity = [panGesture velocityInView:self.window];
-//
-//    switch (panGesture.state) {
-//        case UIGestureRecognizerStateBegan: {
-//            // 将cell中与其对应的imageView进行隐藏:
-//            [self hideImageViewInCell:YES];
-//
-//            // 创建一个临时imageView:
-//            if (self.currentImageView == nil) {
-//                [self createCurrentImageView];
-//            }
-//        }
-//        break;
-//
-//        case UIGestureRecognizerStateChanged: {
-//            [self.collectionView setScrollEnabled:NO];
-//
-//            float alpha = 1 - fabs(transPoint.y) / self.windowBounds.size.height;
-//            alpha = MAX(alpha, 0.1);  // 保证"alpha >= 0.1"
-//            float scale = MAX(alpha, 0.6);  // 保证scale的最小值为原图的0.6倍
-//            CGAffineTransform translationTransform = CGAffineTransformMakeTranslation(transPoint.x / scale, transPoint.y / scale);
-//            CGAffineTransform scaleTransform = CGAffineTransformMakeScale(scale, scale);
-//            [self panViewWithTransform:CGAffineTransformConcat(translationTransform, scaleTransform) alpha:alpha paning:YES];
-//        }
-//        break;
-//
-//        case UIGestureRecognizerStateEnded: {
-//            if (fabs(transPoint.y) > 220 || fabs(velocity.y) > 500) {
-//                [self quitImageBrowser:self.currentImageView];
-//            }
-//            else {
-//                [self panViewWithTransform:CGAffineTransformIdentity alpha:1 paning:NO];  // 返回到初始状态
-//            }
-//
-//            [self.collectionView setScrollEnabled:YES];
-//        }
-//        break;
-//
-//        case UIGestureRecognizerStateCancelled: {
-//            [self panViewWithTransform:CGAffineTransformIdentity alpha:1 paning:NO];  // 返回到初始状态
-//            [self.collectionView setScrollEnabled:YES];
-//        }
-//        break;
-//
-//        default:{
-//            [self panViewWithTransform:CGAffineTransformIdentity alpha:1 paning:NO];  // 返回到初始状态
-//            [self.collectionView setScrollEnabled:YES];
-//        }
-//        break;
-//    }
-//}
+- (void)singleTapAction:(QAImageBrowserCell *)imageBrowserCell {
+    if (imageBrowserCell.scrollView.zoomScale - 1 >= 0.01) {
+        if (self.currentImageView == nil) {
+            [self createCurrentImageView:imageBrowserCell];
+            [self quitImageBrowser:self.currentImageView];
+        }
+    }
+    else {
+        UIImageView *imageView = imageBrowserCell.imageView;
+        [self quitImageBrowser:imageView];
+    }
+}
+- (void)longPressAction:(QAImageBrowserCell *)imageBrowserCell {
+    NSLog(@"%s",__func__);
+}
+- (void)handlePan:(UIPanGestureRecognizer *)panGesture {
+    CGPoint transPoint = [panGesture translationInView:self.window];
+    CGPoint velocity = [panGesture velocityInView:self.window];
+
+    switch (panGesture.state) {
+        case UIGestureRecognizerStateBegan: {
+            // 将cell中与其对应的imageView进行隐藏:
+            [self hideImageViewInCell:YES];
+
+            // 创建一个临时imageView:
+            if (self.currentImageView == nil) {
+                NSArray *visibleCells = [self.collectionView visibleCells];
+                QAImageBrowserCell *imageBrowserCell = [visibleCells firstObject];
+                [self createCurrentImageView:imageBrowserCell];
+            }
+        }
+        break;
+
+        case UIGestureRecognizerStateChanged: {
+            [self.collectionView setScrollEnabled:NO];
+
+            float alpha = 1 - fabs(transPoint.y) / self.windowBounds.size.height;
+            alpha = MAX(alpha, 0.1);  // 保证"alpha >= 0.1"
+            float scale = MAX(alpha, 0.6);  // 保证scale的最小值为原图的0.6倍
+            CGAffineTransform translationTransform = CGAffineTransformMakeTranslation(transPoint.x / scale, transPoint.y / scale);
+            CGAffineTransform scaleTransform = CGAffineTransformMakeScale(scale, scale);
+            [self panViewWithTransform:CGAffineTransformConcat(translationTransform, scaleTransform) alpha:alpha paning:YES];
+        }
+        break;
+
+        case UIGestureRecognizerStateEnded: {
+            if (fabs(transPoint.y) > 220 || fabs(velocity.y) > 500) {
+                [self quitImageBrowser:self.currentImageView];
+            }
+            else {
+                [self panViewWithTransform:CGAffineTransformIdentity alpha:1 paning:NO];  // 返回到初始状态
+            }
+
+            [self.collectionView setScrollEnabled:YES];
+        }
+        break;
+
+        case UIGestureRecognizerStateCancelled: {
+            [self panViewWithTransform:CGAffineTransformIdentity alpha:1 paning:NO];  // 返回到初始状态
+            [self.collectionView setScrollEnabled:YES];
+        }
+        break;
+
+        default:{
+            [self panViewWithTransform:CGAffineTransformIdentity alpha:1 paning:NO];  // 返回到初始状态
+            [self.collectionView setScrollEnabled:YES];
+        }
+        break;
+    }
+}
 
 
 #pragma mark - UICollectionView DataSource -
@@ -452,10 +359,29 @@ static int PagesGap = 10;
 }
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     QAImageBrowserCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:QAImageBrowser_cellID forIndexPath:indexPath];
-    NSLog(@"QAImageBrowserCell: %@",cell);
+    
+    __weak typeof(self) weakself = self;
+    cell.gestureActionBlock = ^(QAImageBrowserViewAction action, QAImageBrowserCell * _Nullable imageBrowserCell) {
+        __strong typeof(self) strongSelf = weakself;
+        switch (action) {
+            case QAImageBrowserViewAction_SingleTap: {
+                [strongSelf singleTapAction:imageBrowserCell];
+            }
+                break;
+            case QAImageBrowserViewAction_LongPress: {
+                [strongSelf longPressAction:imageBrowserCell];
+            }
+                break;
+
+            default:
+                break;
+        }
+    };
     NSDictionary *dic =  [self.images objectAtIndex:indexPath.row];
     
-    [cell configContent:dic contentMode:((UIImageView *)self.tapedObject).contentMode];
+    [cell configContent:dic
+           defaultImage:((UIImageView *)self.tapedObject).image
+            contentMode:((UIImageView *)self.tapedObject).contentMode];
     
     return cell;
 }
@@ -488,40 +414,34 @@ static int PagesGap = 10;
 }
 
 
-//#pragma mark - UIScrollView Delegate -
-//- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-//    scrollView.userInteractionEnabled = NO;
-//    [self.window removeGestureRecognizer:self.panGestureRecognizer];
-//
-//    if (scrollView.contentOffset.x <= -88) {
-//        [self quitImageBrowser_directly];
-//    }
-//    else if (ScreenWidth - (scrollView.contentSize.width - scrollView.contentOffset.x) >= 88) {
-//        [self quitImageBrowser_directly];
-//    }
-//
-//    if (decelerate == NO) {
-//        scrollView.userInteractionEnabled = YES;
-//    }
-//}
-//- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-//    CGFloat pageWidth = scrollView.frame.size.width;
-//    int currentPage = floor((scrollView.contentOffset.x - pageWidth / 2) / pageWidth) + 1;
-//    if (currentPage < 0 || currentPage >= self.images.count) {
-//        return;
-//    }
-//
-//    int previous_currentPosition = self.currentPosition;
-//    QAImageBrowserView *previousPageView = [scrollView viewWithTag:(previous_currentPosition+DefaultTag)];
-//    if (previousPageView) {
-//        [previousPageView.scrollView setZoomScale:1 animated:YES];
-//    }
-//    self.currentPosition = currentPage;
-//
-//    [self processImageBrowserViewAfterPagingWithPosition:previous_currentPosition];
-//    scrollView.userInteractionEnabled = YES;
-//    [self.window addGestureRecognizer:self.panGestureRecognizer];
-//}
+#pragma mark - UIScrollView Delegate -
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    NSArray *visibleCells = [self.collectionView visibleCells];
+    self.previousImageBrowserCell = [visibleCells firstObject];
+}
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    if (scrollView.contentOffset.x <= -88) {
+        [self quitImageBrowser_directly];
+    }
+    else if (ScreenWidth - (scrollView.contentSize.width - scrollView.contentOffset.x) >= 88) {
+        [self quitImageBrowser_directly];
+    }
+}
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    CGFloat pageWidth = scrollView.frame.size.width;
+    int currentPage = floor((scrollView.contentOffset.x - pageWidth / 2) / pageWidth) + 1;
+    
+    if (currentPage < 0 || currentPage >= self.images.count) {
+        return;
+    }
+    else if (self.currentPosition == currentPage) {
+        self.previousImageBrowserCell = nil;
+        return;
+    }
+    
+    self.currentPosition = currentPage;
+    [self.previousImageBrowserCell.scrollView setZoomScale:1 animated:YES];
+}
 
 
 #pragma mark - MemoryWarning -
@@ -564,10 +484,10 @@ static int PagesGap = 10;
     if (!_collectionView) {
         _collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, UIWidth+PagesGap, UIHeight) collectionViewLayout:self.layout];
         
-        _collectionView.backgroundColor = [UIColor brownColor];
+        _collectionView.backgroundColor = [UIColor clearColor];
         _collectionView.pagingEnabled = YES;
         _collectionView.showsVerticalScrollIndicator = NO;
-        _collectionView.showsHorizontalScrollIndicator = YES;
+        _collectionView.showsHorizontalScrollIndicator = NO;
         _collectionView.alwaysBounceVertical = NO;
         _collectionView.alwaysBounceHorizontal = YES;
         _collectionView.dataSource = self;

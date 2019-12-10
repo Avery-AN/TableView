@@ -21,7 +21,6 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = [UIColor redColor];
         [self setUp];
     }
     
@@ -30,15 +29,16 @@
 
  
 #pragma mark - Public Methods -
-- (void)configContent:(NSDictionary * _Nonnull)dic contentMode:(UIViewContentMode)contentMode {
+- (void)configContent:(NSDictionary * _Nonnull)dic
+         defaultImage:(UIImage * _Nullable)defaultImage
+          contentMode:(UIViewContentMode)contentMode {
     NSString *imageUrl = [dic valueForKey:@"url"];
     UIImage *image = [dic valueForKey:@"image"];
-    NSLog(@"imageUrl: %@",imageUrl);
     if (image) {
         [self showImage:image contentModel:contentMode];
     }
     else if (imageUrl) {
-        [self showImageWithUrl:[NSURL URLWithString:imageUrl] contentModel:contentMode];
+        [self showImageWithUrl:[NSURL URLWithString:imageUrl] defaultImage:defaultImage contentModel:contentMode];
     }
     else {
         NSLog(@"QAImageBrowser入参有误!");
@@ -47,12 +47,52 @@
 }
 
 
+#pragma mark - ShowImages Method -
+- (void)showImageWithUrl:(NSURL * _Nonnull)imageUrl
+            defaultImage:(UIImage * _Nullable)defaultImage
+            contentModel:(UIViewContentMode)contentModel {
+    if (!imageUrl || imageUrl.absoluteString.length == 0) {
+        return;
+    }
+    
+    self.imageView.contentMode = contentModel;
+    if (defaultImage) {
+        [self updateImageViewWithImage:defaultImage];
+    }
+    
+    [[SDWebImageDownloader sharedDownloader]
+    downloadImageWithURL:imageUrl
+    options:SDWebImageDownloaderContinueInBackground progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+        
+    } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            if ([imageUrl.absoluteString hasSuffix:@".gif"]) {
+                NSString *path = [[SDImageCache sharedImageCache] defaultCachePathForKey:imageUrl.absoluteString];
+                NSData *data = [NSData dataWithContentsOfFile:path];
+                YYImage *yyImage = [YYImage imageWithData:data];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self updateImageViewWithImage:yyImage];
+                });
+            }
+            else {
+                UIImage *decodeImage = [ImageProcesser decodeImage:image];  // image的解码
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self updateImageViewWithImage:decodeImage];
+                });
+            }
+        });
+    }];
+}
+- (void)showImage:(UIImage * _Nonnull)image contentModel:(UIViewContentMode)contentModel {
+    self.imageView.contentMode = contentModel;
+    [self updateImageViewWithImage:image];
+}
+
+
 #pragma mark - Private Methods -
 - (void)setUp {
-    self.frame = self.bounds;
-    
-    [self addSubview:self.scrollView];
-    // [self addSubview:self.activityIndicator];
+    [self.contentView addSubview:self.scrollView];
+    // [self.contentView addSubview:self.activityIndicator];
     [self.scrollView addSubview:self.imageView];
 
     // 添加手势:
@@ -71,11 +111,7 @@
     [self.imageView addGestureRecognizer:twoFingerTap];
     [self.imageView addGestureRecognizer:longGesture];
 
-    UITapGestureRecognizer *singleTap_2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
-    [self addGestureRecognizer:singleTap_2];
-
     [singleTap requireGestureRecognizerToFail:doubleTap];   // 处理双击时不响应单击
-    [singleTap_2 requireGestureRecognizerToFail:doubleTap]; // 处理双击时不响应单击
 }
 - (void)updateImageViewWithImage:(UIImage *)image {
     self.imageView.frame = [ImageProcesser caculateOriginImageSize:image];
@@ -104,9 +140,9 @@
 - (void)handleSingleTap:(UITapGestureRecognizer *)gesture {
     switch (gesture.state) {
         case UIGestureRecognizerStateEnded: {
-//            if (self.gestureActionBlock) {
-//                self.gestureActionBlock(QAImageBrowserViewAction_SingleTap, self);
-//            }
+            if (self.gestureActionBlock) {
+                self.gestureActionBlock(QAImageBrowserViewAction_SingleTap, self);
+            }
         }
             break;
             
@@ -136,56 +172,19 @@
     [self.scrollView zoomToRect:zoomRect animated:YES];
 }
 - (void)handleLongPress:(UILongPressGestureRecognizer *)longPressGesture {
-//    switch (longPressGesture.state) {
-//            case UIGestureRecognizerStateEnded: {
-//                if (self.gestureActionBlock) {
-//                    self.gestureActionBlock(QAImageBrowserViewAction_LongPress, self);
-//                }
-//            }
-//            break;
-//
-//            default: {
-//
-//            }
-//            break;
-//    }
-}
+    switch (longPressGesture.state) {
+            case UIGestureRecognizerStateEnded: {
+                if (self.gestureActionBlock) {
+                    self.gestureActionBlock(QAImageBrowserViewAction_LongPress, self);
+                }
+            }
+            break;
 
+            default: {
 
-#pragma mark - Public Method -
-- (void)showImageWithUrl:(NSURL * _Nonnull)imageUrl contentModel:(UIViewContentMode)contentModel {
-    if (!imageUrl || imageUrl.absoluteString.length == 0) {
-        return;
+            }
+            break;
     }
-    
-    self.imageView.contentMode = contentModel;
-    
-    [[SDWebImageDownloader sharedDownloader]
-    downloadImageWithURL:imageUrl
-    options:SDWebImageDownloaderContinueInBackground progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
-        
-    } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            if ([imageUrl.absoluteString hasSuffix:@".gif"]) {
-                NSString *path = [[SDImageCache sharedImageCache] defaultCachePathForKey:imageUrl.absoluteString];
-                NSData *data = [NSData dataWithContentsOfFile:path];
-                YYImage *yyImage = [YYImage imageWithData:data];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self updateImageViewWithImage:yyImage];
-                });
-            }
-            else {
-                UIImage *decodeImage = [ImageProcesser decodeImage:image];  // image的解码
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self updateImageViewWithImage:decodeImage];
-                });
-            }
-        });
-    }];
-}
-- (void)showImage:(UIImage * _Nonnull)image contentModel:(UIViewContentMode)contentModel {
-    self.imageView.contentMode = contentModel;
-    [self updateImageViewWithImage:image];
 }
 
 
@@ -246,6 +245,5 @@
     }
     return _activityIndicator;
 }
-
 
 @end

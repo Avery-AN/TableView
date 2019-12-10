@@ -6,23 +6,13 @@
 //  Copyright © 2019 Avery. All rights reserved.
 //
 
-
-/*
- UICollectionViewLayout 的主要目标是提供关于 collection view 中每个元素的位置和可视化状态信息;
- UICollectionViewLayout 对象不会创建 cell 或者 supplementary view、它仅仅是用正确的属性提供它们。
- 
- 创建一个自定义的 UICollectionViewLayout 分为 3 个步骤:
- 自定义一个抽象类UICollectionViewLayout的子类并声明所有你需要进行布局计算的属性;
- 执行所有的计算、提供所有 collection view 的元素并正确设置它们的属性、这是最复杂的步骤，因为你必须从零开始实现 CollectionViewLayout 的核心逻辑;
- 让 collection view 使用新的 CustomLayout 类。
- */
-
-
 #import <UIKit/UIKit.h>
 
-static NSString * _Nonnull const QAImageBrowser_cellID = @"CellID";
-static NSString * _Nonnull const QAImageBrowser_headerIdentifier = @"HeadID";
-static NSString * _Nonnull const QAImageBrowser_footerIdentifier = @"FootID";
+static NSString * _Nonnull const QAImageBrowser_cellID = @"QAImageBrowser_cellID";
+static NSString * _Nonnull const QAImageBrowser_headerIdentifier = @"QAImageBrowser_headerIdentifier";
+static NSString * _Nonnull const QAImageBrowser_footerIdentifier = @"QAImageBrowser_footerIdentifier";
+
+static int PagesGap = 10;  // 作为图片浏览器时使用(collectionView.scrollDirection = UICollectionViewScrollDirectionHorizontal)
 
 NS_ASSUME_NONNULL_BEGIN
 
