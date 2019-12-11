@@ -747,7 +747,7 @@
         if ([type isEqualToString:@"link"]) {
             if (attributedLabel.showShortLink) {
                 NSString *shortLink = attributedLabel.shortLink;
-                shortLink = shortLink ? : ShortLink_Default;
+                shortLink = shortLink ? : QAShortLink_Default;
                 [attributedText.textChangedDic setValue:shortLink forKey:NSStringFromRange(highlightRange)];
             }
             else {
@@ -781,7 +781,7 @@
     if (numberOfLines > maximumNumberOfLines) {
         if (attributedLabel.showMoreText == YES) {
             showMoreTextEffected = YES;
-            NSString *truncationText = attributedLabel.seeMoreText ? : SeeMoreText_DEFAULT;
+            NSString *truncationText = attributedLabel.seeMoreText ? : QASeeMoreText_DEFAULT;
             attributedLabel.seeMoreText = truncationText;
             if (!self.renderText) {
                 NSDictionary *attributes = [attributedLabel.textLayout getTruncationTextAttributes];  // SeemoreText的相关属性

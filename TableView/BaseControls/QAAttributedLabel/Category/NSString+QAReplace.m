@@ -7,6 +7,7 @@
 //
 
 #import "NSString+QAReplace.h"
+#import "QAAttributedLabelConfig.h"
 
 @implementation NSString (QAReplace)
 
@@ -20,12 +21,9 @@
                                       links:(NSMutableArray *_Nonnull __strong *_Nonnull)links {
     NSString *content = self;
     
-    // 网页链接的匹配条件:
-    NSString *regulaStr = @"((http[s]{0,1}|ftp)://[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)|(www.[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)";
-    NSError *error = NULL;
-    
     // 根据匹配条件创建正则表达式:
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regulaStr options:NSRegularExpressionCaseInsensitive error:&error];
+    NSError *error = NULL;
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:QALinkRegularExpression options:NSRegularExpressionCaseInsensitive error:&error];
     if (!regex) {
         NSLog(@"  正则创建失败: %@", [error localizedDescription]);
     }
@@ -59,12 +57,9 @@
                                    ats:(NSMutableArray *_Nonnull __strong *_Nonnull)ats {
     NSString *content = self;
     
-    // "@user"的匹配条件:
-    NSString *regulaStr = @"@[0-9a-zA-Z\\u4e00-\\u9fa5]+";
-    NSError *error = NULL;
-    
     // 根据匹配条件创建正则表达式:
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regulaStr options:NSRegularExpressionCaseInsensitive error:&error];
+    NSError *error = NULL;
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:QAAtRegularExpression options:NSRegularExpressionCaseInsensitive error:&error];
     if (!regex) {
         NSLog(@"  正则创建失败: %@", [error localizedDescription]);
     }
@@ -93,12 +88,9 @@
                              topics:(NSMutableArray *_Nonnull __strong *_Nonnull)topics {
     NSString *content = self;
     
-    // "#...#"话题的匹配条件:
-    NSString *regulaStr = @"#[0-9a-zA-Z\\u4e00-\\u9fa5]+#";
-    NSError *error = NULL;
-    
     // 根据匹配条件创建正则表达式:
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regulaStr options:NSRegularExpressionCaseInsensitive error:&error];
+    NSError *error = NULL;
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:QATopicRegularExpression options:NSRegularExpressionCaseInsensitive error:&error];
     if (!regex) {
         NSLog(@"  正则创建失败: %@", [error localizedDescription]);
     }

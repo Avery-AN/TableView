@@ -20,9 +20,25 @@
 #import "NSString+Md5.h"
 
 
-#define HighlightTextColor_DEFAULT                      [UIColor whiteColor]
-#define HighlightTextBackgroundColor_DEFAULT            [UIColor clearColor]
-#define MoreTextColor_DEFAULT                           [UIColor greenColor]
-#define MoreTextBackgroundColor_DEFAULT                 [UIColor clearColor]
-static NSString *SeeMoreText_DEFAULT = @"...查看全文";
-static NSString *ShortLink_Default = @"网页短链接";
+/**
+ 默认颜色
+ */
+#define HighlightTextColor_DEFAULT                  [UIColor lightGrayColor]
+#define HighlightTextBackgroundColor_DEFAULT        [UIColor clearColor]
+#define MoreTextColor_DEFAULT                       [UIColor orangeColor]
+#define MoreTextBackgroundColor_DEFAULT             [UIColor clearColor]
+
+/**
+ 默认文本
+ */
+static NSString *QASeeMoreText_DEFAULT = @"...查看全文";
+static NSString *QAShortLink_Default = @"网页短链接";
+static NSString *QAEmojiSpaceReplaceString = @"\uFFFC";   // 空的占位字符
+
+/**
+ 正则表达式
+ */
+static NSString *QAEmojiRegularExpression = @"\\[[0-9a-zA-Z\\u4e00-\\u9fa5]+\\]";  // 匹配自定义Emoji表情的正则表达式 [XXX]
+static NSString *QALinkRegularExpression = @"((http[s]{0,1}|ftp)://[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)|(www.[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)";  // 网页链接的正则表达式
+static NSString *QAAtRegularExpression = @"@[0-9a-zA-Z\\u4e00-\\u9fa5\\-]+";    // @user 艾特的正则表达式
+static NSString *QATopicRegularExpression = @"#[0-9a-zA-Z\\u4e00-\\u9fa5]+#";   // "#...#" 话题的正则表达式
