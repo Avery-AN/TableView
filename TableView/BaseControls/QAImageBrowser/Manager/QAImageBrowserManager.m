@@ -234,7 +234,7 @@
     return rect;
 }
 - (void)moveView:(QAImageBrowserCell *)imageBrowserCell toFrame:(CGRect)rectInWindow {
-    [UIView animateWithDuration:3
+    [UIView animateWithDuration:.2
     animations:^{
         self.blackBackgroundView.alpha = 0;
         self.currentImageBrowserCell.imageView.frame = rectInWindow;
@@ -288,6 +288,7 @@
 - (void)handlePan:(UIPanGestureRecognizer *)panGesture {
     CGPoint transPoint = [panGesture translationInView:self.window];
     CGPoint velocity = [panGesture velocityInView:self.window];
+    CGPoint locationInView = [panGesture locationInView:self.window];
 
     switch (panGesture.state) {
         case UIGestureRecognizerStateBegan: {
@@ -300,12 +301,13 @@
 
         case UIGestureRecognizerStateChanged: {
             [self.collectionView setScrollEnabled:NO];
-
+            
             float alpha = 1 - fabs(transPoint.y) / self.windowBounds.size.height;
             alpha = MAX(alpha, 0.2);
             float scale = MAX(alpha, 0.6);
-            NSLog(@"xxxxxx: %f",transPoint.x / scale);
-             CGAffineTransform translationTransform = CGAffineTransformMakeTranslation(transPoint.x / scale, transPoint.y / scale);
+            CGFloat reduceValue = self.currentImageBrowserCell.imageView.bounds.size.width * (1-scale);
+            reduceValue = ( (locationInView.x - self.currentImageBrowserCell.imageView.center.x ) / (self.currentImageBrowserCell.imageView.bounds.size.width/2) * reduceValue ) / 2;
+            CGAffineTransform translationTransform = CGAffineTransformMakeTranslation(transPoint.x / scale + reduceValue, transPoint.y / scale);
             CGAffineTransform scaleTransform = CGAffineTransformMakeScale(scale, scale);
             CGAffineTransform totalTransform = CGAffineTransformConcat(translationTransform, scaleTransform);
             [self panViewWithTransform:totalTransform alpha:alpha paning:YES];
