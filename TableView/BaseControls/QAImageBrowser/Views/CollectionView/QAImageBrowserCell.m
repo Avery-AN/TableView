@@ -43,15 +43,14 @@
         [self updateImageView:imageView withImage:defaultImage];
     }
     
-    [self addAllGesturesToView:imageView];   // 添加手势
-    
+    [self addAllGesturesToView:imageView];
     self.currentShowImageView = imageView;
-    
-    [self checkShowingImageView];
+    [self processShowingImageView];
 }
 - (void)reprepareShowImageView {
-    [self.scrollView addSubview:self.imageView];
-    [self addAllGesturesToView:self.imageView];   // 添加手势
+    //[self.scrollView addSubview:self.imageView];
+    //[self addAllGesturesToView:self.imageView];
+    self.imageView.hidden = NO;
     self.currentShowImageView = self.imageView;
 }
 - (void)configContent:(NSDictionary * _Nonnull)dic
@@ -137,27 +136,20 @@
     (self.scrollView.bounds.size.height - self.scrollView.contentSize.height) * 0.5 : 0.0;
     imageView.center = CGPointMake(self.scrollView.contentSize.width * 0.5 + offsetX,self.scrollView.contentSize.height * 0.5 + offsetY);
 }
-- (void)checkShowingImageView {
+- (void)processShowingImageView {
+//    if (self.currentShowImageView != self.imageView) {
+//        [self.imageView removeFromSuperview];
+//    }
+//    else if (self.imageView.superview == nil) {
+//        [self.scrollView addSubview:self.imageView];
+//    }
     if (self.currentShowImageView != self.imageView) {
-        [self.imageView removeFromSuperview];
+        self.imageView.hidden = YES;
     }
-    else if (self.imageView.superview == nil) {
-        [self.scrollView addSubview:self.imageView];
+    else if (self.imageView.hidden) {
+        self.imageView.hidden = NO;
     }
 }
-//- (void)updateImageViewWithImage:(UIImage *)image {
-//    if (!image) {
-//        return;
-//    }
-//    self.imageView.frame = [ImageProcesser caculateOriginImageSize:image];
-//    self.imageView.image = image;
-//    [self.scrollView setZoomScale:1 animated:NO];
-//
-//    CGFloat offsetX = (self.scrollView.bounds.size.width > self.scrollView.contentSize.width) ? (self.scrollView.bounds.size.width - self.scrollView.contentSize.width) * 0.5 : 0.0;
-//    CGFloat offsetY = (self.scrollView.bounds.size.height > self.scrollView.contentSize.height) ?
-//    (self.scrollView.bounds.size.height - self.scrollView.contentSize.height) * 0.5 : 0.0;
-//    self.imageView.center = CGPointMake(self.scrollView.contentSize.width * 0.5 + offsetX,self.scrollView.contentSize.height * 0.5 + offsetY);
-//}
 - (CGRect)zoomRectWithScale:(CGFloat)scale centerPoint:(CGPoint)center {
     CGRect zoomRect;
 
@@ -168,20 +160,6 @@
     zoomRect.origin.y = center.y - zoomRect.size.height / 2;
 
     return zoomRect;
-}
-- (void)removeAllGestures:(UIImageView *)imageView {
-    if (self.singleTap) {
-       [self removeGestureRecognizer:self.singleTap];
-    }
-    if (self.doubleTap) {
-       [imageView removeGestureRecognizer:self.doubleTap];
-    }
-    if (self.twoFingerTap) {
-       [imageView removeGestureRecognizer:self.twoFingerTap];
-    }
-    if (self.longPressGesture) {
-       [imageView removeGestureRecognizer:self.longPressGesture];
-    }
 }
 - (void)addAllGesturesToView:(UIImageView *)imageView {
     // 添加手势:

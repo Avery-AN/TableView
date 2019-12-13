@@ -167,8 +167,26 @@
     if (!self.imageBrowserManager) {
         self.imageBrowserManager = [[QAImageBrowserManager alloc] init];
     }
+    
+//    __weak typeof(cell) weakCell = cell;
     [self.imageBrowserManager showImageWithTapedObject:tapedObject
-                                                images:images];
+                                                images:images
+                                              finished:^(NSInteger index, YYAnimatedImageView * _Nonnull imageView) {
+//        __strong typeof(weakCell) strongCell = weakCell;
+//        NSInteger tag = (index+DefaultTag_contentImageView);
+//        UIImageView *imageViewInCell = [strongCell.contentView viewWithTag:tag];
+//        if (imageView == imageViewInCell) {
+//            imageView.hidden = NO;
+//        }
+//        else if (imageViewInCell) {
+//            [imageViewInCell removeFromSuperview];
+//            imageViewInCell = imageView;
+//            imageView.tag = tag;
+//        }
+//        else {
+//            NSLog(@"卧槽 无情 ~~~~~~");
+//        }
+    }];
 }
 
 

@@ -9,6 +9,7 @@
 #import "BaseCell.h"
 #import "QAAttributedLabel.h"
 
+static NSInteger DefaultTag_contentImageView = 10;
 static NSInteger MaxLines = 3;      // 最多显示3行
 static NSInteger MaxItems = 3;      // 一行最多显示3张
 static NSInteger AvatarSize = 38;

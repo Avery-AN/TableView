@@ -7,7 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "QAImageBrowserCell.h"
 #import <Masonry.h>
+
+typedef void (^QAImageBrowserFinishedBlock)(NSInteger index, YYAnimatedImageView * _Nonnull imageView);
 
 @interface QAImageBrowserManager : NSObject
 
@@ -24,6 +27,7 @@
                (若image和url同时存在则优先显示image)
  */
 - (void)showImageWithTapedObject:(UIImageView * _Nonnull)tapedImageView
-                          images:(NSArray * _Nonnull)images;
+                          images:(NSArray * _Nonnull)images
+                          finished:(QAImageBrowserFinishedBlock _Nullable)finishedBlock;
 
 @end

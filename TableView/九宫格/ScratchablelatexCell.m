@@ -8,7 +8,6 @@
 
 #import "ScratchablelatexCell.h"
 
-static NSInteger DefaultTag_contentImageView = 10;
 static BOOL openClipsToBounds = YES;
 
 @interface ScratchablelatexCell ()
