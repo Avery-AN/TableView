@@ -21,9 +21,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface QAImageBrowserCell : UICollectionViewCell
 
-@property (nonatomic) UIScrollView * _Nonnull scrollView;
-@property (nonatomic) YYAnimatedImageView * _Nonnull imageView;
+@property (nonatomic) UIScrollView * _Nullable scrollView;
+@property (nonatomic) YYAnimatedImageView * _Nullable imageView;
+@property (nonatomic, unsafe_unretained) YYAnimatedImageView * _Nullable currentShowImageView;
 @property (nonatomic, copy) void(^ _Nullable gestureActionBlock) (QAImageBrowserViewAction action, QAImageBrowserCell * _Nullable imageBrowserCell);
+
+- (void)configImageView:(YYAnimatedImageView *)imageView
+           defaultImage:(UIImage * _Nullable)defaultImage;
+
+- (void)reprepareShowImageView;
 
 - (void)configContent:(NSDictionary * _Nonnull)dic
          defaultImage:(UIImage * _Nullable)defaultImage

@@ -17,13 +17,15 @@
 @property (nonatomic) UIView *blackBackgroundView;
 @property (nonatomic, copy) NSArray *images;
 @property (nonatomic, assign) int currentPosition;
-@property (nonatomic, unsafe_unretained) id tapedObject;
+@property (nonatomic, unsafe_unretained) UIImageView *tapedImageView;
+@property (nonatomic, unsafe_unretained) UIView *tapedSuperView;
+@property (nonatomic, unsafe_unretained) UIImageView *currentShowingImageView;
+@property (nonatomic) CGRect tapedImageViewRect;
 @property (nonatomic, unsafe_unretained) UIView *paningViewInCell;
 @property (nonatomic, assign) CGFloat rectOffsetX;
 @property (nonatomic, assign) CGFloat rectOffsetY;
 @property (nonatomic, assign) CGRect windowBounds;
 @property (nonatomic) UIPanGestureRecognizer *panGestureRecognizer;
-@property (nonatomic) UIImageView *currentImageView;
 @property (nonatomic, unsafe_unretained) QAImageBrowserCell *previousImageBrowserCell;
 @property (nonatomic, unsafe_unretained) QAImageBrowserCell *currentImageBrowserCell;
 @property (nonatomic) CGRect imageViewRectInCell;
@@ -47,29 +49,31 @@
 
 
 #pragma mark - Public Methods -
-- (void)showImageWithTapedObject:(id _Nonnull)tapedObject
+- (void)showImageWithTapedObject:(UIImageView * _Nonnull)tapedImageView
                           images:(NSArray * _Nonnull)images {
-    if (!tapedObject || !images || ![images isKindOfClass:[NSArray class]] || images.count == 0) {
+    if (!tapedImageView || !images || ![images isKindOfClass:[NSArray class]] || images.count == 0) {
+        NSLog(@"  tapedImageView: %@ 【 WTF 】!!!!!!!!", tapedImageView);
         return;
     }
     else if (images.count < 1) {
         return;
     }
     
-    self.tapedObject = tapedObject;
+    self.tapedImageView = tapedImageView;
     self.images = images;
     self.currentPosition = [self getTapedPosition];
-    [self createImageBrowserView];
+    [self createImageBrowserBasicView];
     CGRect newRect = [self getTapedImageFrame];
-    [self showImageBrowserViewWithNewFrame:newRect];
+    [self showImageBrowserViewWithFrame:newRect];
 }
 
 
 #pragma mark - Private Methods -
 - (int)getTapedPosition {
     int result = -1;
-    UIImageView *imageView = self.tapedObject;
-    CGRect tapedRect = imageView.frame;
+    self.tapedSuperView = self.tapedImageView.superview;
+    CGRect tapedRect = self.tapedImageView.frame;
+    self.tapedImageViewRect = tapedRect;
     for (int i = 0; i < self.images.count; i++) {
         NSDictionary *info = [self.images objectAtIndex:i];
         if ([info isKindOfClass:[NSDictionary class]]) {
@@ -94,15 +98,14 @@
     return result;
 }
 - (CGRect)getTapedImageFrame {
-    UIImageView *imageView = self.tapedObject;
-    UIImage *image = imageView.image;  // 缩略图的image
+    UIImage *image = self.tapedImageView.image;  // 缩略图的image
     CGRect rect = CGRectZero;
     if (image) {
         rect = [ImageProcesser caculateOriginImageSize:image];
     }
     return rect;
 }
-- (void)createImageBrowserView {
+- (void)createImageBrowserBasicView {
     UIWindow *window = [UIApplication sharedApplication].delegate.window;
     self.window = window;
     self.windowBounds = self.window.bounds;
@@ -114,93 +117,108 @@
     self.blackBackgroundView.alpha = 0.1;
     [window addSubview:self.blackBackgroundView];
     
-    if (!self.panGestureRecognizer) {
-        self.panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
-        [window addGestureRecognizer:self.panGestureRecognizer];
+    [self addPanGestureRecognizer];
+    
+    [self.window addSubview:self.collectionView];
+    [self.collectionView setContentOffset:CGPointMake(self.currentPosition*self.collectionView.bounds.size.width, 0)];
+    self.collectionView.hidden = YES;
+}
+- (void)removePanGestureRecognizer {
+    if (self.window && self.panGestureRecognizer) {
+        [self.window removeGestureRecognizer:self.panGestureRecognizer];
+        self.panGestureRecognizer = nil;
+    }
+    else if (self.panGestureRecognizer) {
+        UIWindow *window = [UIApplication sharedApplication].delegate.window;
+        [window removeGestureRecognizer:self.panGestureRecognizer];
+        self.panGestureRecognizer = nil;
     }
 }
-- (void)showImageBrowserViewWithNewFrame:(CGRect)newFrame {
-    UIImageView *tapedImageView = self.tapedObject;
-    tapedImageView.hidden = YES;
+- (void)addPanGestureRecognizer {
+    if (!self.panGestureRecognizer) {
+        self.panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
+    }
+    [self.window addGestureRecognizer:self.panGestureRecognizer];
+}
+- (void)showImageBrowserViewWithFrame:(CGRect)newFrame {
+    YYAnimatedImageView *tapedImageView = (YYAnimatedImageView *)self.tapedImageView;
     
     CGRect srcRect = tapedImageView.frame;
-    UIView *tapedSuperView = tapedImageView.superview;
-    CGRect rect = [tapedImageView convertRect:tapedSuperView.frame toView:self.blackBackgroundView];
+    CGRect rect = [tapedImageView convertRect:self.tapedSuperView.frame toView:self.blackBackgroundView];
     self.rectOffsetX = rect.origin.x - srcRect.origin.x;
     self.rectOffsetY = rect.origin.y - srcRect.origin.y;
-    if (self.currentImageView == nil) {
-        UIImageView *currentImageView = [[UIImageView alloc] initWithFrame:CGRectMake(rect.origin.x, rect.origin.y, srcRect.size.width, srcRect.size.height)];
-        currentImageView.contentMode = tapedImageView.contentMode;
-        currentImageView.image = tapedImageView.image;
-        currentImageView.clipsToBounds = YES;
-        self.currentImageView = currentImageView;
-        [self.window addSubview:currentImageView];
-    }
+    tapedImageView.frame = CGRectMake(rect.origin.x, rect.origin.y, srcRect.size.width, srcRect.size.height);
+    [self.window addSubview:tapedImageView];
     
-    [UIView animateWithDuration:0.25
+    [UIView animateWithDuration:3
                      animations:^{
                          self.blackBackgroundView.alpha = 1;
-                         self.currentImageView.frame = newFrame;
+                         tapedImageView.frame = newFrame;
     } completion:^(BOOL finished) {
-        [self.window addSubview:self.collectionView];
-        [self.collectionView setContentOffset:CGPointMake(self.currentPosition*self.collectionView.bounds.size.width, 0)];
-        tapedImageView.hidden = NO;
-        [self.currentImageView removeFromSuperview];
-        self.currentImageView = nil;
+        self.collectionView.hidden = NO;
+        [self getCurrentShowingImageView:nil];
+        [self.currentImageBrowserCell configImageView:tapedImageView defaultImage:tapedImageView.image];
     }];
 }
 - (void)panViewWithTransform:(CGAffineTransform)transform
                        alpha:(CGFloat)alpha
                       paning:(BOOL)paning {
     if (paning) {
-        self.currentImageBrowserCell.imageView.transform = transform;
+        self.currentShowingImageView.transform = transform;
         self.blackBackgroundView.alpha = alpha;
     }
     else {
         [UIView animateWithDuration:0.2
                          animations:^{
-            self.currentImageBrowserCell.imageView.transform = transform;
+            self.currentShowingImageView.transform = transform;
             self.blackBackgroundView.alpha = alpha;
         } completion:^(BOOL finished) {
-            if (alpha == 1 && self.paningViewInCell) {
-                [self hideImageViewInCell:NO];
+            if (alpha == 1) {
+                if (self.paningViewInCell) {
+                    [self hideImageViewInCell:NO];
+                }
                 [self processQAImageBrowserCellAfterPanCanceled];
             }
         }];
     }
 }
+- (void)getCurrentShowingImageView:(QAImageBrowserCell *)imageBrowserCell {
+    if (imageBrowserCell) {
+        self.currentImageBrowserCell = imageBrowserCell;
+    }
+    else {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.currentPosition inSection:0];
+        imageBrowserCell = (QAImageBrowserCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+        self.currentImageBrowserCell = imageBrowserCell;
+    }
+    
+    UIImageView *imageView = self.currentImageBrowserCell.currentShowImageView;
+    self.currentShowingImageView = imageView;
+}
 - (void)processQAImageBrowserCellAfterPanCanceled {
-    UIImageView *imageView = self.currentImageBrowserCell.imageView;
+    UIImageView *imageView = self.currentShowingImageView;
     imageView.transform = self.imageViewTransformInCell;
     imageView.frame = self.imageViewRectInCell;
     [self.currentImageBrowserCell.scrollView addSubview:imageView];
 }
-- (void)processQAImageBrowserCellAfterPanFinished {
-    [self.currentImageBrowserCell.imageView removeFromSuperview];
-}
 - (void)processQAImageBrowserCellWhenPanBegan {
-    NSArray *visibleCells = [self.collectionView visibleCells];
-    QAImageBrowserCell *imageBrowserCell = [visibleCells firstObject];
-    self.currentImageBrowserCell = imageBrowserCell;
+    [self getCurrentShowingImageView:nil];
     
-    UIImageView *imageView = self.currentImageBrowserCell.imageView;
-    self.imageViewRectInCell = imageView.frame;
-    self.imageViewTransformInCell = imageView.transform;
-    CGRect imageNewFrame = CGRectMake(-imageBrowserCell.scrollView.contentOffset.x+self.imageViewRectInCell.origin.x, imageBrowserCell.scrollView.contentOffset.y+self.imageViewRectInCell.origin.y, self.imageViewRectInCell.size.width, self.imageViewRectInCell.size.height);
-    imageView.transform = CGAffineTransformIdentity;
-    imageView.frame = imageNewFrame;
-    [self.window addSubview:imageView];
+    self.imageViewRectInCell = self.currentShowingImageView.frame;
+    self.imageViewTransformInCell = self.currentShowingImageView.transform;
+    CGRect imageNewFrame = CGRectMake(-self.currentImageBrowserCell.scrollView.contentOffset.x+self.imageViewRectInCell.origin.x, self.currentImageBrowserCell.scrollView.contentOffset.y+self.imageViewRectInCell.origin.y, self.imageViewRectInCell.size.width, self.imageViewRectInCell.size.height);
+    self.currentShowingImageView.transform = CGAffineTransformIdentity;
+    self.currentShowingImageView.frame = imageNewFrame;
+    [self.window addSubview:self.currentShowingImageView];
 }
 - (void)hideImageViewInCell:(BOOL)hidden {
     if (hidden == NO) {
         self.paningViewInCell.hidden = NO;
     }
     else {
-        UIView *tapedView = (UIView *)self.tapedObject;
-        UIView *superView = tapedView.superview;
         NSDictionary *info = [self.images objectAtIndex:self.currentPosition];
         CGRect rect = [[info valueForKey:@"frame"] CGRectValue];
-        for (UIView *view in superView.subviews) {
+        for (UIView *view in self.tapedSuperView.subviews) {
             if (view && [view isKindOfClass:[UIImageView class]]) {
                 if (CGRectEqualToRect(view.frame, rect)) {   // NSDecimalNumber
                     self.paningViewInCell = view;
@@ -219,67 +237,101 @@
         }
     }
 }
-- (void)quitImageBrowser {  // 退出图片浏览器
-    [self hideImageViewInCell:YES];
-    
-    CGRect originalFrame = [self getOriginalFrameInTableView];  // 在tableView的cell中的坐标
-    CGRect rectInWindow = CGRectMake(originalFrame.origin.x + self.rectOffsetX, originalFrame.origin.y + self.rectOffsetY, originalFrame.size.width, originalFrame.size.height);
-    [self moveView:self.currentImageBrowserCell toFrame:rectInWindow];
-}
-- (CGRect)getOriginalFrameInTableView {
+- (CGRect)getOriginalFrameInTableViewAtIndex:(int)index {
     CGRect rect = CGRectZero;
-    NSDictionary *info = [self.images objectAtIndex:self.currentPosition];
-    rect = [[info valueForKey:@"frame"] CGRectValue];
+    if (index >= 0 && index < self.images.count) {
+        NSDictionary *info = [self.images objectAtIndex:index];
+        rect = [[info valueForKey:@"frame"] CGRectValue];
+    }
     
     return rect;
 }
+- (void)quitImageBrowser {  // 退出图片浏览器
+    [self hideImageViewInCell:YES];
+    
+    CGRect srcRect = [self getOriginalFrameInTableViewAtIndex:self.currentPosition];  // 在tableView的cell中的坐标
+    CGRect rectInWindow = CGRectZero;
+    if (self.currentShowingImageView.superview == self.window) {
+        rectInWindow = CGRectMake(srcRect.origin.x + self.rectOffsetX, srcRect.origin.y + self.rectOffsetY, srcRect.size.width, srcRect.size.height);
+    }
+    else {
+        rectInWindow = CGRectMake(srcRect.origin.x + self.rectOffsetX + self.currentImageBrowserCell.scrollView.contentOffset.x, srcRect.origin.y + self.rectOffsetY + self.currentImageBrowserCell.scrollView.contentOffset.y, srcRect.size.width, srcRect.size.height);
+    }
+    [self moveView:self.currentImageBrowserCell toFrame:rectInWindow];
+}
 - (void)moveView:(QAImageBrowserCell *)imageBrowserCell toFrame:(CGRect)rectInWindow {
-    [UIView animateWithDuration:.2
+    [self removePanGestureRecognizer];
+    imageBrowserCell.userInteractionEnabled = NO;
+    
+    [UIView animateWithDuration:3
     animations:^{
         self.blackBackgroundView.alpha = 0;
-        self.currentImageBrowserCell.imageView.frame = rectInWindow;
+        self.currentShowingImageView.frame = rectInWindow;
     }
     completion:^(BOOL finished) {
         if (finished) {
             [self cleanupTheBattlefield];
+            imageBrowserCell.userInteractionEnabled = YES;
+            [self addPanGestureRecognizer];
         }
     }];
 }
 - (void)quitImageBrowser_directly {
-    [UIView animateWithDuration:0.2
+    [self getCurrentShowingImageView:nil];
+    [self removePanGestureRecognizer];
+    self.currentImageBrowserCell.userInteractionEnabled = NO;
+    
+    CGRect srcRect = [self getOriginalFrameInTableViewAtIndex:self.currentPosition];  // 在tableView的cell中的坐标
+    CGRect rectInWindow = CGRectMake(srcRect.origin.x + self.rectOffsetX + self.currentImageBrowserCell.scrollView.contentOffset.x, srcRect.origin.y + self.rectOffsetY + self.currentImageBrowserCell.scrollView.contentOffset.y, srcRect.size.width, srcRect.size.height);
+    
+    [UIView animateWithDuration:3
                      animations:^{
         self.blackBackgroundView.alpha = 0;
-        self.collectionView.alpha = 0;
+        self.currentShowingImageView.frame = rectInWindow;
     } completion:^(BOOL finished) {
         [self cleanupTheBattlefield];
+        self.currentImageBrowserCell.userInteractionEnabled = YES;
+        [self addPanGestureRecognizer];
     }];
 }
 - (void)cleanupTheBattlefield {
-    if (self.paningViewInCell) {
-        [self hideImageViewInCell:NO];
-    }
+//    if (self.paningViewInCell) {
+////        [self hideImageViewInCell:NO];
+//        if (self.paningViewInCell != self.currentImageBrowserCell.imageView) {
+//            [self.paningViewInCell removeFromSuperview];
+//        }
+//    }
     
-    [self processQAImageBrowserCellAfterPanFinished];
+    CGRect srcRect = [self getOriginalFrameInTableViewAtIndex:self.currentPosition];
+    self.currentShowingImageView.transform = CGAffineTransformIdentity;
+    [self.tapedSuperView addSubview:self.currentShowingImageView];
+    [self.currentShowingImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(srcRect.origin.y);
+        make.left.mas_equalTo(srcRect.origin.x);
+        make.size.mas_equalTo(srcRect.size);
+    }];
     [self.collectionView removeFromSuperview];
     self.collectionView = nil;
     [self.blackBackgroundView removeFromSuperview];
     self.blackBackgroundView = nil;
     
-    if (self.window) {
-        [self.window removeGestureRecognizer:self.panGestureRecognizer];
-        self.panGestureRecognizer = nil;
-    }
-    else {
-        UIWindow *window = [UIApplication sharedApplication].delegate.window;
-        [window removeGestureRecognizer:self.panGestureRecognizer];
-        self.panGestureRecognizer = nil;
-    }
+    [self removePanGestureRecognizer];
+}
+- (void)backToSrcTableView {
+    CGRect srcRect = self.tapedImageViewRect;
+    self.previousImageBrowserCell.currentShowImageView.transform = CGAffineTransformIdentity;
+    [self.tapedSuperView addSubview:self.previousImageBrowserCell.currentShowImageView];
+    [self.previousImageBrowserCell.currentShowImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(srcRect.origin.y);
+        make.left.mas_equalTo(srcRect.origin.x);
+        make.size.mas_equalTo(srcRect.size);
+    }];
 }
 
 
 #pragma mark - Gesture Actions -
 - (void)singleTapAction:(QAImageBrowserCell *)imageBrowserCell {
-    self.currentImageBrowserCell = imageBrowserCell;
+    [self getCurrentShowingImageView:imageBrowserCell];
     [self quitImageBrowser];
 }
 - (void)longPressAction:(QAImageBrowserCell *)imageBrowserCell {
@@ -305,8 +357,8 @@
             float alpha = 1 - fabs(transPoint.y) / self.windowBounds.size.height;
             alpha = MAX(alpha, 0.2);
             float scale = MAX(alpha, 0.6);
-            CGFloat reduceValue = self.currentImageBrowserCell.imageView.bounds.size.width * (1-scale);
-            reduceValue = ( (locationInView.x - self.currentImageBrowserCell.imageView.center.x ) / (self.currentImageBrowserCell.imageView.bounds.size.width/2) * reduceValue ) / 2;
+            CGFloat reduceValue = self.currentShowingImageView.bounds.size.width * (1-scale);
+            reduceValue = ( (locationInView.x - self.currentShowingImageView.center.x ) / (self.currentShowingImageView.bounds.size.width/2) * reduceValue ) / 2;
             CGAffineTransform translationTransform = CGAffineTransformMakeTranslation(transPoint.x / scale + reduceValue, transPoint.y / scale);
             CGAffineTransform scaleTransform = CGAffineTransformMakeScale(scale, scale);
             CGAffineTransform totalTransform = CGAffineTransformConcat(translationTransform, scaleTransform);
@@ -379,8 +431,8 @@
     NSDictionary *dic =  [self.images objectAtIndex:indexPath.row];
     
     [cell configContent:dic
-           defaultImage:((UIImageView *)self.tapedObject).image
-            contentMode:((UIImageView *)self.tapedObject).contentMode];
+           defaultImage:self.tapedImageView.image
+            contentMode:self.tapedImageView.contentMode];
     
     return cell;
 }
@@ -415,8 +467,11 @@
 
 #pragma mark - UIScrollView Delegate -
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    NSArray *visibleCells = [self.collectionView visibleCells];
-    self.previousImageBrowserCell = [visibleCells firstObject];
+//    NSArray *visibleCells = [self.collectionView visibleCells];
+//    self.previousImageBrowserCell = [visibleCells firstObject];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.currentPosition inSection:0];
+    QAImageBrowserCell *imageBrowserCell = (QAImageBrowserCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+    self.previousImageBrowserCell = imageBrowserCell;
 }
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     if (scrollView.contentOffset.x <= -88) {
@@ -440,6 +495,15 @@
     
     self.currentPosition = currentPage;
     [self.previousImageBrowserCell.scrollView setZoomScale:1 animated:YES];
+    
+    [self checkTapedImageView];
+}
+- (void)checkTapedImageView {
+    if (self.previousImageBrowserCell.imageView.superview == nil) {
+        [self backToSrcTableView];
+        
+        [self.previousImageBrowserCell reprepareShowImageView];
+    }
 }
 
 

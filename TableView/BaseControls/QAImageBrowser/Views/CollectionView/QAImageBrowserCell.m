@@ -10,6 +10,10 @@
 
 @interface QAImageBrowserCell () <UIScrollViewDelegate>
 @property(nonatomic) UIActivityIndicatorView *activityIndicator;
+@property(nonatomic) UITapGestureRecognizer *singleTap;
+@property(nonatomic) UITapGestureRecognizer *doubleTap;
+@property(nonatomic) UITapGestureRecognizer *twoFingerTap;
+@property(nonatomic) UILongPressGestureRecognizer *longPressGesture;
 @end
 
 @implementation QAImageBrowserCell
@@ -27,13 +31,35 @@
     return self;
 }
 
- 
+
 #pragma mark - Public Methods -
+- (void)configImageView:(YYAnimatedImageView *)imageView
+           defaultImage:(UIImage * _Nullable)defaultImage {
+    imageView.clipsToBounds = YES;
+    imageView.contentMode = UIViewContentModeScaleAspectFill;
+    imageView.userInteractionEnabled = YES;
+    [self.scrollView addSubview:imageView];
+    if (defaultImage) {
+        [self updateImageView:imageView withImage:defaultImage];
+    }
+    
+    [self addAllGesturesToView:imageView];   // 添加手势
+    
+    self.currentShowImageView = imageView;
+    
+    [self checkShowingImageView];
+}
+- (void)reprepareShowImageView {
+    [self.scrollView addSubview:self.imageView];
+    [self addAllGesturesToView:self.imageView];   // 添加手势
+    self.currentShowImageView = self.imageView;
+}
 - (void)configContent:(NSDictionary * _Nonnull)dic
          defaultImage:(UIImage * _Nullable)defaultImage
           contentMode:(UIViewContentMode)contentMode {
     NSString *imageUrl = [dic valueForKey:@"url"];
     UIImage *image = [dic valueForKey:@"image"];
+    
     if (image) {
         [self showImage:image contentModel:contentMode];
     }
@@ -55,9 +81,9 @@
         return;
     }
     
-    self.imageView.contentMode = contentModel;
+    self.currentShowImageView.contentMode = contentModel;
     if (defaultImage) {
-        [self updateImageViewWithImage:defaultImage];
+        [self updateImageView:self.currentShowImageView withImage:defaultImage];
     }
     
     [[SDWebImageDownloader sharedDownloader]
@@ -71,13 +97,13 @@
                 NSData *data = [NSData dataWithContentsOfFile:path];
                 YYImage *yyImage = [YYImage imageWithData:data];
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [self updateImageViewWithImage:yyImage];
+                    [self updateImageView:self.currentShowImageView withImage:yyImage];
                 });
             }
             else {
                 UIImage *decodeImage = [ImageProcesser decodeImage:image];  // image的解码
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [self updateImageViewWithImage:decodeImage];
+                    [self updateImageView:self.currentShowImageView withImage:decodeImage];
                 });
             }
         });
@@ -85,7 +111,7 @@
 }
 - (void)showImage:(UIImage * _Nonnull)image contentModel:(UIViewContentMode)contentModel {
     self.imageView.contentMode = contentModel;
-    [self updateImageViewWithImage:image];
+    [self updateImageView:self.currentShowImageView withImage:image];
 }
 
 
@@ -94,38 +120,44 @@
     [self.contentView addSubview:self.scrollView];
     // [self.contentView addSubview:self.activityIndicator];
     [self.scrollView addSubview:self.imageView];
-
-    // 添加手势:
-    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
-    UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
-    UITapGestureRecognizer *twoFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTwoFingerPan:)];
-    UILongPressGestureRecognizer *longGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
-    singleTap.numberOfTapsRequired = 1;
-    singleTap.numberOfTouchesRequired = 1;
-    doubleTap.numberOfTapsRequired = 2;
-    doubleTap.numberOfTouchesRequired = 1;
-    twoFingerTap.numberOfTouchesRequired = 2;
     
-    [self addGestureRecognizer:singleTap];
-    [self.imageView addGestureRecognizer:doubleTap];
-    [self.imageView addGestureRecognizer:twoFingerTap];
-    [self.imageView addGestureRecognizer:longGesture];
-    
-    [singleTap requireGestureRecognizerToFail:doubleTap];   // 处理双击时不响应单击
+    [self addAllGesturesToView:self.imageView];
+    self.currentShowImageView = self.imageView;
 }
-- (void)updateImageViewWithImage:(UIImage *)image {
+- (void)updateImageView:(UIImageView *)imageView withImage:(UIImage *)image {
     if (!image) {
         return;
     }
-    self.imageView.frame = [ImageProcesser caculateOriginImageSize:image];
-    self.imageView.image = image;
+    imageView.frame = [ImageProcesser caculateOriginImageSize:image];
+    imageView.image = image;
     [self.scrollView setZoomScale:1 animated:NO];
     
     CGFloat offsetX = (self.scrollView.bounds.size.width > self.scrollView.contentSize.width) ? (self.scrollView.bounds.size.width - self.scrollView.contentSize.width) * 0.5 : 0.0;
     CGFloat offsetY = (self.scrollView.bounds.size.height > self.scrollView.contentSize.height) ?
     (self.scrollView.bounds.size.height - self.scrollView.contentSize.height) * 0.5 : 0.0;
-    self.imageView.center = CGPointMake(self.scrollView.contentSize.width * 0.5 + offsetX,self.scrollView.contentSize.height * 0.5 + offsetY);
+    imageView.center = CGPointMake(self.scrollView.contentSize.width * 0.5 + offsetX,self.scrollView.contentSize.height * 0.5 + offsetY);
 }
+- (void)checkShowingImageView {
+    if (self.currentShowImageView != self.imageView) {
+        [self.imageView removeFromSuperview];
+    }
+    else if (self.imageView.superview == nil) {
+        [self.scrollView addSubview:self.imageView];
+    }
+}
+//- (void)updateImageViewWithImage:(UIImage *)image {
+//    if (!image) {
+//        return;
+//    }
+//    self.imageView.frame = [ImageProcesser caculateOriginImageSize:image];
+//    self.imageView.image = image;
+//    [self.scrollView setZoomScale:1 animated:NO];
+//
+//    CGFloat offsetX = (self.scrollView.bounds.size.width > self.scrollView.contentSize.width) ? (self.scrollView.bounds.size.width - self.scrollView.contentSize.width) * 0.5 : 0.0;
+//    CGFloat offsetY = (self.scrollView.bounds.size.height > self.scrollView.contentSize.height) ?
+//    (self.scrollView.bounds.size.height - self.scrollView.contentSize.height) * 0.5 : 0.0;
+//    self.imageView.center = CGPointMake(self.scrollView.contentSize.width * 0.5 + offsetX,self.scrollView.contentSize.height * 0.5 + offsetY);
+//}
 - (CGRect)zoomRectWithScale:(CGFloat)scale centerPoint:(CGPoint)center {
     CGRect zoomRect;
 
@@ -136,6 +168,67 @@
     zoomRect.origin.y = center.y - zoomRect.size.height / 2;
 
     return zoomRect;
+}
+- (void)removeAllGestures:(UIImageView *)imageView {
+    if (self.singleTap) {
+       [self removeGestureRecognizer:self.singleTap];
+    }
+    if (self.doubleTap) {
+       [imageView removeGestureRecognizer:self.doubleTap];
+    }
+    if (self.twoFingerTap) {
+       [imageView removeGestureRecognizer:self.twoFingerTap];
+    }
+    if (self.longPressGesture) {
+       [imageView removeGestureRecognizer:self.longPressGesture];
+    }
+}
+- (void)addAllGesturesToView:(UIImageView *)imageView {
+    // 添加手势:
+    if (!self.singleTap) {
+        UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
+        self.singleTap = singleTap;
+    }
+    else {
+        [self removeGestureRecognizer:self.singleTap];
+    }
+    
+    if (!self.doubleTap) {
+        UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
+        self.doubleTap = doubleTap;
+    }
+    else {
+        [imageView removeGestureRecognizer:self.doubleTap];
+    }
+    
+    if (!self.twoFingerTap) {
+            UITapGestureRecognizer *twoFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTwoFingerPan:)];
+        self.twoFingerTap = twoFingerTap;
+    }
+    else {
+        [imageView removeGestureRecognizer:self.twoFingerTap];
+    }
+    
+    if (!self.longPressGesture) {
+        UILongPressGestureRecognizer *longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+        self.longPressGesture = longPressGesture;
+    }
+    else {
+        [imageView removeGestureRecognizer:self.longPressGesture];
+    }
+    
+    self.singleTap.numberOfTapsRequired = 1;
+    self.singleTap.numberOfTouchesRequired = 1;
+    self.doubleTap.numberOfTapsRequired = 2;
+    self.doubleTap.numberOfTouchesRequired = 1;
+    self.twoFingerTap.numberOfTouchesRequired = 2;
+    
+    [self addGestureRecognizer:self.singleTap];
+    [imageView addGestureRecognizer:self.doubleTap];
+    [imageView addGestureRecognizer:self.twoFingerTap];
+    [imageView addGestureRecognizer:self.longPressGesture];
+    
+    [self.singleTap requireGestureRecognizerToFail:self.doubleTap];   // 处理双击时不响应单击
 }
 
 
@@ -194,7 +287,7 @@
 #pragma mark - UIScrollView Delegate -
 // 返回要缩放的UI控件
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
-    return self.imageView;
+    return self.currentShowImageView;
 }
 
 // 让图片保持在屏幕中央、防止图片放大时位置跑偏
@@ -202,7 +295,7 @@
     CGFloat offsetX = (self.scrollView.bounds.size.width > self.scrollView.contentSize.width)?(self.scrollView.bounds.size.width - self.scrollView.contentSize.width) * 0.5 : 0.0;
     CGFloat offsetY = (self.scrollView.bounds.size.height > self.scrollView.contentSize.height)?
     (self.scrollView.bounds.size.height - self.scrollView.contentSize.height) * 0.5 : 0.0;
-    self.imageView.center = CGPointMake(self.scrollView.contentSize.width * 0.5 + offsetX,self.scrollView.contentSize.height * 0.5 + offsetY);
+    self.currentShowImageView.center = CGPointMake(self.scrollView.contentSize.width * 0.5 + offsetX,self.scrollView.contentSize.height * 0.5 + offsetY);
 }
 
 // 重新确定缩放完后的缩放倍数

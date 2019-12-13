@@ -256,7 +256,38 @@
                     startY = baseY + (itemHeight + ContentImageView_gap) * 2;
                 }
                 [contentImageViewDic setValue:[NSValue valueWithCGRect:CGRectMake(startX, startY, itemWidth, itemHeight)] forKey:@"frame"];
-                [contentImageViewDic setValue:[dic valueForKey:@"avatar"] forKey:@"url"];
+                if (i == 0) {
+                    if (j == 0) {
+                        [contentImageViewDic setValue:@"https://upload-images.jianshu.io/upload_images/15705790-16af8ef57a95f35a.jpg" forKey:@"url"];
+                    }
+                    else if (j == 1) {
+                        [contentImageViewDic setValue:@"https://upload-images.jianshu.io/upload_images/14892748-590eb681e5adfa96" forKey:@"url"];
+                    }
+                    else if (j == 2) {
+                        [contentImageViewDic setValue:@"https://upload-images.jianshu.io/upload_images/8666040-e168249b5659f7b1.jpeg" forKey:@"url"];
+                    }
+                    else if (j == 3) {
+                        [contentImageViewDic setValue:@"https://upload-images.jianshu.io/upload_images/17788728-c70af7cb2d08d901.jpg" forKey:@"url"];
+                    }
+                    else if (j == 4) {
+                        [contentImageViewDic setValue:@"https://upload-images.jianshu.io/upload_images/15705790-d7125d495dea81ea" forKey:@"url"];
+                    }
+                    else if (j == 5) {
+                        [contentImageViewDic setValue:@"https://upload-images.jianshu.io/upload_images/6337952-002bf5cec6ebd442.jpg" forKey:@"url"];
+                    }
+                    else if (j == 6) {
+                        [contentImageViewDic setValue:@"https://upload-images.jianshu.io/upload_images/15705790-24e41bb452b274c8" forKey:@"url"];
+                    }
+                    else if (j == 7) {
+                        [contentImageViewDic setValue:@"https://upload-images.jianshu.io/upload_images/11027481-3c3e53c8143024b3.jpg" forKey:@"url"];
+                    }
+                    else if (j == 8) {
+                        [contentImageViewDic setValue:@"https://upload-images.jianshu.io/upload_images/2748485-8caa321e4f1aadf5" forKey:@"url"];
+                    }
+                }
+                else {
+                    [contentImageViewDic setValue:[dic valueForKey:@"avatar"] forKey:@"url"];
+                }
             }
         }
     }
