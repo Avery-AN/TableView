@@ -14,6 +14,8 @@
 @property(nonatomic) UITapGestureRecognizer *doubleTap;
 @property(nonatomic) UITapGestureRecognizer *twoFingerTap;
 @property(nonatomic) UILongPressGestureRecognizer *longPressGesture;
+@property(nonatomic, copy) NSDictionary *dic;
+@property(nonatomic) UIImage *defaultImage;
 @end
 
 @implementation QAImageBrowserCell
@@ -35,35 +37,35 @@
 #pragma mark - Public Methods -
 - (void)configImageView:(YYAnimatedImageView *)imageView
            defaultImage:(UIImage * _Nullable)defaultImage {
-    imageView.clipsToBounds = YES;
-    imageView.contentMode = UIViewContentModeScaleAspectFill;
-    imageView.userInteractionEnabled = YES;
-    [self.scrollView addSubview:imageView];
-    if (defaultImage) {
-        [self updateImageView:imageView withImage:defaultImage];
+    if (self.imageView != imageView) {
+        self.imageView.image = nil;
+        self.imageView.hidden = YES;
+        
+        imageView.clipsToBounds = YES;
+        imageView.contentMode = UIViewContentModeScaleAspectFill;
+        imageView.userInteractionEnabled = YES;
+        self.scrollView.zoomScale = 1;
+        [self.scrollView addSubview:imageView];
+        [self addAllGesturesToView:imageView];
+        self.currentShowImageView = imageView;
+        if (defaultImage) {
+            [self updateImageView:imageView withImage:defaultImage];
+        }
     }
-    
-    [self addAllGesturesToView:imageView];
-    self.currentShowImageView = imageView;
-    [self processShowingImageView];
 }
 - (void)reprepareShowImageView {
-    //[self.scrollView addSubview:self.imageView];
-    //[self addAllGesturesToView:self.imageView];
-    self.imageView.hidden = NO;
     self.currentShowImageView = self.imageView;
+    self.currentShowImageView.hidden = NO;
+    [self showContentWithContentMode:self.imageView.contentMode];
 }
-- (void)configContent:(NSDictionary * _Nonnull)dic
-         defaultImage:(UIImage * _Nullable)defaultImage
-          contentMode:(UIViewContentMode)contentMode {
-    NSString *imageUrl = [dic valueForKey:@"url"];
-    UIImage *image = [dic valueForKey:@"image"];
-    
+- (void)showContentWithContentMode:(UIViewContentMode)contentMode {
+    NSString *imageUrl = [self.dic valueForKey:@"url"];
+    UIImage *image = [self.dic valueForKey:@"image"];
     if (image) {
         [self showImage:image contentModel:contentMode];
     }
     else if (imageUrl) {
-        [self showImageWithUrl:[NSURL URLWithString:imageUrl] defaultImage:defaultImage contentModel:contentMode];
+        [self showImageWithUrl:[NSURL URLWithString:imageUrl] defaultImage:self.defaultImage contentModel:contentMode];
     }
     else {
         NSLog(@"QAImageBrowser入参有误!");
@@ -127,6 +129,10 @@
     if (!image) {
         return;
     }
+    else if (imageView.superview != self.scrollView) {
+        NSLog(@"这里需要优化下下载......");
+        return;
+    }
     imageView.frame = [ImageProcesser caculateOriginImageSize:image];
     imageView.image = image;
     [self.scrollView setZoomScale:1 animated:NO];
@@ -135,20 +141,6 @@
     CGFloat offsetY = (self.scrollView.bounds.size.height > self.scrollView.contentSize.height) ?
     (self.scrollView.bounds.size.height - self.scrollView.contentSize.height) * 0.5 : 0.0;
     imageView.center = CGPointMake(self.scrollView.contentSize.width * 0.5 + offsetX,self.scrollView.contentSize.height * 0.5 + offsetY);
-}
-- (void)processShowingImageView {
-//    if (self.currentShowImageView != self.imageView) {
-//        [self.imageView removeFromSuperview];
-//    }
-//    else if (self.imageView.superview == nil) {
-//        [self.scrollView addSubview:self.imageView];
-//    }
-    if (self.currentShowImageView != self.imageView) {
-        self.imageView.hidden = YES;
-    }
-    else if (self.imageView.hidden) {
-        self.imageView.hidden = NO;
-    }
 }
 - (CGRect)zoomRectWithScale:(CGFloat)scale centerPoint:(CGPoint)center {
     CGRect zoomRect;
@@ -207,6 +199,16 @@
     [imageView addGestureRecognizer:self.longPressGesture];
     
     [self.singleTap requireGestureRecognizerToFail:self.doubleTap];   // 处理双击时不响应单击
+}
+- (void)configContent:(NSDictionary * _Nonnull)dic
+         defaultImage:(UIImage * _Nullable)defaultImage
+          contentMode:(UIViewContentMode)contentMode {
+    self.dic = dic;
+    self.defaultImage = defaultImage;
+    self.imageView.contentMode = contentMode;
+    self.imageView.hidden = NO;
+    
+    [self showContentWithContentMode:contentMode];
 }
 
 
@@ -309,6 +311,7 @@
         _imageView.clipsToBounds = YES;
         _imageView.contentMode = UIViewContentModeScaleAspectFill;
         _imageView.userInteractionEnabled = YES;
+        _imageView.tag = 999;
     }
     return _imageView;
 }

@@ -153,8 +153,22 @@
     
     NSDictionary *dic = [self.showDatas objectAtIndex:indexPath.row];
     [cell showStytle:dic];
+//    if (indexPath.row == 0) {
+//        [self performSelector:@selector(test:) withObject:cell afterDelay:.2];
+//    }
     
     return cell;
+}
+- (void)test:(ScratchablelatexCell *)cell {
+    cell.contentImageView_1.image = [UIImage imageNamed:@"0.jpg"];
+    cell.contentImageView_2.image = [UIImage imageNamed:@"1.JPG"];
+    cell.contentImageView_3.image = [UIImage imageNamed:@"2.jpg"];
+    cell.contentImageView_4.image = [UIImage imageNamed:@"3.jpg"];
+    cell.contentImageView_5.image = [UIImage imageNamed:@"4.jpg"];
+    cell.contentImageView_6.image = [UIImage imageNamed:@"9.JPG"];
+    cell.contentImageView_7.image = [UIImage imageNamed:@"6.jpg"];
+    cell.contentImageView_8.image = [UIImage imageNamed:@"7.JPG"];
+    cell.contentImageView_9.image = [UIImage imageNamed:@"8.jpeg"];
 }
 
 
@@ -167,6 +181,27 @@
     if (!self.imageBrowserManager) {
         self.imageBrowserManager = [[QAImageBrowserManager alloc] init];
     }
+    
+//    NSMutableDictionary *dic = [images objectAtIndex:0];
+//    [dic setValue:[UIImage imageNamed:@"0.jpg"] forKey:@"image"];
+//    dic = [images objectAtIndex:1];
+//    [dic setValue:[UIImage imageNamed:@"1.JPG"] forKey:@"image"];
+//    dic = [images objectAtIndex:2];
+//    [dic setValue:[UIImage imageNamed:@"2.jpg"] forKey:@"image"];
+//    dic = [images objectAtIndex:3];
+//    [dic setValue:[UIImage imageNamed:@"3.jpg"] forKey:@"image"];
+//    dic = [images objectAtIndex:4];
+//    [dic setValue:[UIImage imageNamed:@"4.jpg"] forKey:@"image"];
+//    dic = [images objectAtIndex:5];
+//    [dic setValue:[UIImage imageNamed:@"9.JPG"] forKey:@"image"];
+//    dic = [images objectAtIndex:6];
+//    [dic setValue:[UIImage imageNamed:@"6.jpg"] forKey:@"image"];
+//    dic = [images objectAtIndex:7];
+//    [dic setValue:[UIImage imageNamed:@"7.JPG"] forKey:@"image"];
+//    dic = [images objectAtIndex:8];
+//    [dic setValue:[UIImage imageNamed:@"8.jpeg"] forKey:@"image"];
+    
+    
     
 //    __weak typeof(cell) weakCell = cell;
     [self.imageBrowserManager showImageWithTapedObject:tapedObject
@@ -242,7 +277,7 @@
         
         int fps = floor(_frameCount / rintf(passTime));  // 帧数 = 总帧数/时间
         if (fps - 59 < 0) {
-            NSLog(@"这里的UI有点问题!!! fps: %d",fps);
+            // NSLog(@"这里的UI有点问题!!! fps: %d",fps);
         }
         
         _lastTime = 0;

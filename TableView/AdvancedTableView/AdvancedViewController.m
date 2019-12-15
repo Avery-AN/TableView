@@ -360,7 +360,7 @@
         
         int fps = floor(_frameCount / rintf(passTime));  // 帧数 = 总帧数/时间
         if (fps - 59 < 0) {
-            NSLog(@"这里的UI有点问题!!! fps: %d",fps);
+            // NSLog(@"这里的UI有点问题!!! fps: %d",fps);
         }
         
         _lastTime = 0;

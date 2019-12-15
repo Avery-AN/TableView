@@ -51,6 +51,16 @@
 		BB9F6C9123838BF300F05116 /* AdvancedCell+SelfManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BB9F6C8B23838BF300F05116 /* AdvancedCell+SelfManager.m */; };
 		BB9F6C9223838BF300F05116 /* AdvancedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB9F6C8F23838BF300F05116 /* AdvancedViewController.m */; };
 		BB9F6C9323838BF300F05116 /* AdvancedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BB9F6C9023838BF300F05116 /* AdvancedCell.m */; };
+		BBCD5DC123A50CBA00950B71 /* 9.JPG in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DB723A50CBA00950B71 /* 9.JPG */; };
+		BBCD5DC223A50CBA00950B71 /* 8.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DB823A50CBA00950B71 /* 8.jpeg */; };
+		BBCD5DC323A50CBA00950B71 /* 4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DB923A50CBA00950B71 /* 4.jpg */; };
+		BBCD5DC423A50CBA00950B71 /* 5.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DBA23A50CBA00950B71 /* 5.jpg */; };
+		BBCD5DC523A50CBA00950B71 /* 7.JPG in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DBB23A50CBA00950B71 /* 7.JPG */; };
+		BBCD5DC623A50CBA00950B71 /* 6.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DBC23A50CBA00950B71 /* 6.jpg */; };
+		BBCD5DC723A50CBA00950B71 /* 2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DBD23A50CBA00950B71 /* 2.jpg */; };
+		BBCD5DC823A50CBA00950B71 /* 3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DBE23A50CBA00950B71 /* 3.jpg */; };
+		BBCD5DC923A50CBA00950B71 /* 1.JPG in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DBF23A50CBA00950B71 /* 1.JPG */; };
+		BBCD5DCA23A50CBA00950B71 /* 0.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DC023A50CBA00950B71 /* 0.jpg */; };
 		CD8B8875A520E2CA6C6A9EBB /* Pods_TableView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 175F2055E5583335E94BE624 /* Pods_TableView.framework */; };
 /* End PBXBuildFile section */
 
@@ -138,6 +148,16 @@
 		BB9F6C8F23838BF300F05116 /* AdvancedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdvancedViewController.m; sourceTree = "<group>"; };
 		BB9F6C9023838BF300F05116 /* AdvancedCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdvancedCell.m; sourceTree = "<group>"; };
 		BB9F6C9423838DFF00F05116 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		BBCD5DB723A50CBA00950B71 /* 9.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 9.JPG; sourceTree = "<group>"; };
+		BBCD5DB823A50CBA00950B71 /* 8.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 8.jpeg; sourceTree = "<group>"; };
+		BBCD5DB923A50CBA00950B71 /* 4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 4.jpg; sourceTree = "<group>"; };
+		BBCD5DBA23A50CBA00950B71 /* 5.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 5.jpg; sourceTree = "<group>"; };
+		BBCD5DBB23A50CBA00950B71 /* 7.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 7.JPG; sourceTree = "<group>"; };
+		BBCD5DBC23A50CBA00950B71 /* 6.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 6.jpg; sourceTree = "<group>"; };
+		BBCD5DBD23A50CBA00950B71 /* 2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 2.jpg; sourceTree = "<group>"; };
+		BBCD5DBE23A50CBA00950B71 /* 3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 3.jpg; sourceTree = "<group>"; };
+		BBCD5DBF23A50CBA00950B71 /* 1.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.JPG; sourceTree = "<group>"; };
+		BBCD5DC023A50CBA00950B71 /* 0.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 0.jpg; sourceTree = "<group>"; };
 		E3595C74E821A0641B064A74 /* Pods-TableView.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TableView.release.xcconfig"; path = "Target Support Files/Pods-TableView/Pods-TableView.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -173,6 +193,7 @@
 		BB0666FC238396CE0086CF6F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				BBCD5DB623A50CBA00950B71 /* CellImages */,
 				BB7BECEB23965C2D00688028 /* demo.GIF */,
 				BB58E085238B7CD0005C4EA9 /* EmojiImages */,
 			);
@@ -419,6 +440,23 @@
 			path = AdvancedTableView;
 			sourceTree = "<group>";
 		};
+		BBCD5DB623A50CBA00950B71 /* CellImages */ = {
+			isa = PBXGroup;
+			children = (
+				BBCD5DB723A50CBA00950B71 /* 9.JPG */,
+				BBCD5DB823A50CBA00950B71 /* 8.jpeg */,
+				BBCD5DB923A50CBA00950B71 /* 4.jpg */,
+				BBCD5DBA23A50CBA00950B71 /* 5.jpg */,
+				BBCD5DBB23A50CBA00950B71 /* 7.JPG */,
+				BBCD5DBC23A50CBA00950B71 /* 6.jpg */,
+				BBCD5DBD23A50CBA00950B71 /* 2.jpg */,
+				BBCD5DBE23A50CBA00950B71 /* 3.jpg */,
+				BBCD5DBF23A50CBA00950B71 /* 1.JPG */,
+				BBCD5DC023A50CBA00950B71 /* 0.jpg */,
+			);
+			path = CellImages;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -478,16 +516,26 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BBCD5DC523A50CBA00950B71 /* 7.JPG in Resources */,
+				BBCD5DC123A50CBA00950B71 /* 9.JPG in Resources */,
 				BB9F6C7823838BEB00F05116 /* emoji_default@3x.png in Resources */,
+				BBCD5DC223A50CBA00950B71 /* 8.jpeg in Resources */,
 				BB58E08D238B7CD0005C4EA9 /* nezha@3x.png in Resources */,
+				BBCD5DC723A50CBA00950B71 /* 2.jpg in Resources */,
 				BB7BECD823925B0000688028 /* 默认图@2x.png in Resources */,
 				BB7BECD723925B0000688028 /* 默认图@3x.png in Resources */,
 				BB58E08B238B7CD0005C4EA9 /* emoji偷笑@3x.png in Resources */,
+				BBCD5DC823A50CBA00950B71 /* 3.jpg in Resources */,
 				BB9F6C7923838BEB00F05116 /* emoji_default@2x.png in Resources */,
 				BB58E08C238B7CD0005C4EA9 /* nezha@2x.png in Resources */,
+				BBCD5DC623A50CBA00950B71 /* 6.jpg in Resources */,
 				BB9F6C1523838A7200F05116 /* Assets.xcassets in Resources */,
 				BB58E08A238B7CD0005C4EA9 /* emoji偷笑@2x.png in Resources */,
+				BBCD5DC923A50CBA00950B71 /* 1.JPG in Resources */,
+				BBCD5DCA23A50CBA00950B71 /* 0.jpg in Resources */,
+				BBCD5DC423A50CBA00950B71 /* 5.jpg in Resources */,
 				BB7BECEC23965C2D00688028 /* demo.GIF in Resources */,
+				BBCD5DC323A50CBA00950B71 /* 4.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

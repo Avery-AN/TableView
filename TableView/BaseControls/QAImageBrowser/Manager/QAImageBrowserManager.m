@@ -10,6 +10,8 @@
 #import "QAImageBrowserLayout.h"
 #import "QAImageBrowserCell.h"
 
+static void *CollectionContext = &CollectionContext;
+
 @interface QAImageBrowserManager () <UICollectionViewDelegate, UICollectionViewDataSource>
 @property (nonatomic) QAImageBrowserLayout *layout;
 @property (nonatomic) UICollectionView *collectionView;
@@ -18,16 +20,22 @@
 @property (nonatomic, copy) NSArray *images;
 @property (nonatomic, assign) int currentPosition;
 @property (nonatomic, unsafe_unretained) UIImageView *tapedImageView;
+//@property (nonatomic) UIImageView *tapedImageView;
 @property (nonatomic, unsafe_unretained) UIView *tapedSuperView;
-@property (nonatomic, unsafe_unretained) YYAnimatedImageView *currentShowingImageView;
+@property (nonatomic) YYAnimatedImageView *currentShowingImageView;
 @property (nonatomic) CGRect tapedImageViewRect;
-@property (nonatomic, unsafe_unretained) UIView *paningViewInCell;
+//@property (nonatomic, unsafe_unretained) UIImageView *currentImageViewInSrcCell;   // 在原table中对应的imageView
+//@property (nonatomic) UIImageView *currentImageViewInSrcCell;   // 在原table中对应的imageView
 @property (nonatomic, assign) CGFloat rectOffsetX;
 @property (nonatomic, assign) CGFloat rectOffsetY;
 @property (nonatomic, assign) CGRect windowBounds;
+@property (nonatomic, assign) CGFloat collectionOffsetX_began;
+@property (nonatomic, assign) int collectionOffsetX_tmp;
 @property (nonatomic) UIPanGestureRecognizer *panGestureRecognizer;
-@property (nonatomic, unsafe_unretained) QAImageBrowserCell *previousImageBrowserCell;
+//@property (nonatomic, unsafe_unretained) QAImageBrowserCell *previousImageBrowserCell;
 @property (nonatomic, unsafe_unretained) QAImageBrowserCell *currentImageBrowserCell;
+@property (nonatomic) QAImageBrowserCell *previousImageBrowserCell;
+//@property (nonatomic) QAImageBrowserCell *currentImageBrowserCell;
 @property (nonatomic) CGRect imageViewRectInCell;
 @property (nonatomic) CGAffineTransform imageViewTransformInCell;
 @property (nonatomic, copy) QAImageBrowserFinishedBlock finishedBlock;
@@ -118,13 +126,16 @@
         self.blackBackgroundView.backgroundColor = [UIColor blackColor];
     }
     self.blackBackgroundView.alpha = 0.1;
-    [window addSubview:self.blackBackgroundView];
+    [self.window addSubview:self.blackBackgroundView];
     
     [self addPanGestureRecognizer];
     
     [self.window addSubview:self.collectionView];
-    [self.collectionView setContentOffset:CGPointMake(self.currentPosition*self.collectionView.bounds.size.width, 0)];
+    CGFloat offsetX = self.currentPosition * self.collectionView.bounds.size.width;
+    [self.collectionView setContentOffset:CGPointMake(offsetX, 0)];
     self.collectionView.hidden = YES;
+    self.collectionOffsetX_began = offsetX;
+    [self.collectionView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:CollectionContext];
 }
 - (void)removePanGestureRecognizer {
     if (self.window && self.panGestureRecognizer) {
@@ -144,23 +155,20 @@
     [self.window addGestureRecognizer:self.panGestureRecognizer];
 }
 - (void)showImageBrowserViewWithFrame:(CGRect)newFrame {
-    YYAnimatedImageView *tapedImageView = (YYAnimatedImageView *)self.tapedImageView;
-    
-    CGRect srcRect = tapedImageView.frame;
-    CGRect rect = [tapedImageView convertRect:self.tapedSuperView.frame toView:self.blackBackgroundView];
-    self.rectOffsetX = rect.origin.x - srcRect.origin.x;
-    self.rectOffsetY = rect.origin.y - srcRect.origin.y;
-    tapedImageView.frame = CGRectMake(rect.origin.x, rect.origin.y, srcRect.size.width, srcRect.size.height);
-    [self.window addSubview:tapedImageView];
+    CGRect rect = [self.tapedImageView convertRect:self.tapedSuperView.frame toView:self.blackBackgroundView];
+    self.rectOffsetX = rect.origin.x - self.tapedImageViewRect.origin.x;
+    self.rectOffsetY = rect.origin.y - self.tapedImageViewRect.origin.y;
+    self.tapedImageView.frame = CGRectMake(rect.origin.x, rect.origin.y, self.tapedImageViewRect.size.width, self.tapedImageViewRect.size.height);
+    [self.window addSubview:self.tapedImageView];
     
     [UIView animateWithDuration:.25
                      animations:^{
                          self.blackBackgroundView.alpha = 1;
-                         tapedImageView.frame = newFrame;
+                         self.tapedImageView.frame = newFrame;
     } completion:^(BOOL finished) {
         self.collectionView.hidden = NO;
         [self getCurrentShowingImageView:nil];
-        [self.currentImageBrowserCell configImageView:tapedImageView defaultImage:tapedImageView.image];
+        [self.currentImageBrowserCell configImageView:self.tapedImageView defaultImage:self.tapedImageView.image];
     }];
 }
 - (void)panViewWithTransform:(CGAffineTransform)transform
@@ -177,9 +185,6 @@
             self.blackBackgroundView.alpha = alpha;
         } completion:^(BOOL finished) {
             if (alpha == 1) {
-                if (self.paningViewInCell) {
-                    [self hideImageViewInCell:NO];
-                }
                 [self processQAImageBrowserCellAfterPanCanceled];
             }
         }];
@@ -199,6 +204,8 @@
     self.currentShowingImageView = imageView;
 }
 - (void)processQAImageBrowserCellAfterPanCanceled {
+    [self hideImageViewInCell:NO];
+    
     UIImageView *imageView = self.currentShowingImageView;
     imageView.transform = self.imageViewTransformInCell;
     imageView.frame = self.imageViewRectInCell;
@@ -215,27 +222,23 @@
     [self.window addSubview:self.currentShowingImageView];
 }
 - (void)hideImageViewInCell:(BOOL)hidden {
-    if (hidden == NO) {
-        self.paningViewInCell.hidden = NO;
-    }
-    else {
-        NSDictionary *info = [self.images objectAtIndex:self.currentPosition];
-        CGRect rect = [[info valueForKey:@"frame"] CGRectValue];
-        for (UIView *view in self.tapedSuperView.subviews) {
-            if (view && [view isKindOfClass:[UIImageView class]]) {
-                if (CGRectEqualToRect(view.frame, rect)) {   // NSDecimalNumber
-                    self.paningViewInCell = view;
-                    self.paningViewInCell.hidden = YES;
-                    break;
-                }
-                else if (fabs(view.frame.origin.x - rect.origin.x) <= 1 &&
-                         fabs(view.frame.origin.y - rect.origin.y) <= 1 &&
-                         fabs(view.frame.size.width - rect.size.width) <= 1 &&
-                         fabs(view.frame.size.height - rect.size.height) <= 1) {
-                    self.paningViewInCell = view;
-                    self.paningViewInCell.hidden = YES;
-                    break;
-                }
+    NSDictionary *info = [self.images objectAtIndex:self.currentPosition];
+    CGRect rect = [[info valueForKey:@"frame"] CGRectValue];
+    NSLog(@"imageView.hidden时(--1)、currentPosition: %d; hidden: %d",self.currentPosition,hidden);
+    for (UIImageView *imageView in self.tapedSuperView.subviews) {
+        if (imageView && [imageView isKindOfClass:[UIImageView class]]) {
+            if (CGRectEqualToRect(imageView.frame, rect)) {   // NSDecimalNumber
+                imageView.hidden = hidden;
+                NSLog(@"imageView.hidden时(0)、currentPosition: %d; hidden: %d",self.currentPosition,hidden);
+                break;
+            }
+            else if (fabs(imageView.frame.origin.x - rect.origin.x) <= 1 &&
+                     fabs(imageView.frame.origin.y - rect.origin.y) <= 1 &&
+                     fabs(imageView.frame.size.width - rect.size.width) <= 1 &&
+                     fabs(imageView.frame.size.height - rect.size.height) <= 1) {
+                imageView.hidden = hidden;
+                NSLog(@"imageView.hidden时(1)、currentPosition: %d; hidden: %d",self.currentPosition,hidden);
+                break;
             }
         }
     }
@@ -250,6 +253,8 @@
     return rect;
 }
 - (void)quitImageBrowser {  // 退出图片浏览器
+    [self hideImageViewInCell:YES];
+    
     CGRect srcRect = [self getOriginalFrameInTableViewAtIndex:self.currentPosition];  // 在tableView的cell中的坐标
     CGRect rectInWindow = CGRectZero;
     if (self.currentShowingImageView.superview == self.window) {
@@ -274,6 +279,8 @@
     }];
 }
 - (void)quitImageBrowser_directly {
+    [self hideImageViewInCell:YES];
+    
     [self getCurrentShowingImageView:nil];
     [self removePanGestureRecognizer];
     self.currentImageBrowserCell.userInteractionEnabled = NO;
@@ -290,23 +297,70 @@
     }];
 }
 - (void)cleanupTheBattlefield {
-    CGRect srcRect = [self getOriginalFrameInTableViewAtIndex:self.currentPosition];
-    self.currentShowingImageView.transform = CGAffineTransformIdentity;
-    [self.tapedSuperView addSubview:self.currentShowingImageView];
-    self.currentShowingImageView.frame = srcRect;
-    [self.currentShowingImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(srcRect.origin.y);
-        make.left.mas_equalTo(srcRect.origin.x);
-        make.size.mas_equalTo(srcRect.size);
-    }];
-    if (self.paningViewInCell == self.tapedImageView) {
-        [self hideImageViewInCell:NO];
+    if (self.tapedImageView == self.currentShowingImageView) {   // 退出之前没有滑动collectionView去显示其它的imageView
+        NSLog(@"退出之前没有滑动collectionView去显示另外的imageView -(0)");
+        
+        CGRect srcRect = self.tapedImageViewRect;
+        self.tapedImageView.transform = CGAffineTransformIdentity;
+        [self.tapedSuperView addSubview:self.tapedImageView];
+        self.tapedImageView.frame = srcRect;
+        [self.tapedImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.mas_equalTo(srcRect.origin.x);
+            make.top.mas_equalTo(srcRect.origin.y);
+            make.size.mas_equalTo(srcRect.size);
+        }];
     }
-    else if (self.paningViewInCell) {
-        self.currentShowingImageView.tag = self.paningViewInCell.tag;
-        [self.paningViewInCell removeFromSuperview];
-        self.paningViewInCell = self.currentShowingImageView;
+    else if (self.currentShowingImageView != self.tapedImageView) {
+        NSLog(@"collectionView退出情况 -(1)");
+        
+
+        NSLog(@" ");
+        NSLog(@" ");
+        int count = 0;
+        for (UIImageView *imageView in self.tapedSuperView .subviews) {
+            if ([imageView isKindOfClass:[UIImageView class]] && imageView.bounds.size.width > 50) {
+                NSLog(@"imageView -(0)- frame: %@; tag: %ld; hidden: %d",NSStringFromCGRect(imageView.frame),imageView.tag,imageView.hidden);
+                count++;
+            }
+        }
+        NSLog(@"imageView-count: %d",count);
+        if (count < 9) {
+            NSLog(@" -------> 【【【 出现了BUG 】】】 <-------");
+            NSLog(@" -------> 【【【 出现了BUG 】】】 <-------");
+            NSLog(@" -------> 【【【 出现了BUG 】】】 <-------");
+        }
+        NSLog(@" ");
+        NSLog(@" ");
+        
+        
+        
+        int startPosition = self.collectionOffsetX_began / self.collectionView.bounds.size.width;
+        int difference = self.currentPosition - startPosition;
+        long tag = self.tapedImageView.tag + difference;
+        NSLog(@"删除imageView的时候 self.currentPosition : %d",self.currentPosition);
+        NSLog(@"删除imageView的时候 tag : %ld",tag);
+        for (UIImageView *imageView in self.tapedSuperView.subviews) {
+            if (imageView.tag == tag) {
+                NSLog(@"删除的imageView: %@; hidden: %d",imageView,imageView.hidden);
+            }
+        }
+        [[self.tapedSuperView viewWithTag:tag] removeFromSuperview];
+        self.currentShowingImageView.tag = tag;
+        
+        CGRect srcRect = [self getOriginalFrameInTableViewAtIndex:self.currentPosition];
+        self.currentShowingImageView.transform = CGAffineTransformIdentity;
+        [self.tapedSuperView addSubview:self.currentShowingImageView];
+        self.currentShowingImageView.frame = srcRect;
+        [self.currentShowingImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.mas_equalTo(srcRect.origin.x);
+            make.top.mas_equalTo(srcRect.origin.y);
+            make.size.mas_equalTo(srcRect.size);
+        }];
     }
+    else {
+        NSLog(@"collectionView退出情况 -(2)");
+    }
+    
     if (self.finishedBlock) {
         self.finishedBlock(self.currentPosition, self.currentShowingImageView);
     }
@@ -314,17 +368,42 @@
     self.collectionView = nil;
     [self.blackBackgroundView removeFromSuperview];
     self.blackBackgroundView = nil;
+    
+    NSLog(@" ");
+    NSLog(@" ");
+    int count = 0;
+    for (UIImageView *imageView in self.tapedSuperView .subviews) {
+        if ([imageView isKindOfClass:[UIImageView class]] && imageView.bounds.size.width > 50) {
+            NSLog(@"imageView -(1)- frame: %@; tag: %ld; hidden: %d",NSStringFromCGRect(imageView.frame),imageView.tag,imageView.hidden);
+            count++;
+            
+            if (imageView.hidden) {  // 【 【 勿删 】 】 【 【 勿删 】 】 【 【 勿删 】 】 【 【 勿删 】 】 【 【 勿删 】 】
+                NSLog(@"有点异常了。。。。。。");
+                imageView.hidden = NO;
+            }
+        }
+    }
+    NSLog(@"imageView-count: %d",count);
+    NSLog(@" ");
+    NSLog(@" ");
+}
+- (void)makeTapedImageViewBacktoOriginalStateWhenScroll {
+    if (self.tapedImageView.superview != self.tapedSuperView) {
+        [self makeTapedImageViewBacktoSrcTableView];
+        [self.previousImageBrowserCell reprepareShowImageView];
+    }
 }
 - (void)makeTapedImageViewBacktoSrcTableView {
-    CGRect srcRect = self.tapedImageViewRect;
-    self.previousImageBrowserCell.currentShowImageView.transform = CGAffineTransformIdentity;
-    self.previousImageBrowserCell.currentShowImageView.frame = srcRect;
-    [self.tapedSuperView addSubview:self.previousImageBrowserCell.currentShowImageView];
-    [self.previousImageBrowserCell.currentShowImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(srcRect.origin.y);
-        make.left.mas_equalTo(srcRect.origin.x);
-        make.size.mas_equalTo(srcRect.size);
+    self.tapedImageView.transform = CGAffineTransformIdentity;
+    self.tapedImageView.hidden = NO;
+    [self.tapedSuperView addSubview:self.tapedImageView];
+    self.tapedImageView.frame = self.tapedImageViewRect;
+    [self.tapedImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(self.tapedImageViewRect.origin.x);
+        make.top.mas_equalTo(self.tapedImageViewRect.origin.y);
+        make.size.mas_equalTo(self.tapedImageViewRect.size);
     }];
+    NSLog(@"恢复初始点击的tapedImageView到原cell中");
 }
 
 
@@ -430,7 +509,7 @@
     NSDictionary *dic =  [self.images objectAtIndex:indexPath.row];
     
     [cell configContent:dic
-           defaultImage:self.tapedImageView.image
+           defaultImage:nil
             contentMode:self.tapedImageView.contentMode];
     
     return cell;
@@ -454,13 +533,13 @@
     return YES;
 }
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"   didSelectItem (section - row) :  %ld - %ld", indexPath.section, indexPath.row);
+    NSLog(@"   didSelectItem (section - row) :  %ld - %ld", (long)indexPath.section, (long)indexPath.row);
 }
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
     return YES;
 }
 - (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"   didDeselectItem (section - row) :  %ld - %ld", indexPath.section, indexPath.row);
+    NSLog(@"   didDeselectItem (section - row) :  %ld - %ld", (long)indexPath.section, (long)indexPath.row);
 }
 
 
@@ -469,41 +548,71 @@
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.currentPosition inSection:0];
     QAImageBrowserCell *imageBrowserCell = (QAImageBrowserCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
     self.previousImageBrowserCell = imageBrowserCell;
+    NSLog(@"self.previousImageBrowserCell【 BEGIN 】: %@",self.previousImageBrowserCell);
 }
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    if (scrollView.contentOffset.x <= -88) {
+    if (scrollView.contentOffset.x <= -80) {
         [self quitImageBrowser_directly];
     }
-    else if (ScreenWidth - (scrollView.contentSize.width - scrollView.contentOffset.x) >= 88) {
+    else if (ScreenWidth - (scrollView.contentSize.width - scrollView.contentOffset.x) >= 80) {
         [self quitImageBrowser_directly];
     }
 }
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    CGFloat pageWidth = scrollView.frame.size.width;
-    int currentPage = floor((scrollView.contentOffset.x - pageWidth / 2) / pageWidth) + 1;
-    
-    if (currentPage < 0 || currentPage >= self.images.count) {
-        return;
-    }
-    else if (self.currentPosition == currentPage) {
-        self.previousImageBrowserCell = nil;
-        return;
-    }
-    
-    self.currentPosition = currentPage;
-    [self.previousImageBrowserCell.scrollView setZoomScale:1 animated:YES];
-    
-    [self makeTapedImageViewBacktoOriginalState];  // 将初次点击的imageView进行复位 (CollectionView.cell -> SRCTableView.cell)
 }
-- (void)makeTapedImageViewBacktoOriginalState {
-    if (self.previousImageBrowserCell.imageView.hidden == YES) {
-        NSLog(@" ----------------");
-        self.previousImageBrowserCell.preparing = YES;
-        [self makeTapedImageViewBacktoSrcTableView];
-        [self.previousImageBrowserCell reprepareShowImageView];
-        self.previousImageBrowserCell.preparing = NO;
+
+
+#pragma mark - Observe -
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context {
+    // NSString *oldKey = [change objectForKey:NSKeyValueChangeOldKey];
+    // NSString *newKey = [change objectForKey:NSKeyValueChangeNewKey];
+    if (context == CollectionContext) {
+        CGFloat pageWidth = self.collectionView.bounds.size.width;
+        
+        CGPoint offset = [[change objectForKey:NSKeyValueChangeNewKey] CGPointValue];
+//        CGFloat difference = fabs(offset.x-self.collectionOffsetX_began) - pageWidth;
+//        if (difference >= 0.) {
+//            NSLog(@"self.previousImageBrowserCell: %@",self.previousImageBrowserCell);
+//            NSLog(@"previousImageBrowserCell.imageView: %@",self.previousImageBrowserCell.imageView);
+//            if (self.previousImageBrowserCell && self.previousImageBrowserCell.imageView.hidden) {
+//                [self makeTapedImageViewBacktoOriginalStateWhenScroll];  // 将初次点击的imageView进行复位 (CollectionView.cell -> SRCTableView.cell)
+//            }
+//        }
+        
+        
+        
+        int currentPage = self.currentPosition;
+        self.collectionOffsetX_tmp = self.currentPosition * pageWidth;
+        if (offset.x - self.collectionOffsetX_tmp > 3) {
+            if (fabs(offset.x - self.collectionOffsetX_tmp) - pageWidth >= 0) {
+                currentPage = currentPage + 1;
+            }
+        }
+        else if (offset.x - self.collectionOffsetX_tmp < -3) {
+            if (fabs(offset.x - self.collectionOffsetX_tmp) - pageWidth >= 0) {
+                currentPage = currentPage - 1;
+            }
+        }
+
+        if (currentPage < 0 || currentPage >= self.images.count) {
+            return;
+        }
+        else if (self.currentPosition == currentPage) {
+            return;
+        }
+
+        self.currentPosition = currentPage;
+        if (self.previousImageBrowserCell && self.previousImageBrowserCell.scrollView.zoomScale > 1) {
+            [self.previousImageBrowserCell.scrollView setZoomScale:1 animated:YES];
+        }
+        
+        // 将初次点击的imageView进行复位 (CollectionView.cell -> SRCTableView.cell)
+        [self makeTapedImageViewBacktoOriginalStateWhenScroll];
     }
-}
+};
 
 
 #pragma mark - MemoryWarning -
