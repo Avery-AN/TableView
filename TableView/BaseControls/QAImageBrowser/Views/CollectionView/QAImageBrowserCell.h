@@ -36,6 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
          defaultImage:(UIImage * _Nullable)defaultImage
           contentMode:(UIViewContentMode)contentMode;
 
+- (void)clearALLGesturesInView:(UIView * _Nonnull)view;
+
 @end
 
 NS_ASSUME_NONNULL_END

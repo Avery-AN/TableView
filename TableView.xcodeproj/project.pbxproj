@@ -227,9 +227,9 @@
 			isa = PBXGroup;
 			children = (
 				BB97A75D23A5E2A900A3BA7A /* QAImageBrowserManagerConfig.h */,
-				BB7BECD423925B0000688028 /* Resources */,
 				BB7BECC12390E40C00688028 /* Manager */,
 				BB7BECC72390E40C00688028 /* Views */,
+				BB7BECD423925B0000688028 /* Resources */,
 			);
 			path = QAImageBrowser;
 			sourceTree = "<group>";

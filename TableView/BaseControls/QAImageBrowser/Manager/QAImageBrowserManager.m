@@ -30,7 +30,7 @@ static void *CollectionContext = &CollectionContext;
 @property (nonatomic, assign) int collectionOffsetX_tmp;
 @property (nonatomic) UIPanGestureRecognizer *panGestureRecognizer;
 @property (nonatomic, unsafe_unretained) QAImageBrowserCell *currentImageBrowserCell;
-@property (nonatomic) QAImageBrowserCell *previousImageBrowserCell;
+@property (nonatomic, unsafe_unretained) QAImageBrowserCell *firstImageBrowserCell;
 @property (nonatomic) CGRect imageViewRectInCell;
 @property (nonatomic) CGAffineTransform imageViewTransformInCell;
 @property (nonatomic, copy) QAImageBrowserFinishedBlock finishedBlock;
@@ -173,6 +173,7 @@ static void *CollectionContext = &CollectionContext;
         self.collectionView.hidden = NO;
         [self getCurrentShowingImageView:nil];
         [self.currentImageBrowserCell configImageView:self.tapedImageView defaultImage:self.tapedImageView.image];
+        self.firstImageBrowserCell = self.currentImageBrowserCell;
     }];
 }
 - (void)panViewWithTransform:(CGAffineTransform)transform
@@ -206,6 +207,11 @@ static void *CollectionContext = &CollectionContext;
     
     YYAnimatedImageView *imageView = self.currentImageBrowserCell.currentShowImageView;
     self.currentShowingImageView = imageView;
+}
+- (QAImageBrowserCell *)getPreviousImageBrowserCell:(int)currentPosition {
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:(currentPosition-1) inSection:0];
+    QAImageBrowserCell *imageBrowserCell = (QAImageBrowserCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+    return imageBrowserCell;
 }
 - (void)processQAImageBrowserCellAfterPanCanceled {
     [self hideImageViewInCell:NO];
@@ -300,6 +306,7 @@ static void *CollectionContext = &CollectionContext;
 - (void)cleanupTheBattlefield {
     if (self.tapedImageView == self.currentShowingImageView) {   // 退出之前没有滑动collectionView去显示其它的imageView
         self.tapedImageView.transform = CGAffineTransformIdentity;
+        [self.currentImageBrowserCell clearALLGesturesInView:self.tapedImageView];  // 删除在collectionView中添加的所有手势
         [self.tapedSuperView addSubview:self.tapedImageView];
         
         self.tapedImageView.frame = self.tapedImageViewRect;
@@ -320,6 +327,7 @@ static void *CollectionContext = &CollectionContext;
         
         CGRect srcRectInTable = [self getOriginalFrameInTableViewAtIndex:self.currentPosition];
         self.currentShowingImageView.transform = CGAffineTransformIdentity;
+        [self.currentImageBrowserCell clearALLGesturesInView:self.tapedImageView];  // 删除在collectionView中添加的所有手势
         [self.tapedSuperView addSubview:self.currentShowingImageView];
         
         self.currentShowingImageView.frame = srcRectInTable;
@@ -345,7 +353,7 @@ static void *CollectionContext = &CollectionContext;
 - (void)makeTapedImageViewBacktoOriginalStateWhenScroll {
     if (self.tapedImageView.superview != self.tapedSuperView) {
         [self makeTapedImageViewBacktoSrcTableView];
-        [self.previousImageBrowserCell reprepareShowImageView];
+        [self.firstImageBrowserCell reprepareShowImageView];
     }
 }
 - (void)makeTapedImageViewBacktoSrcTableView {
@@ -501,11 +509,6 @@ static void *CollectionContext = &CollectionContext;
 
 
 #pragma mark - UIScrollView Delegate -
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.currentPosition inSection:0];
-    QAImageBrowserCell *imageBrowserCell = (QAImageBrowserCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-    self.previousImageBrowserCell = imageBrowserCell;
-}
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     if (scrollView.contentOffset.x <= -80) {
         [self quitImageBrowser_directly];
@@ -539,7 +542,7 @@ static void *CollectionContext = &CollectionContext;
                 currentPage = currentPage - 1;
             }
         }
-
+        
         if (currentPage < 0 || currentPage >= self.images.count) {
             return;
         }
@@ -548,12 +551,20 @@ static void *CollectionContext = &CollectionContext;
         }
 
         self.currentPosition = currentPage;
-        if (self.previousImageBrowserCell && self.previousImageBrowserCell.scrollView.zoomScale > 1) {
-            [self.previousImageBrowserCell.scrollView setZoomScale:1 animated:YES];
+        
+        if (fabs(offset.x - self.collectionOffsetX_began) - pageWidth >= 0.) {
+            // 将初次点击的imageView进行复位 (CollectionView.cell -> SRCTableView.cell)
+            /** [self makeTapedImageViewBacktoOriginalStateWhenScroll]; */
+            SEL makeTapedImageViewBacktoOriginalStateWhenScrollSelector = NSSelectorFromString(@"makeTapedImageViewBacktoOriginalStateWhenScroll");
+            IMP makeTapedImageViewBacktoOriginalStateWhenScrollImp = [self methodForSelector:makeTapedImageViewBacktoOriginalStateWhenScrollSelector];
+            void (*makeTapedImageViewBacktoOriginalStateWhenScroll)(id, SEL) = (void *)makeTapedImageViewBacktoOriginalStateWhenScrollImp;
+            makeTapedImageViewBacktoOriginalStateWhenScroll(self, makeTapedImageViewBacktoOriginalStateWhenScrollSelector);
         }
         
-        // 将初次点击的imageView进行复位 (CollectionView.cell -> SRCTableView.cell)
-        [self makeTapedImageViewBacktoOriginalStateWhenScroll];
+        QAImageBrowserCell *previousImageBrowserCell = [self getPreviousImageBrowserCell:self.currentPosition];
+        if (previousImageBrowserCell && previousImageBrowserCell.scrollView.zoomScale > 1) {
+            [previousImageBrowserCell.scrollView setZoomScale:1 animated:YES];
+        }
     }
 };
 

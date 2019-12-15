@@ -41,7 +41,7 @@
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self performSelector:@selector(setFPS) withObject:nil afterDelay:.5];
+    [self performSelector:@selector(setFPS) withObject:nil afterDelay:.2];
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
@@ -151,24 +151,11 @@
     }
     
     
+    
     NSDictionary *dic = [self.showDatas objectAtIndex:indexPath.row];
     [cell showStytle:dic];
-//    if (indexPath.row == 0) {
-//        [self performSelector:@selector(test:) withObject:cell afterDelay:.2];
-//    }
     
     return cell;
-}
-- (void)test:(ScratchablelatexCell *)cell {
-    cell.contentImageView_1.image = [UIImage imageNamed:@"0.jpg"];
-    cell.contentImageView_2.image = [UIImage imageNamed:@"1.JPG"];
-    cell.contentImageView_3.image = [UIImage imageNamed:@"2.jpg"];
-    cell.contentImageView_4.image = [UIImage imageNamed:@"3.jpg"];
-    cell.contentImageView_5.image = [UIImage imageNamed:@"4.jpg"];
-    cell.contentImageView_6.image = [UIImage imageNamed:@"9.JPG"];
-    cell.contentImageView_7.image = [UIImage imageNamed:@"6.jpg"];
-    cell.contentImageView_8.image = [UIImage imageNamed:@"7.JPG"];
-    cell.contentImageView_9.image = [UIImage imageNamed:@"8.jpeg"];
 }
 
 

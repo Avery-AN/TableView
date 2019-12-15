@@ -140,10 +140,17 @@ static BOOL openClipsToBounds = YES;
              }];
              */
         }
-        for (NSUInteger i = contentImageViews.count; i < 9; i++) {
-            UIImageView *contentImageView = [self.contentImageView viewWithTag:DefaultTag_contentImageView+i];
-            contentImageView.hidden = YES;
-        }
+        [self hideImageView:contentImageViews.count];
+    }
+}
+
+
+#pragma mark - Private Method -
+- (void)hideImageView:(NSInteger)startPosition {
+    for (NSUInteger i = startPosition; i < 9; i++) {
+        UIImageView *contentImageView = [self.contentView viewWithTag:DefaultTag_contentImageView+i];
+        contentImageView.image = nil;
+        contentImageView.hidden = YES;
     }
 }
 

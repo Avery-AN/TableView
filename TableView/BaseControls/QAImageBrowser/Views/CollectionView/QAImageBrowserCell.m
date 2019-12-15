@@ -22,7 +22,7 @@
 
 #pragma mark - Life Cycle -
 - (void)dealloc {
-    NSLog(@"   %s",__func__);
+    //NSLog(@"   %s",__func__);
 }
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
@@ -54,9 +54,10 @@
     }
 }
 - (void)reprepareShowImageView {
+    self.imageView.hidden = NO;
     self.currentShowImageView = self.imageView;
-    self.currentShowImageView.hidden = NO;
     [self showContentWithContentMode:self.imageView.contentMode];
+    [self addAllGesturesToView:self.imageView];
 }
 - (void)showContentWithContentMode:(UIViewContentMode)contentMode {
     NSString *imageUrl = [self.dic valueForKey:@"url"];
@@ -71,6 +72,14 @@
         NSLog(@"QAImageBrowser入参有误!");
         return;
     }
+}
+- (void)clearALLGesturesInView:(UIView * _Nonnull)view {
+    if (!view) {
+        return;
+    }
+    [view removeGestureRecognizer:self.doubleTap];
+    [view removeGestureRecognizer:self.twoFingerTap];
+    [view removeGestureRecognizer:self.longPressGesture];
 }
 
 

@@ -44,7 +44,7 @@
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self performSelector:@selector(setFPS) withObject:nil afterDelay:.5];
+    [self performSelector:@selector(setFPS) withObject:nil afterDelay:.2];
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
