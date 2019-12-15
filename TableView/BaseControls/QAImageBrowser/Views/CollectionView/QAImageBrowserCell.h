@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <YYImage/YYImage.h>
 #import "ImageProcesser.h"
+#import "QAImageBrowserManagerConfig.h"
 
 typedef NS_ENUM(NSUInteger, QAImageBrowserViewAction) {
     QAImageBrowserViewAction_SingleTap = 1,

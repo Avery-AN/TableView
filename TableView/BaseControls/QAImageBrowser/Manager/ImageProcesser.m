@@ -14,9 +14,9 @@ static BOOL ProcessBytesPerRowAlignment = YES;  // 是否要进行字节对齐
 
 #pragma mark - Public Methods -
 + (CGRect)caculateOriginImageSize:(UIImage *)image {
-    CGFloat width = ScreenWidth;  // 固定宽度为屏幕的宽度
+    CGFloat width = QAImageBrowserScreenWidth;  // 固定宽度为屏幕的宽度
     CGFloat height = width / (image.size.width / image.size.height);
-    return CGRectMake(0, (ScreenHeight - height)/2., width, height);
+    return CGRectMake(0, (QAImageBrowserScreenHeight - height)/2., width, height);
     
     /*
      CGFloat originImageHeight = [self processImage:image withTargetWidth:ScreenWidth].size.height;

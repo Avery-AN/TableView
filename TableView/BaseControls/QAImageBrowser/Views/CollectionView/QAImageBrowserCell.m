@@ -130,7 +130,6 @@
         return;
     }
     else if (imageView.superview != self.scrollView) {
-        NSLog(@"这里需要优化下下载......");
         return;
     }
     imageView.frame = [ImageProcesser caculateOriginImageSize:image];
@@ -288,7 +287,7 @@
 #pragma mark - Property -
 - (UIScrollView *)scrollView {
     if (!_scrollView) {
-        _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, UIWidth, UIHeight)];
+        _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, QAImageBrowserScreenWidth, QAImageBrowserScreenHeight)];
         _scrollView.delegate = self;
         _scrollView.showsVerticalScrollIndicator = NO;
         _scrollView.showsHorizontalScrollIndicator = NO;

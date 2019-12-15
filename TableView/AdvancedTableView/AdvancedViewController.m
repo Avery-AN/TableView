@@ -179,12 +179,11 @@
                 self.imageBrowserManager = [[QAImageBrowserManager alloc] init];
             }
 
-//            __weak typeof(cell) weakCell = cell;
+            // __weak typeof(cell) weakCell = cell;
             [self.imageBrowserManager showImageWithTapedObject:cell.yyImageView
                                                         images:[NSArray arrayWithObject:dic]
                                                       finished:^(NSInteger index, YYAnimatedImageView * _Nonnull imageView) {
-//                __strong typeof(weakCell) strongCell = weakCell;
-//                strongCell.yyImageView = imageView;
+                // __strong typeof(weakCell) strongCell = weakCell;
             }];
         }
     }

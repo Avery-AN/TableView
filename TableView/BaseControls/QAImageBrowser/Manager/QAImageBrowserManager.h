@@ -8,16 +8,21 @@
 
 #import <Foundation/Foundation.h>
 #import "QAImageBrowserCell.h"
-#import <Masonry.h>
-
-typedef void (^QAImageBrowserFinishedBlock)(NSInteger index, YYAnimatedImageView * _Nonnull imageView);
-
-@interface QAImageBrowserManager : NSObject
+#import "QAImageBrowserManagerConfig.h"
 
 /**
  本DEMO中使用了 SDWebImageManager & YYImage
  */
 
+
+
+/**
+ @param index 退出ImageBrowser时、正在展示的imageView的位置 (是九宫格图片中的第几个)
+ @param imageView 退出ImageBrowser时、正在展示的imageView
+ */
+typedef void (^QAImageBrowserFinishedBlock)(NSInteger index, YYAnimatedImageView * _Nonnull imageView);
+
+@interface QAImageBrowserManager : NSObject
 
 /**
  显示给定的image  (cell中显示的缩略图和此处要准备浏览的大图最好要保持宽高比一致)

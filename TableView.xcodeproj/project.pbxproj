@@ -86,6 +86,7 @@
 		BB7BECE82395022D00688028 /* ImageProcesser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageProcesser.h; sourceTree = "<group>"; };
 		BB7BECE92395022D00688028 /* ImageProcesser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageProcesser.m; sourceTree = "<group>"; };
 		BB7BECEB23965C2D00688028 /* demo.GIF */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = demo.GIF; sourceTree = "<group>"; };
+		BB97A75D23A5E2A900A3BA7A /* QAImageBrowserManagerConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QAImageBrowserManagerConfig.h; sourceTree = "<group>"; };
 		BB9F6C0523838A7000F05116 /* TableView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TableView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB9F6C0823838A7000F05116 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		BB9F6C0923838A7000F05116 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -225,6 +226,7 @@
 		BB7BECC02390E40C00688028 /* QAImageBrowser */ = {
 			isa = PBXGroup;
 			children = (
+				BB97A75D23A5E2A900A3BA7A /* QAImageBrowserManagerConfig.h */,
 				BB7BECD423925B0000688028 /* Resources */,
 				BB7BECC12390E40C00688028 /* Manager */,
 				BB7BECC72390E40C00688028 /* Views */,

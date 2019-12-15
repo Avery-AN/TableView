@@ -131,11 +131,14 @@ static BOOL openClipsToBounds = YES;
             contentImageView.hidden = NO;
             NSDictionary *dic = [contentImageViews objectAtIndex:i];
             CGRect rect = [[dic valueForKey:@"frame"] CGRectValue];
-            [contentImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
-                make.top.mas_equalTo(rect.origin.y);
-                make.left.mas_equalTo(rect.origin.x);
-                make.size.mas_equalTo(rect.size);
-            }];
+            contentImageView.frame = rect;
+            /*
+             [contentImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
+                 make.top.mas_equalTo(rect.origin.y);
+                 make.left.mas_equalTo(rect.origin.x);
+                 make.size.mas_equalTo(rect.size);
+             }];
+             */
         }
         for (NSUInteger i = contentImageViews.count; i < 9; i++) {
             UIImageView *contentImageView = [self.contentImageView viewWithTag:DefaultTag_contentImageView+i];

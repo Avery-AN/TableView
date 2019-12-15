@@ -7,9 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
-#define ScreenWidth     [UIScreen mainScreen].bounds.size.width
-#define ScreenHeight    [UIScreen mainScreen].bounds.size.height
+#import "QAImageBrowserManagerConfig.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

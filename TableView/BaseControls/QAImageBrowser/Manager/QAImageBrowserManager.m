@@ -19,23 +19,18 @@ static void *CollectionContext = &CollectionContext;
 @property (nonatomic) UIView *blackBackgroundView;
 @property (nonatomic, copy) NSArray *images;
 @property (nonatomic, assign) int currentPosition;
-@property (nonatomic, unsafe_unretained) UIImageView *tapedImageView;
-//@property (nonatomic) UIImageView *tapedImageView;
+@property (nonatomic, unsafe_unretained) YYAnimatedImageView *tapedImageView;
 @property (nonatomic, unsafe_unretained) UIView *tapedSuperView;
 @property (nonatomic) YYAnimatedImageView *currentShowingImageView;
 @property (nonatomic) CGRect tapedImageViewRect;
-//@property (nonatomic, unsafe_unretained) UIImageView *currentImageViewInSrcCell;   // 在原table中对应的imageView
-//@property (nonatomic) UIImageView *currentImageViewInSrcCell;   // 在原table中对应的imageView
 @property (nonatomic, assign) CGFloat rectOffsetX;
 @property (nonatomic, assign) CGFloat rectOffsetY;
 @property (nonatomic, assign) CGRect windowBounds;
 @property (nonatomic, assign) CGFloat collectionOffsetX_began;
 @property (nonatomic, assign) int collectionOffsetX_tmp;
 @property (nonatomic) UIPanGestureRecognizer *panGestureRecognizer;
-//@property (nonatomic, unsafe_unretained) QAImageBrowserCell *previousImageBrowserCell;
 @property (nonatomic, unsafe_unretained) QAImageBrowserCell *currentImageBrowserCell;
 @property (nonatomic) QAImageBrowserCell *previousImageBrowserCell;
-//@property (nonatomic) QAImageBrowserCell *currentImageBrowserCell;
 @property (nonatomic) CGRect imageViewRectInCell;
 @property (nonatomic) CGAffineTransform imageViewTransformInCell;
 @property (nonatomic, copy) QAImageBrowserFinishedBlock finishedBlock;
@@ -132,9 +127,9 @@ static void *CollectionContext = &CollectionContext;
     
     [self.window addSubview:self.collectionView];
     CGFloat offsetX = self.currentPosition * self.collectionView.bounds.size.width;
+    self.collectionOffsetX_began = offsetX;
     [self.collectionView setContentOffset:CGPointMake(offsetX, 0)];
     self.collectionView.hidden = YES;
-    self.collectionOffsetX_began = offsetX;
     [self.collectionView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:CollectionContext];
 }
 - (void)removePanGestureRecognizer {
@@ -163,8 +158,17 @@ static void *CollectionContext = &CollectionContext;
     
     [UIView animateWithDuration:.25
                      animations:^{
-                         self.blackBackgroundView.alpha = 1;
-                         self.tapedImageView.frame = newFrame;
+        self.blackBackgroundView.alpha = 1;
+        self.tapedImageView.frame = newFrame;
+        
+        /*
+         [self.tapedImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
+             make.left.mas_equalTo(newFrame.origin.x);
+             make.top.mas_equalTo(newFrame.origin.y);
+             make.size.mas_equalTo(newFrame.size);
+         }];
+         [self.tapedImageView.superview layoutIfNeeded];
+         */
     } completion:^(BOOL finished) {
         self.collectionView.hidden = NO;
         [self getCurrentShowingImageView:nil];
@@ -224,12 +228,10 @@ static void *CollectionContext = &CollectionContext;
 - (void)hideImageViewInCell:(BOOL)hidden {
     NSDictionary *info = [self.images objectAtIndex:self.currentPosition];
     CGRect rect = [[info valueForKey:@"frame"] CGRectValue];
-    NSLog(@"imageView.hidden时(--1)、currentPosition: %d; hidden: %d",self.currentPosition,hidden);
     for (UIImageView *imageView in self.tapedSuperView.subviews) {
         if (imageView && [imageView isKindOfClass:[UIImageView class]]) {
             if (CGRectEqualToRect(imageView.frame, rect)) {   // NSDecimalNumber
                 imageView.hidden = hidden;
-                NSLog(@"imageView.hidden时(0)、currentPosition: %d; hidden: %d",self.currentPosition,hidden);
                 break;
             }
             else if (fabs(imageView.frame.origin.x - rect.origin.x) <= 1 &&
@@ -237,7 +239,6 @@ static void *CollectionContext = &CollectionContext;
                      fabs(imageView.frame.size.width - rect.size.width) <= 1 &&
                      fabs(imageView.frame.size.height - rect.size.height) <= 1) {
                 imageView.hidden = hidden;
-                NSLog(@"imageView.hidden时(1)、currentPosition: %d; hidden: %d",self.currentPosition,hidden);
                 break;
             }
         }
@@ -255,13 +256,13 @@ static void *CollectionContext = &CollectionContext;
 - (void)quitImageBrowser {  // 退出图片浏览器
     [self hideImageViewInCell:YES];
     
-    CGRect srcRect = [self getOriginalFrameInTableViewAtIndex:self.currentPosition];  // 在tableView的cell中的坐标
+    CGRect srcRectInTable = [self getOriginalFrameInTableViewAtIndex:self.currentPosition];  // 在tableView的cell中的坐标
     CGRect rectInWindow = CGRectZero;
     if (self.currentShowingImageView.superview == self.window) {
-        rectInWindow = CGRectMake(srcRect.origin.x + self.rectOffsetX, srcRect.origin.y + self.rectOffsetY, srcRect.size.width, srcRect.size.height);
+        rectInWindow = CGRectMake(srcRectInTable.origin.x + self.rectOffsetX, srcRectInTable.origin.y + self.rectOffsetY, srcRectInTable.size.width, srcRectInTable.size.height);
     }
     else {
-        rectInWindow = CGRectMake(srcRect.origin.x + self.rectOffsetX + self.currentImageBrowserCell.scrollView.contentOffset.x, srcRect.origin.y + self.rectOffsetY + self.currentImageBrowserCell.scrollView.contentOffset.y, srcRect.size.width, srcRect.size.height);
+        rectInWindow = CGRectMake(srcRectInTable.origin.x + self.rectOffsetX + self.currentImageBrowserCell.scrollView.contentOffset.x, srcRectInTable.origin.y + self.rectOffsetY + self.currentImageBrowserCell.scrollView.contentOffset.y, srcRectInTable.size.width, srcRectInTable.size.height);
     }
     [self moveView:self.currentImageBrowserCell toFrame:rectInWindow];
 }
@@ -270,7 +271,7 @@ static void *CollectionContext = &CollectionContext;
     imageBrowserCell.userInteractionEnabled = NO;
     
     [UIView animateWithDuration:.2
-    animations:^{
+                     animations:^{
         self.blackBackgroundView.alpha = 0;
         self.currentShowingImageView.frame = rectInWindow;
     }
@@ -298,67 +299,39 @@ static void *CollectionContext = &CollectionContext;
 }
 - (void)cleanupTheBattlefield {
     if (self.tapedImageView == self.currentShowingImageView) {   // 退出之前没有滑动collectionView去显示其它的imageView
-        NSLog(@"退出之前没有滑动collectionView去显示另外的imageView -(0)");
-        
-        CGRect srcRect = self.tapedImageViewRect;
         self.tapedImageView.transform = CGAffineTransformIdentity;
         [self.tapedSuperView addSubview:self.tapedImageView];
-        self.tapedImageView.frame = srcRect;
-        [self.tapedImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.mas_equalTo(srcRect.origin.x);
-            make.top.mas_equalTo(srcRect.origin.y);
-            make.size.mas_equalTo(srcRect.size);
-        }];
+        
+        self.tapedImageView.frame = self.tapedImageViewRect;
+        /*
+         [self.tapedImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
+             make.left.mas_equalTo(self.tapedImageViewRect.origin.x);
+             make.top.mas_equalTo(self.tapedImageViewRect.origin.y);
+             make.size.mas_equalTo(self.tapedImageViewRect.size);
+         }];
+         */
     }
     else if (self.currentShowingImageView != self.tapedImageView) {
-        NSLog(@"collectionView退出情况 -(1)");
-        
-
-        NSLog(@" ");
-        NSLog(@" ");
-        int count = 0;
-        for (UIImageView *imageView in self.tapedSuperView .subviews) {
-            if ([imageView isKindOfClass:[UIImageView class]] && imageView.bounds.size.width > 50) {
-                NSLog(@"imageView -(0)- frame: %@; tag: %ld; hidden: %d",NSStringFromCGRect(imageView.frame),imageView.tag,imageView.hidden);
-                count++;
-            }
-        }
-        NSLog(@"imageView-count: %d",count);
-        if (count < 9) {
-            NSLog(@" -------> 【【【 出现了BUG 】】】 <-------");
-            NSLog(@" -------> 【【【 出现了BUG 】】】 <-------");
-            NSLog(@" -------> 【【【 出现了BUG 】】】 <-------");
-        }
-        NSLog(@" ");
-        NSLog(@" ");
-        
-        
-        
         int startPosition = self.collectionOffsetX_began / self.collectionView.bounds.size.width;
         int difference = self.currentPosition - startPosition;
         long tag = self.tapedImageView.tag + difference;
-        NSLog(@"删除imageView的时候 self.currentPosition : %d",self.currentPosition);
-        NSLog(@"删除imageView的时候 tag : %ld",tag);
-        for (UIImageView *imageView in self.tapedSuperView.subviews) {
-            if (imageView.tag == tag) {
-                NSLog(@"删除的imageView: %@; hidden: %d",imageView,imageView.hidden);
-            }
-        }
         [[self.tapedSuperView viewWithTag:tag] removeFromSuperview];
         self.currentShowingImageView.tag = tag;
         
-        CGRect srcRect = [self getOriginalFrameInTableViewAtIndex:self.currentPosition];
+        CGRect srcRectInTable = [self getOriginalFrameInTableViewAtIndex:self.currentPosition];
         self.currentShowingImageView.transform = CGAffineTransformIdentity;
         [self.tapedSuperView addSubview:self.currentShowingImageView];
-        self.currentShowingImageView.frame = srcRect;
-        [self.currentShowingImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.mas_equalTo(srcRect.origin.x);
-            make.top.mas_equalTo(srcRect.origin.y);
-            make.size.mas_equalTo(srcRect.size);
-        }];
+        
+        self.currentShowingImageView.frame = srcRectInTable;
+        /*
+         [self.currentShowingImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
+             make.left.mas_equalTo(srcRectInTable.origin.x);
+             make.top.mas_equalTo(srcRectInTable.origin.y);
+             make.size.mas_equalTo(srcRectInTable.size);
+         }];
+         */
     }
     else {
-        NSLog(@"collectionView退出情况 -(2)");
     }
     
     if (self.finishedBlock) {
@@ -368,24 +341,6 @@ static void *CollectionContext = &CollectionContext;
     self.collectionView = nil;
     [self.blackBackgroundView removeFromSuperview];
     self.blackBackgroundView = nil;
-    
-    NSLog(@" ");
-    NSLog(@" ");
-    int count = 0;
-    for (UIImageView *imageView in self.tapedSuperView .subviews) {
-        if ([imageView isKindOfClass:[UIImageView class]] && imageView.bounds.size.width > 50) {
-            NSLog(@"imageView -(1)- frame: %@; tag: %ld; hidden: %d",NSStringFromCGRect(imageView.frame),imageView.tag,imageView.hidden);
-            count++;
-            
-            if (imageView.hidden) {  // 【 【 勿删 】 】 【 【 勿删 】 】 【 【 勿删 】 】 【 【 勿删 】 】 【 【 勿删 】 】
-                NSLog(@"有点异常了。。。。。。");
-                imageView.hidden = NO;
-            }
-        }
-    }
-    NSLog(@"imageView-count: %d",count);
-    NSLog(@" ");
-    NSLog(@" ");
 }
 - (void)makeTapedImageViewBacktoOriginalStateWhenScroll {
     if (self.tapedImageView.superview != self.tapedSuperView) {
@@ -397,13 +352,15 @@ static void *CollectionContext = &CollectionContext;
     self.tapedImageView.transform = CGAffineTransformIdentity;
     self.tapedImageView.hidden = NO;
     [self.tapedSuperView addSubview:self.tapedImageView];
+    
     self.tapedImageView.frame = self.tapedImageViewRect;
-    [self.tapedImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(self.tapedImageViewRect.origin.x);
-        make.top.mas_equalTo(self.tapedImageViewRect.origin.y);
-        make.size.mas_equalTo(self.tapedImageViewRect.size);
-    }];
-    NSLog(@"恢复初始点击的tapedImageView到原cell中");
+    /*
+     [self.tapedImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
+         make.left.mas_equalTo(self.tapedImageViewRect.origin.x);
+         make.top.mas_equalTo(self.tapedImageViewRect.origin.y);
+         make.size.mas_equalTo(self.tapedImageViewRect.size);
+     }];
+     */
 }
 
 
@@ -548,13 +505,12 @@ static void *CollectionContext = &CollectionContext;
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.currentPosition inSection:0];
     QAImageBrowserCell *imageBrowserCell = (QAImageBrowserCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
     self.previousImageBrowserCell = imageBrowserCell;
-    NSLog(@"self.previousImageBrowserCell【 BEGIN 】: %@",self.previousImageBrowserCell);
 }
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     if (scrollView.contentOffset.x <= -80) {
         [self quitImageBrowser_directly];
     }
-    else if (ScreenWidth - (scrollView.contentSize.width - scrollView.contentOffset.x) >= 80) {
+    else if (QAImageBrowserScreenWidth - (scrollView.contentSize.width - scrollView.contentOffset.x) >= 80) {
         [self quitImageBrowser_directly];
     }
 }
@@ -566,23 +522,10 @@ static void *CollectionContext = &CollectionContext;
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
                         change:(NSDictionary *)change
-                       context:(void *)context {
-    // NSString *oldKey = [change objectForKey:NSKeyValueChangeOldKey];
-    // NSString *newKey = [change objectForKey:NSKeyValueChangeNewKey];
+                       context:(void *)context {  // NSKeyValueChangeOldKey & NSKeyValueChangeNewKey
     if (context == CollectionContext) {
         CGFloat pageWidth = self.collectionView.bounds.size.width;
-        
         CGPoint offset = [[change objectForKey:NSKeyValueChangeNewKey] CGPointValue];
-//        CGFloat difference = fabs(offset.x-self.collectionOffsetX_began) - pageWidth;
-//        if (difference >= 0.) {
-//            NSLog(@"self.previousImageBrowserCell: %@",self.previousImageBrowserCell);
-//            NSLog(@"previousImageBrowserCell.imageView: %@",self.previousImageBrowserCell.imageView);
-//            if (self.previousImageBrowserCell && self.previousImageBrowserCell.imageView.hidden) {
-//                [self makeTapedImageViewBacktoOriginalStateWhenScroll];  // 将初次点击的imageView进行复位 (CollectionView.cell -> SRCTableView.cell)
-//            }
-//        }
-        
-        
         
         int currentPage = self.currentPosition;
         self.collectionOffsetX_tmp = self.currentPosition * pageWidth;
@@ -638,8 +581,8 @@ static void *CollectionContext = &CollectionContext;
         NSInteger gap_lineSpace = 0;
         
         _layout = [[QAImageBrowserLayout alloc] init];
-        _layout.itemWidth = UIWidth;
-        _layout.itemHeight = UIHeight;
+        _layout.itemWidth = QAImageBrowserScreenWidth;
+        _layout.itemHeight = QAImageBrowserScreenHeight;
         _layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
         _layout.itemCountsPerLine = itemCount;
         _layout.leftSpace = gap_left;
@@ -653,7 +596,7 @@ static void *CollectionContext = &CollectionContext;
 }
 - (UICollectionView *)collectionView {
     if (!_collectionView) {
-        _collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, UIWidth+PagesGap, UIHeight) collectionViewLayout:self.layout];
+        _collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, QAImageBrowserScreenWidth+PagesGap, QAImageBrowserScreenHeight) collectionViewLayout:self.layout];
         
         if (@available(iOS 11.0, *)) {
             if ([_collectionView respondsToSelector:@selector(setContentInsetAdjustmentBehavior:)]) {

@@ -182,45 +182,11 @@
         self.imageBrowserManager = [[QAImageBrowserManager alloc] init];
     }
     
-//    NSMutableDictionary *dic = [images objectAtIndex:0];
-//    [dic setValue:[UIImage imageNamed:@"0.jpg"] forKey:@"image"];
-//    dic = [images objectAtIndex:1];
-//    [dic setValue:[UIImage imageNamed:@"1.JPG"] forKey:@"image"];
-//    dic = [images objectAtIndex:2];
-//    [dic setValue:[UIImage imageNamed:@"2.jpg"] forKey:@"image"];
-//    dic = [images objectAtIndex:3];
-//    [dic setValue:[UIImage imageNamed:@"3.jpg"] forKey:@"image"];
-//    dic = [images objectAtIndex:4];
-//    [dic setValue:[UIImage imageNamed:@"4.jpg"] forKey:@"image"];
-//    dic = [images objectAtIndex:5];
-//    [dic setValue:[UIImage imageNamed:@"9.JPG"] forKey:@"image"];
-//    dic = [images objectAtIndex:6];
-//    [dic setValue:[UIImage imageNamed:@"6.jpg"] forKey:@"image"];
-//    dic = [images objectAtIndex:7];
-//    [dic setValue:[UIImage imageNamed:@"7.JPG"] forKey:@"image"];
-//    dic = [images objectAtIndex:8];
-//    [dic setValue:[UIImage imageNamed:@"8.jpeg"] forKey:@"image"];
-    
-    
-    
-//    __weak typeof(cell) weakCell = cell;
+    // __weak typeof(cell) weakCell = cell;
     [self.imageBrowserManager showImageWithTapedObject:tapedObject
                                                 images:images
                                               finished:^(NSInteger index, YYAnimatedImageView * _Nonnull imageView) {
-//        __strong typeof(weakCell) strongCell = weakCell;
-//        NSInteger tag = (index+DefaultTag_contentImageView);
-//        UIImageView *imageViewInCell = [strongCell.contentView viewWithTag:tag];
-//        if (imageView == imageViewInCell) {
-//            imageView.hidden = NO;
-//        }
-//        else if (imageViewInCell) {
-//            [imageViewInCell removeFromSuperview];
-//            imageViewInCell = imageView;
-//            imageView.tag = tag;
-//        }
-//        else {
-//            NSLog(@"卧槽 无情 ~~~~~~");
-//        }
+        // __strong typeof(weakCell) strongCell = weakCell;
     }];
 }
 

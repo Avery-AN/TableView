@@ -162,11 +162,14 @@ typedef union {
     if ([[dic allKeys] indexOfObject:NSStringFromSelector(@selector(avatar))] != NSNotFound) {
         self.avatar.hidden = NO;
         CGRect rect = [[dic valueForKey:@"avatar-frame"] CGRectValue];
-        [self.avatar mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.top.mas_equalTo(rect.origin.y);
-            make.left.mas_equalTo(rect.origin.x);
-            make.size.mas_equalTo(rect.size);
-        }];
+        self.avatar.frame = rect;
+        /*
+         [self.avatar mas_remakeConstraints:^(MASConstraintMaker *make) {
+             make.top.mas_equalTo(rect.origin.y);
+             make.left.mas_equalTo(rect.origin.x);
+             make.size.mas_equalTo(rect.size);
+         }];
+         */
     }
     else {
         self.avatar.hidden = YES;
@@ -176,11 +179,14 @@ typedef union {
         CGRect rect = [[dic valueForKey:@"contentImageView-frame"] CGRectValue];
         
         self.yyImageView.hidden = NO;
-        [self.yyImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.top.mas_equalTo(rect.origin.y);
-            make.left.mas_equalTo(rect.origin.x);
-            make.size.mas_equalTo(rect.size);
-        }];
+        self.yyImageView.frame = rect;
+        /*
+         [self.yyImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
+             make.top.mas_equalTo(rect.origin.y);
+             make.left.mas_equalTo(rect.origin.x);
+             make.size.mas_equalTo(rect.size);
+         }];
+         */
         
         
 //        NSString *imageUrl = [dic valueForKey:@"contentImageView"];
@@ -229,11 +235,14 @@ typedef union {
     if ([[dic allKeys] indexOfObject:NSStringFromSelector(@selector(content))] != NSNotFound) {
         self.content.hidden = NO;
         CGRect rect = [[dic valueForKey:@"content-frame"] CGRectValue];
-        [self.content mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.top.mas_equalTo(rect.origin.y);
-            make.left.mas_equalTo(rect.origin.x);
-            make.size.mas_equalTo(rect.size);
-        }];
+        self.content.frame = rect;
+        /*
+         [self.content mas_remakeConstraints:^(MASConstraintMaker *make) {
+             make.top.mas_equalTo(rect.origin.y);
+             make.left.mas_equalTo(rect.origin.x);
+             make.size.mas_equalTo(rect.size);
+         }];
+         */
     }
     else {
         self.content.hidden = YES;
