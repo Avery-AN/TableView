@@ -41,6 +41,7 @@ static void *CollectionContext = &CollectionContext;
 #pragma mark - Life Cycle -
 - (void)dealloc {
     NSLog(@"  %s",__func__);
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 - (instancetype)init {
     if (self = [super init]) {
@@ -55,7 +56,7 @@ static void *CollectionContext = &CollectionContext;
 #pragma mark - Public Methods -
 - (void)showImageWithTapedObject:(UIImageView * _Nonnull)tapedImageView
                           images:(NSArray * _Nonnull)images
-                          finished:(QAImageBrowserFinishedBlock _Nullable)finishedBlock {
+                        finished:(QAImageBrowserFinishedBlock _Nullable)finishedBlock {
     if (!tapedImageView || !images || ![images isKindOfClass:[NSArray class]] || images.count == 0) {
         NSLog(@"  tapedImageView: %@ 【 WTF 】!!!!!!!!", tapedImageView);
         return;
@@ -65,7 +66,7 @@ static void *CollectionContext = &CollectionContext;
     }
     
     self.finishedBlock = finishedBlock;
-    self.tapedImageView = tapedImageView;
+    self.tapedImageView = (YYAnimatedImageView *)tapedImageView;
     self.images = images;
     self.currentPosition = [self getTapedPosition];
     [self createImageBrowserBasicView];
@@ -209,7 +210,11 @@ static void *CollectionContext = &CollectionContext;
     self.currentShowingImageView = imageView;
 }
 - (QAImageBrowserCell *)getPreviousImageBrowserCell:(int)currentPosition {
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:(currentPosition-1) inSection:0];
+    int previousPosition = currentPosition - 1;
+    if (previousPosition < 0 || previousPosition >= self.images.count) {
+        return nil;
+    }
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:previousPosition inSection:0];
     QAImageBrowserCell *imageBrowserCell = (QAImageBrowserCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
     return imageBrowserCell;
 }
@@ -342,13 +347,15 @@ static void *CollectionContext = &CollectionContext;
     else {
     }
     
-    if (self.finishedBlock) {
-        self.finishedBlock(self.currentPosition, self.currentShowingImageView);
-    }
+    [self.collectionView removeObserver:self forKeyPath:@"contentOffset"];
     [self.collectionView removeFromSuperview];
     self.collectionView = nil;
     [self.blackBackgroundView removeFromSuperview];
     self.blackBackgroundView = nil;
+    
+    if (self.finishedBlock) {
+        self.finishedBlock(self.currentPosition, self.currentShowingImageView);
+    }
 }
 - (void)makeTapedImageViewBacktoOriginalStateWhenScroll {
     if (self.tapedImageView.superview != self.tapedSuperView) {

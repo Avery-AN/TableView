@@ -33,6 +33,6 @@ typedef void (^QAImageBrowserFinishedBlock)(NSInteger index, YYAnimatedImageView
  */
 - (void)showImageWithTapedObject:(UIImageView * _Nonnull)tapedImageView
                           images:(NSArray * _Nonnull)images
-                          finished:(QAImageBrowserFinishedBlock _Nullable)finishedBlock;
+                        finished:(QAImageBrowserFinishedBlock _Nullable)finishedBlock;
 
 @end
