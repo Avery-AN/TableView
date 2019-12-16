@@ -9,6 +9,8 @@
 #import "QAImageBrowserManager.h"
 #import "QAImageBrowserLayout.h"
 #import "QAImageBrowserCell.h"
+#import "QAImageBroeserDownloadManager.h"
+#import <SDWebImageManager.h>
 
 static void *CollectionContext = &CollectionContext;
 
@@ -18,6 +20,8 @@ static void *CollectionContext = &CollectionContext;
 @property (nonatomic, unsafe_unretained) UIWindow *window;
 @property (nonatomic) UIView *blackBackgroundView;
 @property (nonatomic, copy) NSArray *images;
+@property (nonatomic) QAImageBroeserDownloadManager *imageDownloadManager;
+@property (nonatomic) NSMutableArray *preloadImages;
 @property (nonatomic, assign) int currentPosition;
 @property (nonatomic, unsafe_unretained) YYAnimatedImageView *tapedImageView;
 @property (nonatomic, unsafe_unretained) UIView *tapedSuperView;
@@ -65,6 +69,9 @@ static void *CollectionContext = &CollectionContext;
         return;
     }
     
+    if (!self.imageDownloadManager) {
+        self.imageDownloadManager = [[QAImageBroeserDownloadManager alloc] init];
+    }
     self.finishedBlock = finishedBlock;
     self.tapedImageView = (YYAnimatedImageView *)tapedImageView;
     self.images = images;
@@ -108,7 +115,7 @@ static void *CollectionContext = &CollectionContext;
     UIImage *image = self.tapedImageView.image;  // 缩略图的image
     CGRect rect = CGRectZero;
     if (image) {
-        rect = [ImageProcesser caculateOriginImageSize:image];
+        rect = [QAImageProcesser caculateOriginImageSize:image];
     }
     return rect;
 }
@@ -360,7 +367,7 @@ static void *CollectionContext = &CollectionContext;
 - (void)makeTapedImageViewBacktoOriginalStateWhenScroll {
     if (self.tapedImageView.superview != self.tapedSuperView) {
         [self makeTapedImageViewBacktoSrcTableView];
-        [self.firstImageBrowserCell reprepareShowImageView];
+        [self.firstImageBrowserCell reprepareShowImageViewWithImageDownloadManager:self.imageDownloadManager];
     }
 }
 - (void)makeTapedImageViewBacktoSrcTableView {
@@ -376,6 +383,31 @@ static void *CollectionContext = &CollectionContext;
          make.size.mas_equalTo(self.tapedImageViewRect.size);
      }];
      */
+}
+- (void)preloadImages:(NSInteger)position {
+    if (!self.preloadImages) {
+        self.preloadImages = [NSMutableArray arrayWithCapacity:2];
+    }
+    else {
+        [self.preloadImages removeAllObjects];
+    }
+
+    if (position - 1 >= 0) {
+        NSDictionary *dic = [self.images objectAtIndex:(position-1)];
+        NSString *imageUrlString = [dic valueForKey:@"url"];
+        if (imageUrlString) {
+            [self.preloadImages addObject:[NSURL URLWithString:imageUrlString]];
+        }
+    }
+    if (position + 1 < self.images.count) {
+        NSDictionary *dic = [self.images objectAtIndex:(position+1)];
+        NSString *imageUrlString = [dic valueForKey:@"url"];
+        if (imageUrlString) {
+            [self.preloadImages addObject:[NSURL URLWithString:imageUrlString]];
+        }
+    }
+    
+    [self.imageDownloadManager downloadImages:self.preloadImages];
 }
 
 
@@ -478,11 +510,13 @@ static void *CollectionContext = &CollectionContext;
                 break;
         }
     };
-    NSDictionary *dic =  [self.images objectAtIndex:indexPath.row];
     
-    [cell configContent:dic
-           defaultImage:nil
-            contentMode:self.tapedImageView.contentMode];
+    // 当前cell内容的绘制:
+    NSDictionary *dic = [self.images objectAtIndex:indexPath.row];
+    [cell configContent:dic defaultImage:nil contentMode:self.tapedImageView.contentMode withImageDownloadManager:self.imageDownloadManager];
+    
+    // 本cell临近位置的图片预加载:
+    [self preloadImages:indexPath.row];
     
     return cell;
 }

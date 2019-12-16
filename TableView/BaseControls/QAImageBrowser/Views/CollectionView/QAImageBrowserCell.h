@@ -7,8 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <YYImage/YYImage.h>
-#import "ImageProcesser.h"
 #import "QAImageBrowserManagerConfig.h"
 
 typedef NS_ENUM(NSUInteger, QAImageBrowserViewAction) {
@@ -30,11 +28,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)configImageView:(YYAnimatedImageView *)imageView
            defaultImage:(UIImage * _Nullable)defaultImage;
 
-- (void)reprepareShowImageView;
+- (void)reprepareShowImageViewWithImageDownloadManager:(QAImageBroeserDownloadManager * _Nonnull)imageDownloadManager;
 
 - (void)configContent:(NSDictionary * _Nonnull)dic
          defaultImage:(UIImage * _Nullable)defaultImage
-          contentMode:(UIViewContentMode)contentMode;
+          contentMode:(UIViewContentMode)contentMode
+withImageDownloadManager:(QAImageBroeserDownloadManager * _Nonnull)imageDownloadManager;
 
 - (void)clearALLGesturesInView:(UIView * _Nonnull)view;
 

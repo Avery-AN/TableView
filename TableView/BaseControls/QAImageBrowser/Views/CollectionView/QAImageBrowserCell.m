@@ -53,25 +53,22 @@
         }
     }
 }
-- (void)reprepareShowImageView {
+- (void)reprepareShowImageViewWithImageDownloadManager:(QAImageBroeserDownloadManager * _Nonnull)imageDownloadManager {
     self.imageView.hidden = NO;
     self.currentShowImageView = self.imageView;
-    [self showContentWithContentMode:self.imageView.contentMode];
+    [self showContentWithContentMode:self.imageView.contentMode imageDownloadManager:imageDownloadManager];
     [self addAllGesturesToView:self.imageView];
 }
-- (void)showContentWithContentMode:(UIViewContentMode)contentMode {
-    NSString *imageUrl = [self.dic valueForKey:@"url"];
-    UIImage *image = [self.dic valueForKey:@"image"];
-    if (image) {
-        [self showImage:image contentModel:contentMode];
-    }
-    else if (imageUrl) {
-        [self showImageWithUrl:[NSURL URLWithString:imageUrl] defaultImage:self.defaultImage contentModel:contentMode];
-    }
-    else {
-        NSLog(@"QAImageBrowser入参有误!");
-        return;
-    }
+- (void)configContent:(NSDictionary * _Nonnull)dic
+         defaultImage:(UIImage * _Nullable)defaultImage
+          contentMode:(UIViewContentMode)contentMode
+withImageDownloadManager:(QAImageBroeserDownloadManager * _Nonnull)imageDownloadManager {
+    self.dic = dic;
+    self.defaultImage = defaultImage;
+    self.imageView.contentMode = contentMode;
+    self.imageView.hidden = NO;
+    
+    [self showContentWithContentMode:contentMode imageDownloadManager:imageDownloadManager];
 }
 - (void)clearALLGesturesInView:(UIView * _Nonnull)view {
     if (!view) {
@@ -84,9 +81,25 @@
 
 
 #pragma mark - ShowImages Method -
+- (void)showContentWithContentMode:(UIViewContentMode)contentMode
+              imageDownloadManager:(QAImageBroeserDownloadManager * _Nonnull)imageDownloadManager {
+    NSString *imageUrl = [self.dic valueForKey:@"url"];
+    UIImage *image = [self.dic valueForKey:@"image"];
+    if (image) {
+        [self showImage:image contentModel:contentMode];
+    }
+    else if (imageUrl) {
+        [self showImageWithUrl:[NSURL URLWithString:imageUrl] defaultImage:self.defaultImage contentModel:contentMode imageDownloadManager:imageDownloadManager];
+    }
+    else {
+        NSLog(@"QAImageBrowser入参有误!");
+        return;
+    }
+}
 - (void)showImageWithUrl:(NSURL * _Nonnull)imageUrl
             defaultImage:(UIImage * _Nullable)defaultImage
-            contentModel:(UIViewContentMode)contentModel {
+            contentModel:(UIViewContentMode)contentModel
+    imageDownloadManager:(QAImageBroeserDownloadManager * _Nonnull)imageDownloadManager {
     if (!imageUrl || imageUrl.absoluteString.length == 0) {
         return;
     }
@@ -96,27 +109,30 @@
         [self updateImageView:self.currentShowImageView withImage:defaultImage];
     }
     
-    [[SDWebImageDownloader sharedDownloader]
-    downloadImageWithURL:imageUrl
-    options:SDWebImageDownloaderContinueInBackground progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+    __weak typeof(self) weakSelf = self;
+    [imageDownloadManager queryImageWithUrl:imageUrl
+                                   finished:^(NSURL * _Nonnull image_url, UIImage * _Nullable image_completed) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        if (imageUrl == image_url) {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                if ([imageUrl.absoluteString hasSuffix:@".gif"]) {
+                    NSString *path = [[SDImageCache sharedImageCache] defaultCachePathForKey:imageUrl.absoluteString];
+                    NSData *data = [NSData dataWithContentsOfFile:path];
+                    YYImage *yyImage = [YYImage imageWithData:data];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [strongSelf updateImageView:self.currentShowImageView withImage:yyImage];
+                    });
+                }
+                else {
+                    UIImage *decodeImage = [QAImageProcesser decodeImage:image_completed];  // image的解码
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [strongSelf updateImageView:self.currentShowImageView withImage:decodeImage];
+                    });
+                }
+            });
+        }
+    } failed:^(NSURL * _Nonnull image_url, NSError * _Nullable error) {
         
-    } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            if ([imageUrl.absoluteString hasSuffix:@".gif"]) {
-                NSString *path = [[SDImageCache sharedImageCache] defaultCachePathForKey:imageUrl.absoluteString];
-                NSData *data = [NSData dataWithContentsOfFile:path];
-                YYImage *yyImage = [YYImage imageWithData:data];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self updateImageView:self.currentShowImageView withImage:yyImage];
-                });
-            }
-            else {
-                UIImage *decodeImage = [ImageProcesser decodeImage:image];  // image的解码
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self updateImageView:self.currentShowImageView withImage:decodeImage];
-                });
-            }
-        });
     }];
 }
 - (void)showImage:(UIImage * _Nonnull)image contentModel:(UIViewContentMode)contentModel {
@@ -141,7 +157,7 @@
     else if (imageView.superview != self.scrollView) {
         return;
     }
-    imageView.frame = [ImageProcesser caculateOriginImageSize:image];
+    imageView.frame = [QAImageProcesser caculateOriginImageSize:image];
     imageView.image = image;
     [self.scrollView setZoomScale:1 animated:NO];
     
@@ -207,16 +223,6 @@
     [imageView addGestureRecognizer:self.longPressGesture];
     
     [self.singleTap requireGestureRecognizerToFail:self.doubleTap];   // 处理双击时不响应单击
-}
-- (void)configContent:(NSDictionary * _Nonnull)dic
-         defaultImage:(UIImage * _Nullable)defaultImage
-          contentMode:(UIViewContentMode)contentMode {
-    self.dic = dic;
-    self.defaultImage = defaultImage;
-    self.imageView.contentMode = contentMode;
-    self.imageView.hidden = NO;
-    
-    [self showContentWithContentMode:contentMode];
 }
 
 

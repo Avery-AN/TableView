@@ -8,6 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <YYImage/YYImage.h>
+#import <SDWebImage/SDWebImageDownloader.h>
+#import <SDWebImage/SDImageCache.h>
+#import "QAImageProcesser.h"
+#import "QAImageBroeserDownloadManager.h"
 // #import <Masonry.h>
 
 #define QAImageBrowserScreenWidth     [UIScreen mainScreen].bounds.size.width
