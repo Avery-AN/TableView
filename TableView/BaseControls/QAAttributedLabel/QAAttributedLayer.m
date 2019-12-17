@@ -446,7 +446,7 @@ static dispatch_queue_t QAAttributedLayerDrawQueue() {
                                     UIGraphicsEndImageContext();
                                     
                                     dispatch_async(dispatch_get_main_queue(), ^{
-                                        strongSelf.contents = weakSelf.currentCGImage;
+                                        strongSelf.contents = strongSelf.currentCGImage;
                                     });
                                 }];
     });
