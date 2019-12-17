@@ -464,21 +464,26 @@ static dispatch_queue_t QAAttributedLayerDrawQueue() {
     CGContextFillRect(context, attributedLabel.bounds);
     
     // 绘制文案:
+    __weak typeof(self) weakSelf = self;
     [self fillContentsWithContext:context
                             label:attributedLabel
                        selfBounds:self.bounds
               checkAttributedText:^BOOL (NSString *content) {
+                                    __strong typeof(weakSelf) strongSelf = weakSelf;
+        
                                     // 检查绘制是否应该被取消:
-                                    return [self checkWithContent:content];
+                                    return [strongSelf checkWithContent:content];
                                 } cancel:^{
                                     NSLog(@"绘制被取消!!!");
                                     UIGraphicsEndImageContext();
                                 } completion:^{
+                                    __strong typeof(weakSelf) strongSelf = weakSelf;
+                                    
                                     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
                                     UIGraphicsEndImageContext();
                                     image = [image decodeImage];  // image的解码
-                                    self.currentCGImage = (__bridge id _Nullable)(image.CGImage);
-                                    self.contents = self.currentCGImage;
+                                    strongSelf.currentCGImage = (__bridge id _Nullable)(image.CGImage);
+                                    strongSelf.contents = strongSelf.currentCGImage;
                                 }];
 }
 - (void)fillContentsWithContext:(CGContextRef)context
