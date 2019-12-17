@@ -68,7 +68,7 @@ static dispatch_queue_t QAAttributedLayerDrawQueue() {
 
 #pragma mark - Override Methods -
 - (void)display {
-    [super display];
+    super.contents = super.contents;
     
     QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
     if (!attributedLabel) {
