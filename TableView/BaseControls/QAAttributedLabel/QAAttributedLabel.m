@@ -67,7 +67,7 @@ static void *TouchingContext = &TouchingContext;
 
 #pragma mark - Life Cycle -
 - (void)dealloc {
-//    NSLog(@" %s",__func__);
+    // NSLog(@" %s",__func__);
 }
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {

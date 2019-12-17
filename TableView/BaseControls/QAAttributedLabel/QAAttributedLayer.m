@@ -11,45 +11,36 @@
 #import "QATextLayout.h"
 #import "QATextDrawer.h"
 #import "QAAttributedLabelConfig.h"
+#import <stdatomic.h>
 
 
-@interface QAAttributedLayerThread : NSObject
-+ (NSThread *)drawThread;
-+ (NSOperationQueue *)drawQueue;
-@end
-
-@implementation QAAttributedLayerThread
-+ (NSOperationQueue *)drawQueue {
-    static NSOperationQueue *_drawQueue = nil;
-    static dispatch_once_t oncePredicate;
-    dispatch_once(&oncePredicate, ^{
-        _drawQueue = [[NSOperationQueue alloc] init];
-        _drawQueue.maxConcurrentOperationCount = 6;
+static dispatch_queue_t QAAttributedLayerDrawQueue() {
+#define MAX_QUEUE_COUNT 16
+    static int queueCount;
+    static dispatch_queue_t queues[MAX_QUEUE_COUNT];
+    static dispatch_once_t onceToken;
+    static atomic_int counter = 0;
+    dispatch_once(&onceToken, ^{
+        queueCount = (int)[NSProcessInfo processInfo].activeProcessorCount;
+        queueCount = queueCount < 1 ? 1 : queueCount > MAX_QUEUE_COUNT ? MAX_QUEUE_COUNT : queueCount;
+        if ([UIDevice currentDevice].systemVersion.floatValue >= 8.) {
+            for (NSUInteger i = 0; i < queueCount; i++) {
+                dispatch_queue_attr_t queue_attr = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INITIATED, 0);
+                queues[i] = dispatch_queue_create("com.avery.QAAttributedLayer.render", queue_attr);
+            }
+        } else {
+            for (NSUInteger i = 0; i < queueCount; i++) {
+                queues[i] = dispatch_queue_create("com.avery.QAAttributedLayer.render", DISPATCH_QUEUE_SERIAL);
+                dispatch_set_target_queue(queues[i], dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
+            }
+        }
     });
     
-    return _drawQueue;
+    // 线程安全的自增计数,每调用一次+1
+    atomic_fetch_add_explicit(&counter, 1, memory_order_relaxed);
+    return queues[(counter) % queueCount];
+#undef MAX_QUEUE_COUNT
 }
-+ (NSThread *)drawThread {
-    static NSThread *_drawThread = nil;
-    static dispatch_once_t oncePredicate;
-    dispatch_once(&oncePredicate, ^{
-        _drawThread = [[NSThread alloc] initWithTarget:self selector:@selector(drawThreadEntryPoint:) object:nil];
-        [_drawThread start];
-    });
-    
-    return _drawThread;
-}
-+ (void)drawThreadEntryPoint:(id)__unused object {
-    @autoreleasepool {
-        [[NSThread currentThread] setName:@"QADrawThread"];
-        
-        NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
-        [runLoop addPort:[NSMachPort port] forMode:NSDefaultRunLoopMode];
-        [runLoop run];
-    }
-}
-@end
-
 
 
 @interface QAAttributedLayer () {
@@ -343,7 +334,7 @@
     if (self.currentCGImage) {
         self.contents = self.currentCGImage;
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        dispatch_async(QAAttributedLayerDrawQueue(), ^{
             // 清除当点击高亮文案时所做的文案高亮属性的修改 (将点击时添加的高亮颜色去掉、并恢复到点击之前的颜色状态):
             QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
             NSMutableAttributedString *attributedText = attributedLabel.attributedText;
@@ -362,7 +353,7 @@
     }
 }
 - (void)drawTextBackgroundWithAttributedString:(NSMutableAttributedString * _Nonnull)attributedString {
-    dispatch_async(dispatch_queue_create("DrawTextBackground_asyncQueue", NULL), ^{
+    dispatch_async(QAAttributedLayerDrawQueue(), ^{
         QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
         CGRect bounds = attributedLabel.bounds;
         CGFloat boundsWidth = bounds.size.width;
@@ -421,70 +412,45 @@
 - (void)fillContents_async:(QAAttributedLabel *)attributedLabel {
     // NSLog(@"   %s",__func__);
     
-    @autoreleasepool {
-        UIColor *backgroundColor = attributedLabel.backgroundColor;
-        NSValue *bounds = [NSValue valueWithCGRect:self.bounds];
-        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-        [dic setValue:backgroundColor forKey:@"backgroundColor"];
-        [dic setValue:bounds forKey:@"bounds"];
-        [dic setValue:attributedLabel forKey:@"attributedLabel"];
-        
-        [self performSelector:@selector(fillContents_inDrawThread:) onThread:[QAAttributedLayerThread drawThread] withObject:dic waitUntilDone:NO];
-    }
-}
-- (void)fillContents_inDrawThread:(NSDictionary *)info {
-    [self createRunLoopObserver];
+    CGColorRef backgroundCgcolor = attributedLabel.backgroundColor.CGColor;
+    CGRect bounds = attributedLabel.bounds;
     
-    QAAttributedLabel *attributedLabel = [info valueForKey:@"attributedLabel"];
-    UIColor *backgroundColor = [info valueForKey:@"backgroundColor"];
-    NSValue *boundsValue = [info valueForKey:@"bounds"];
-    CGColorRef backgroundCgcolor = backgroundColor.CGColor;
-    CGRect bounds = boundsValue.CGRectValue;
-    
-    // 获取上下文:
-    UIGraphicsBeginImageContextWithOptions(CGSizeMake(bounds.size.width, bounds.size.height), self.opaque, 0);
-    CGContextRef context = UIGraphicsGetCurrentContext();
+    dispatch_async(QAAttributedLayerDrawQueue(), ^{
+        // 获取上下文:
+        UIGraphicsBeginImageContextWithOptions(CGSizeMake(bounds.size.width, bounds.size.height), self.opaque, 0);
+        CGContextRef context = UIGraphicsGetCurrentContext();
 
-    // 给上下文填充背景色:
-    CGContextSetFillColorWithColor(context, backgroundCgcolor);
-    CGContextFillRect(context, bounds);
+        // 给上下文填充背景色:
+        CGContextSetFillColorWithColor(context, backgroundCgcolor);
+        CGContextFillRect(context, bounds);
 
-    // 绘制文案:
-    __weak typeof(self) weakSelf = self;
-    [self fillContentsWithContext:context
-                            label:attributedLabel
-                       selfBounds:bounds
-              checkAttributedText:^BOOL (NSString *content) {
-                                // 检查绘制是否应该被取消:
-                                return [self checkWithContent:content];
-                            } cancel:^{
-                                NSLog(@"绘制被取消!!!");
-                                UIGraphicsEndImageContext();
-                            } completion:^{
-                                UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-                                image = [image decodeImage];  // image的解码
-                                weakSelf.currentCGImage = (__bridge id _Nullable)(image.CGImage);
-                                UIGraphicsEndImageContext();
-                                
-                                [self performSelector:@selector(updateContentsImage) onThread:[NSThread mainThread] withObject:nil waitUntilDone:NO];
-                            }];
-}
-- (void)updateContentsImage {
-    self.contents = self.currentCGImage;
-}
-- (void)createRunLoopObserver {
-    //监听全部状态的变化:
-    CFRunLoopObserverRef observer = CFRunLoopObserverCreateWithHandler(kCFAllocatorDefault, kCFRunLoopAllActivities, true, 0,^(CFRunLoopObserverRef observer,CFRunLoopActivity activity) {
-        NSLog(@"   ");
-        NSLog(@"   监听到RunLoop状态发生改变(kCFRunLoopAllActivities): %zd",activity);
-        
+        // 绘制文案:
+        __weak typeof(self) weakSelf = self;
+        [self fillContentsWithContext:context
+                                label:attributedLabel
+                           selfBounds:bounds
+                  checkAttributedText:^BOOL (NSString *content) {
+                                    __strong typeof(weakSelf) strongSelf = weakSelf;
+            
+                                    // 检查绘制是否应该被取消:
+                                    return [strongSelf checkWithContent:content];
+                                } cancel:^{
+                                    NSLog(@"绘制被取消!!!");
+                                    UIGraphicsEndImageContext();
+                                } completion:^{
+                                    __strong typeof(weakSelf) strongSelf = weakSelf;
+                                    
+                                    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+                                    image = [image decodeImage];  // image的解码
+                                    strongSelf.currentCGImage = (__bridge id _Nullable)(image.CGImage);
+                                    UIGraphicsEndImageContext();
+                                    
+                                    dispatch_async(dispatch_get_main_queue(), ^{
+                                        strongSelf.contents = weakSelf.currentCGImage;
+                                    });
+                                }];
     });
-    
-    CFRunLoopRef runLoop = CFRunLoopGetCurrent();
-    CFStringRef runLoopMode = kCFRunLoopDefaultMode;
-    CFRunLoopAddObserver(runLoop, observer, runLoopMode);
 }
-
 
 - (void)fillContents_sync:(QAAttributedLabel *)attributedLabel {
     // NSLog(@"   %s",__func__);
