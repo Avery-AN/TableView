@@ -18,7 +18,7 @@
 
 #pragma mark - life Cycle -
 - (void)dealloc {
-//    NSLog(@" %s",__func__);
+    // NSLog(@" %s",__func__);
 }
 - (instancetype)initWithContainerSize:(CGSize)size attributedText:(NSMutableAttributedString *)attributedText {
     if (self = [super init]) {
@@ -43,9 +43,12 @@
     self.size = size;
     _attributedText = attributedText;
 }
-- (NSDictionary *)getTruncationTextAttributes {
+- (NSDictionary *)getTruncationTextAttributesWithCheckBlock:(BOOL(^_Nullable)(void))checkBlock {
     if (!_truncationTextAttributes) {
         _truncationTextAttributes = [NSMutableDictionary dictionary];
+    }
+    else {
+        [_truncationTextAttributes removeAllObjects];
     }
     
     // 字号 & 字体:
@@ -58,6 +61,11 @@
     else {
         fontSize = self.font.pointSize;
         fontName = self.font.fontName;
+    }
+    
+    // 判断是否已取消:
+    if (checkBlock && checkBlock()) {
+        return nil;
     }
     
     // 设置字体:
@@ -107,11 +115,19 @@
     
     return _truncationTextAttributes;
 }
-- (NSDictionary *)getTextAttributes {
+- (NSDictionary *)getTextAttributesWithCheckBlock:(BOOL(^_Nullable)(void))checkBlock {
     if (!_textAttributes) {
         _textAttributes = [NSMutableDictionary dictionary];
     }
-
+    else {
+        [_textAttributes removeAllObjects];
+    }
+    
+    // 判断是否已取消:
+    if (checkBlock && checkBlock()) {
+        return nil;
+    }
+    
     // 设置字体:
     CGFloat fontSize = self.font.pointSize;
     NSString *fontName = self.font.fontName;

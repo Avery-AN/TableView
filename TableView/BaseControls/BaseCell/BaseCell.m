@@ -268,7 +268,7 @@ typedef union {
 //    self.flImageView.image = nil;
     self.yyImageView.image = nil;
     self.content.text = nil;
-    self.content.attributedText = nil;
+    self.content.attributedString = nil;
     self.content.layer.contents = nil;
     // self.contentImageLayer.contents = nil;
     self.contentView.layer.contents = nil;
@@ -346,7 +346,7 @@ typedef union {
             // *** 【4】content
             if ([[dic allKeys] indexOfObject:NSStringFromSelector(@selector(content))] != NSNotFound) {
                 NSMutableAttributedString *attributedText = [dic valueForKey:@"content-attributed"];
-                self.content.attributedText = attributedText;
+                self.content.attributedString = attributedText;
             }
             
             

@@ -33,8 +33,8 @@
 @property (nonatomic, strong, readonly) NSMutableDictionary * _Nonnull truncationTextAttributes;
 @property (nonatomic, assign, readonly) CGSize textBoundSize;
 
-- (NSDictionary * _Nullable)getTextAttributes;
-- (NSDictionary * _Nullable)getTruncationTextAttributes;
+- (NSDictionary * _Nullable)getTextAttributesWithCheckBlock:(BOOL(^_Nullable)(void))checkBlock;
+- (NSDictionary * _Nullable)getTruncationTextAttributesWithCheckBlock:(BOOL(^_Nullable)(void))checkBlock;
 
 + (instancetype _Nonnull)layoutWithContainerSize:(CGSize)size
                                   attributedText:(NSMutableAttributedString * _Nonnull)attributedText;

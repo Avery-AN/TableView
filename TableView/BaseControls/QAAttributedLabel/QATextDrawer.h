@@ -39,8 +39,7 @@
  @param wordSpace 字间距、处理自定义的Emoji时使用
  @param maxNumberOfLines 展示文案时最多展示的行数 (用户设定的numberoflines)
  @param saveHighlightText 是否需要保存attributedString中highllight文案的相关信息、值为YES时表示需要保存 (目前只是保存了需要交互的高亮文本)
- @param checkAttributedText 检查attributedString是否在绘制的过程中已变化的block
- @param cancel 绘制取消block
+ @param checkBlock 检查attributedString是否在绘制的过程中已变化的block
  */
 - (int)drawAttributedText:(NSMutableAttributedString *)attributedString
                   context:(CGContextRef)context
@@ -50,7 +49,6 @@
             textAlignment:(NSTextAlignment)textAlignment
            truncationText:(NSDictionary *)truncationTextInfo
         saveHighlightText:(BOOL)saveHighlightText
-      checkAttributedText:(BOOL(^)(NSString *content))checkAttributedText
-                   cancel:(void(^)(void))cancel;
+               checkBlock:(BOOL(^)(NSString *content))checkBlock;
 
 @end

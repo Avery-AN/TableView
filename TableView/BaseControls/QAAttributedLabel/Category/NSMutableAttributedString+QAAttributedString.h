@@ -15,7 +15,7 @@
 @property (nonatomic, copy, nullable) NSMutableDictionary *highlightRanges;
 @property (nonatomic, copy, nullable) NSMutableDictionary *highlightContents;
 @property (nonatomic, copy, nullable) NSDictionary *truncationInfo;
-@property (nonatomic, copy, nullable) NSMutableArray *searchRanges;
+@property (nonatomic, copy, nullable) NSArray *searchRanges;
 @property (nonatomic, copy, nullable) NSDictionary *searchAttributeInfo;
 @property (nonatomic, copy, nullable) NSAttributedString *truncationText;
 
@@ -101,7 +101,8 @@
                                   highlightFont:(UIFont * _Nonnull)highlightFont
                                  highlightRange:(NSRange)highlightRange;
 
+
 - (NSDictionary * _Nullable)getInstanceProperty;
-- (void)setFunctions:(NSDictionary * _Nonnull)dic;
+- (void)setProperties:(NSDictionary * _Nonnull)dic;
 
 @end

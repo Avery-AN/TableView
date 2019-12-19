@@ -13,10 +13,10 @@ typedef void (^QAEmojiCompletionBlock)(BOOL success, NSArray * _Nullable emojiTe
 
 @interface QAEmojiTextManager : NSObject
 
-+ (void)processDiyEmojiText:(NSMutableAttributedString * _Nonnull)attributedString
-                       font:(UIFont * _Nonnull)font
-                  wordSpace:(NSUInteger)wordSpace
-             textAttributes:(NSDictionary * _Nonnull)textAttributes
-                 completion:(QAEmojiCompletionBlock _Nullable)completion;
++ (int)processDiyEmojiText:(NSMutableAttributedString * _Nonnull)attributedString
+                      font:(UIFont * _Nonnull)font
+                 wordSpace:(NSUInteger)wordSpace
+            textAttributes:(NSDictionary * _Nonnull)textAttributes
+                completion:(QAEmojiCompletionBlock _Nullable)completion;
 
 @end
