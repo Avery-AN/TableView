@@ -18,6 +18,7 @@
 #import "QAHighlightTextManager.h"
 #import "UIImage+DecodeImage.h"
 #import "NSString+Md5.h"
+#import "QAAttributedLayer+Cache.h"
 
 
 /**

@@ -15,6 +15,10 @@
 
 
 static NSMutableSet *transactionSet = nil;
+
+/**
+ RunloopObserver的回调方法，从transactionSet取出transaction对象执行SEL的方法，分发到每一次Runloop执行，避免一次Runloop执行时间太长。
+ */
 static void QARunLoopObserverCallBack(CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info) {
     if (transactionSet.count == 0) {
         return;
@@ -30,6 +34,12 @@ static void QARunLoopObserverCallBack(CFRunLoopObserverRef observer, CFRunLoopAc
     }];
 }
 
+/**
+ QATransaction有target & selector的属性，selector其实就是contentsNeedUpdated方法。此时并不会立即在后台线程去更新显示，
+ 而是将QATransaction对象本身提交保存在transactionSet的集合中，同时在QATransaction中注册一个RunloopObserver，
+ 并监听MainRunloop在kCFRunLoopCommonModes（包含kCFRunLoopDefaultMode、UITrackingRunLoopMode）下的kCFRunLoopBeforeWaiting和
+ kCFRunLoopExit的状态，也就是说在一次Runloop空闲时去执行更新显示的操作。
+ */
 static void QATextTransactionSetup() {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -38,9 +48,9 @@ static void QATextTransactionSetup() {
         CFRunLoopRef runloop = CFRunLoopGetMain();
         CFRunLoopObserverRef observer;
         observer = CFRunLoopObserverCreate(CFAllocatorGetDefault(),
-                                           kCFRunLoopBeforeWaiting | kCFRunLoopExit,
+                                           kCFRunLoopBeforeWaiting | kCFRunLoopExit, // 当RunLoop进入kCFRunLoopBeforeWaiting或kCFRunLoopExit时开始执行观察者。
                                            true,        // repeat
-                                           0xFFFFFF,    // after CATransaction (2000000)
+                                           (2000000-1), // 设定观察者的优先级 after CATransaction(2000000) 这是为了确保系统的动画优先执行，之后再执行异步渲染。
                                            QARunLoopObserverCallBack,
                                            NULL);
         CFRunLoopAddObserver(runloop, observer, kCFRunLoopCommonModes);

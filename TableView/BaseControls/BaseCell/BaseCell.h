@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  设置QAAttributedLabel的相关属性
  */
-- (void)setFunctions:(NSDictionary *)dic;
+- (void)setProperties:(NSDictionary *)dic;
 
 /**
  Cell的布局

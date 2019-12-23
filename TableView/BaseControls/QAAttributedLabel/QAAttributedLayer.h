@@ -43,7 +43,6 @@ static dispatch_queue_t _Nonnull QAAttributedLayerDrawQueue() {
 
 @interface QAAttributedLayer : CALayer
 
-@property (nonatomic, nullable) QATextDrawer *textDrawer;
 @property (nonatomic, nullable) __block id currentCGImage;
 @property (nonatomic, copy, nullable) NSDictionary *truncationInfo;
 @property (nonatomic, strong, nullable) NSMutableAttributedString *renderText;

@@ -105,7 +105,7 @@ static BOOL openClipsToBounds = YES;
     self.styleInfo = dic;
     
     // 设置cell的相关属性:
-    [self setFunctions:self.styleInfo];
+    [self setProperties:self.styleInfo];
     
     // 清除cell上已绘制的内容:
     [self clear];

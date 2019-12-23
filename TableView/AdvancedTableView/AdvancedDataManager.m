@@ -10,10 +10,11 @@
 #import "AdvancedCell.h"
 
 @implementation AdvancedDataManager
+
 + (NSMutableArray *)getDatas {
     NSMutableArray *datas = [NSMutableArray array];
 
-    for (int i = 0; i < 181; i++) {
+    for (int i = 0; i < 281; i++) {
         NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:0];
 
         CGRect avatarFrame = CGRectMake(Avatar_left_gap, Avatar_top_gap, AvatarSize, AvatarSize);
@@ -95,11 +96,7 @@
         if (i % 10 == 4) {
             [dic setValue:@"https://upload-images.jianshu.io/upload_images/15705790-d7125d495dea81ea" forKey:@"avatar"];
 
-            NSString *baseString = [NSString stringWithFormat:@"哈哈哈哈哈哈哈 - %d;",i];
-            for (int j = 0; j < i; j++) {
-                content = [content stringByAppendingString:baseString];
-            }
-            content = [NSString stringWithFormat:@"【%d】%@", i, content];
+            content = [NSString stringWithFormat:@"%@ 这里是第\n【%d】\n条数据！", @" hi~各位!具体代码详见: https://github.com/Avery-AN", i];
             [dic setValue:content forKey:@"content"];
 
             [datas addObject:dic];
@@ -130,24 +127,16 @@
         }
         if (i % 10 == 7) {
             [dic setValue:@"https://upload-images.jianshu.io/upload_images/11027481-3c3e53c8143024b3.jpg" forKey:@"avatar"];
-
-            NSString *baseString = [NSString stringWithFormat:@"哈哈哈哈哈哈哈 - %d;",i];
-            for (int j = 0; j < i; j++) {
-                content = [content stringByAppendingString:baseString];
-            }
-            content = [NSString stringWithFormat:@"【%d】%@", i, content];
+            
+            content = [NSString stringWithFormat:@"【%d】%@", i, @"mmap是一种内存映射文件的方法，即将一个文件或者其它对象映射到进程的地址空间，实现文件磁盘地址和进程虚拟地址空间中一段虚拟地址的一一对映关系。实现这样的映射关系后，进程就可以采用指针的方式读写操作这一段内存，而系统会自动回写脏页面到对应的文件磁盘上，即完成了对文件的操作而不必再调用read,write等系统调用函数。相反，内核空间对这段区域的修改也直接反映用户空间，从而可以实现不同进程间的文件共享。"];
             [dic setValue:content forKey:@"content"];
 
             [datas addObject:dic];
         }
         if (i % 10 == 8) {
             [dic setValue:@"https://upload-images.jianshu.io/upload_images/2748485-8caa321e4f1aadf5" forKey:@"avatar"];
-
-            NSString *baseString = [NSString stringWithFormat:@"哈哈哈哈哈哈哈 - %d;",i];
-            for (int j = 0; j < i; j++) {
-                content = [content stringByAppendingString:baseString];
-            }
-            content = [NSString stringWithFormat:@"【%d】%@", i, content];
+            
+            content = [NSString stringWithFormat:@"【%d】%@", i, @"mmap适用场景:\n(1) 有一个大file、你需要随时或者多次访问其内容。\n(2) 有一个小的file、你需要一次读入并且会频繁访问。这最适合大小不超过几个虚拟内存页面的文件。\n(3) 缓存一个文件的某一部分，无需映射整个文件，这样可以节省内存空间。"];
             [dic setValue:content forKey:@"content"];
 
             [datas addObject:dic];
@@ -241,4 +230,5 @@
     
     return datas;
 }
+
 @end

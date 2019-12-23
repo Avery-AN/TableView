@@ -295,23 +295,23 @@
     return [objc_getAssociatedObject(self, _cmd) boolValue];
 }
 
-- (void)setTextDic:(NSMutableDictionary *)textDic {
-    objc_setAssociatedObject(self, @selector(textDic), textDic, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+- (void)setHighlightTextDic:(NSMutableDictionary *)highlightTextDic {
+    objc_setAssociatedObject(self, @selector(highlightTextDic), highlightTextDic, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
-- (NSMutableDictionary *)textDic {
+- (NSMutableDictionary *)highlightTextDic {
     return objc_getAssociatedObject(self, _cmd);
 }
-- (void)setTextChangedDic:(NSMutableDictionary *)textChangedDic {
-    objc_setAssociatedObject(self, @selector(textChangedDic), textChangedDic, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+- (void)setHighlightTextChangedDic:(NSMutableDictionary *)highlightTextChangedDic {
+    objc_setAssociatedObject(self, @selector(highlightTextChangedDic), highlightTextChangedDic, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
-- (NSMutableDictionary *)textChangedDic {
+- (NSMutableDictionary *)highlightTextChangedDic {
     return objc_getAssociatedObject(self, _cmd);
 }
 
-- (void)setTextTypeDic:(NSMutableDictionary *)textTypeDic {
-    objc_setAssociatedObject(self, @selector(textTypeDic), textTypeDic, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+- (void)setHighlightTextTypeDic:(NSMutableDictionary *)highlightTextTypeDic {
+    objc_setAssociatedObject(self, @selector(highlightTextTypeDic), highlightTextTypeDic, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
-- (NSMutableDictionary *)textTypeDic {
+- (NSMutableDictionary *)highlightTextTypeDic {
     return objc_getAssociatedObject(self, _cmd);
 }
 

@@ -9,8 +9,8 @@
 #import "QAAttributedLabel.h"
 #import "QAAttributedLayer.h"
 #import "QATextLayout.h"
-#import "QATextDrawer.h"
 #import "QATextTransaction.h"
+#import "QATextDraw.h"
 
 
 #define LinkHighlight_MASK          (1 << 0)  // 0000 0001
@@ -140,7 +140,7 @@ static void *TouchingContext = &TouchingContext;
     // 处理"...查看全文":
     NSMutableAttributedString *showingAttributedText = self.attributedString;
     if (self.numberOfLines != 0 && self.showMoreText && showingAttributedText.showMoreTextEffected) {
-        NSDictionary *highlightFrameDic = layer.textDrawer.highlightFrameDic; // (key:range - value:CGRect-array)
+        NSDictionary *highlightFrameDic = self.attributedString.highlightFrameDic; // (key:range - value:CGRect-array)
         NSString *truncationRangeKey = [showingAttributedText.truncationInfo valueForKey:@"truncationRange"];
         if (truncationRangeKey) {
             NSRange truncationRange = NSRangeFromString(truncationRangeKey);
@@ -163,7 +163,7 @@ static void *TouchingContext = &TouchingContext;
     // 处理高亮文案的点击效果:
     if (self.atHighlight || self.linkHighlight || self.topicHighlight) {
         // 获取self的属性:
-        NSDictionary *highlightFrameDic = layer.textDrawer.highlightFrameDic; // (key:range - value:CGRect-array)
+        NSDictionary *highlightFrameDic = self.attributedString.highlightFrameDic; // (key:range - value:CGRect-array)
         for (NSString *key in highlightFrameDic) {
             NSArray *highlightRects = [highlightFrameDic valueForKey:key];
 
@@ -176,11 +176,11 @@ static void *TouchingContext = &TouchingContext;
                     self.tapedHighlightRange = highlightRange;
                     [layer drawHighlightColor:highlightRange];
 
-                    NSDictionary *highlightTextDic = showingAttributedText.textDic;
+                    NSDictionary *highlightTextDic = showingAttributedText.highlightTextDic;
                     if (highlightTextDic && highlightTextDic.count > 0) {
                         NSString *key = NSStringFromRange(highlightRange);
                         NSString *highlightText = [highlightTextDic valueForKey:key];
-                        NSString *tapedType = [showingAttributedText.textTypeDic valueForKey:key];
+                        NSString *tapedType = [showingAttributedText.highlightTextTypeDic valueForKey:key];
                         if (!tapedType) {
                             return;
                         }
@@ -317,11 +317,13 @@ static void *TouchingContext = &TouchingContext;
         return;
     }
     
-    QAAttributedLayer *layer = (QAAttributedLayer *)self.layer;
-    layer.contents = (__bridge id _Nullable)(image.CGImage);
-    
-    // 后台绘制attributedString (作用是:在layer.textDrawer中保存highlightFrameDic的值以供点击高亮文本时使用)
-    [layer drawTextBackgroundWithAttributedString:attributedString];
+    // 后台绘制attributedString (作用是得到highlightFrameDic的值以供点击高亮文本时使用)
+    if (!attributedString.highlightFrameDic || attributedString.highlightFrameDic.count == 0) {
+        QAAttributedLayer *layer = (QAAttributedLayer *)self.layer;
+        layer.contents = (__bridge id _Nullable)(image.CGImage);
+        
+        [layer drawTextBackgroundWithAttributedString:attributedString];
+    }
 }
 - (void)searchTexts:(NSArray * _Nonnull)texts resetSearchResultInfo:(NSDictionary * _Nullable (^_Nullable)(void))searchResultInfo {
     if (!texts || texts.count == 0) {
@@ -347,6 +349,44 @@ static void *TouchingContext = &TouchingContext;
 }
 
 
+#pragma mark - Update Layout -
+- (void)_commitUpdate {
+    // NSLog(@"%s",__func__);
+    
+    self.needUpdate = YES;
+    [self _update];
+    
+    /**
+     self.needUpdate = YES;
+
+     #if !TARGET_INTERFACE_BUILDER
+         [[QATextTransaction transactionWithTarget:self selector:@selector(_updateIfNeeded)] commit];
+     #else
+         [self _update];
+     #endif
+     */
+}
+- (void)_updateIfNeeded {
+    // NSLog(@"%s",__func__);
+    if (self.needUpdate) {
+        [self _update];
+    }
+}
+- (void)_update {
+    // NSLog(@"%s",__func__);
+    
+    self.needUpdate = NO;
+    if ([[NSThread currentThread] isMainThread]) {
+        [self.layer setNeedsDisplay];
+    }
+    else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.layer setNeedsDisplay];
+        });
+    }
+}
+
+
 #pragma mark - Private Methods -
 - (void)updateAttributedText:(NSMutableAttributedString *)attributedText {
     if ([attributedText isKindOfClass:[NSMutableAttributedString class]]) {
@@ -363,6 +403,13 @@ static void *TouchingContext = &TouchingContext;
     
     _srcAttributedString.searchAttributeInfo = attributedText.searchAttributeInfo;
     _srcAttributedString.searchRanges = attributedText.searchRanges;
+}
+- (void)appendDrawResult:(NSMutableAttributedString *)attributedText {
+    /**
+     若QAAttributedLabel的attributedString属性使用的是strong、则无需再在此方法中做处理
+     */
+    _srcAttributedString.textNewlineDic = attributedText.textNewlineDic;
+    _srcAttributedString.highlightFrameDic = attributedText.highlightFrameDic;
 }
 - (CGSize)getContentSize {
     NSMutableAttributedString *attributedText;
@@ -415,44 +462,6 @@ static void *TouchingContext = &TouchingContext;
                 [self removeObserver:self forKeyPath:NSStringFromSelector(@selector(isTouching))];
             }
         }
-    }
-}
-
-
-#pragma mark - Update Layout -
-- (void)_commitUpdate {
-    // NSLog(@"%s",__func__);
-    
-    self.needUpdate = YES;
-    [self _update];
-    
-    /**
-     self.needUpdate = YES;
-
-     #if !TARGET_INTERFACE_BUILDER
-         [[QATextTransaction transactionWithTarget:self selector:@selector(_updateIfNeeded)] commit];
-     #else
-         [self _update];
-     #endif
-     */
-}
-- (void)_updateIfNeeded {
-    // NSLog(@"%s",__func__);
-    if (self.needUpdate) {
-        [self _update];
-    }
-}
-- (void)_update {
-    // NSLog(@"%s",__func__);
-    
-    self.needUpdate = NO;
-    if ([[NSThread currentThread] isMainThread]) {
-        [self.layer setNeedsDisplay];
-    }
-    else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.layer setNeedsDisplay];
-        });
     }
 }
 

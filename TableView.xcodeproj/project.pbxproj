@@ -38,7 +38,6 @@
 		BB9F6C7823838BEB00F05116 /* emoji_default@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB9F6C4123838BEA00F05116 /* emoji_default@3x.png */; };
 		BB9F6C7923838BEB00F05116 /* emoji_default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB9F6C4223838BEA00F05116 /* emoji_default@2x.png */; };
 		BB9F6C7A23838BEB00F05116 /* QAAttributedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = BB9F6C4323838BEA00F05116 /* QAAttributedLabel.m */; };
-		BB9F6C7B23838BEB00F05116 /* QATextDrawer.m in Sources */ = {isa = PBXBuildFile; fileRef = BB9F6C4523838BEA00F05116 /* QATextDrawer.m */; };
 		BB9F6C7C23838BEB00F05116 /* QAHighlightTextManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BB9F6C4723838BEA00F05116 /* QAHighlightTextManager.m */; };
 		BB9F6C7D23838BEB00F05116 /* QAEmojiTextManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BB9F6C4A23838BEA00F05116 /* QAEmojiTextManager.m */; };
 		BB9F6C7E23838BEB00F05116 /* QATextLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = BB9F6C4E23838BEA00F05116 /* QATextLayout.m */; };
@@ -50,6 +49,7 @@
 		BB9F6C9123838BF300F05116 /* AdvancedCell+SelfManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BB9F6C8B23838BF300F05116 /* AdvancedCell+SelfManager.m */; };
 		BB9F6C9223838BF300F05116 /* AdvancedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB9F6C8F23838BF300F05116 /* AdvancedViewController.m */; };
 		BB9F6C9323838BF300F05116 /* AdvancedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BB9F6C9023838BF300F05116 /* AdvancedCell.m */; };
+		BBA5395E23B10DD500977DD7 /* QATextDraw.m in Sources */ = {isa = PBXBuildFile; fileRef = BBA5395C23B10DD400977DD7 /* QATextDraw.m */; };
 		BBCD5DC123A50CBA00950B71 /* 9.JPG in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DB723A50CBA00950B71 /* 9.JPG */; };
 		BBCD5DC223A50CBA00950B71 /* 8.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DB823A50CBA00950B71 /* 8.jpeg */; };
 		BBCD5DC323A50CBA00950B71 /* 4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DB923A50CBA00950B71 /* 4.jpg */; };
@@ -104,7 +104,6 @@
 		BB9F6C2B23838BEA00F05116 /* UIImage+ClipsToBounds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ClipsToBounds.h"; sourceTree = "<group>"; };
 		BB9F6C2C23838BEA00F05116 /* UIImage+RoundedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+RoundedImage.h"; sourceTree = "<group>"; };
 		BB9F6C2F23838BEA00F05116 /* QATextRunDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QATextRunDelegate.m; sourceTree = "<group>"; };
-		BB9F6C3023838BEA00F05116 /* QATextDrawer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QATextDrawer.h; sourceTree = "<group>"; };
 		BB9F6C3123838BEA00F05116 /* QAAttributedLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QAAttributedLayer.m; sourceTree = "<group>"; };
 		BB9F6C3423838BEA00F05116 /* NSData+Md5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Md5.m"; sourceTree = "<group>"; };
 		BB9F6C3523838BEA00F05116 /* NSString+Md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Md5.h"; sourceTree = "<group>"; };
@@ -122,7 +121,6 @@
 		BB9F6C4223838BEA00F05116 /* emoji_default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "emoji_default@2x.png"; sourceTree = "<group>"; };
 		BB9F6C4323838BEA00F05116 /* QAAttributedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QAAttributedLabel.m; sourceTree = "<group>"; };
 		BB9F6C4423838BEA00F05116 /* QATextLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QATextLayout.h; sourceTree = "<group>"; };
-		BB9F6C4523838BEA00F05116 /* QATextDrawer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QATextDrawer.m; sourceTree = "<group>"; };
 		BB9F6C4723838BEA00F05116 /* QAHighlightTextManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QAHighlightTextManager.m; sourceTree = "<group>"; };
 		BB9F6C4823838BEA00F05116 /* QAEmojiTextManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QAEmojiTextManager.h; sourceTree = "<group>"; };
 		BB9F6C4923838BEA00F05116 /* QAHighlightTextManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QAHighlightTextManager.h; sourceTree = "<group>"; };
@@ -149,6 +147,8 @@
 		BB9F6C8F23838BF300F05116 /* AdvancedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdvancedViewController.m; sourceTree = "<group>"; };
 		BB9F6C9023838BF300F05116 /* AdvancedCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdvancedCell.m; sourceTree = "<group>"; };
 		BB9F6C9423838DFF00F05116 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		BBA5395C23B10DD400977DD7 /* QATextDraw.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QATextDraw.m; sourceTree = "<group>"; };
+		BBA5395D23B10DD500977DD7 /* QATextDraw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QATextDraw.h; sourceTree = "<group>"; };
 		BBCD5DB723A50CBA00950B71 /* 9.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 9.JPG; sourceTree = "<group>"; };
 		BBCD5DB823A50CBA00950B71 /* 8.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 8.jpeg; sourceTree = "<group>"; };
 		BBCD5DB923A50CBA00950B71 /* 4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 4.jpg; sourceTree = "<group>"; };
@@ -345,8 +345,8 @@
 				BBFB190E23AB7528009CD0C1 /* QATextTransaction.m */,
 				BB9F6C4423838BEA00F05116 /* QATextLayout.h */,
 				BB9F6C4E23838BEA00F05116 /* QATextLayout.m */,
-				BB9F6C3023838BEA00F05116 /* QATextDrawer.h */,
-				BB9F6C4523838BEA00F05116 /* QATextDrawer.m */,
+				BBA5395D23B10DD500977DD7 /* QATextDraw.h */,
+				BBA5395C23B10DD400977DD7 /* QATextDraw.m */,
 				BB9F6C4C23838BEA00F05116 /* QATextRunDelegate.h */,
 				BB9F6C2F23838BEA00F05116 /* QATextRunDelegate.m */,
 				BB9F6C3223838BEA00F05116 /* Category */,
@@ -621,7 +621,6 @@
 				BB9F6C7223838BEB00F05116 /* NSData+Md5.m in Sources */,
 				BB7BECCA2390E40C00688028 /* QAImageBrowserManager.m in Sources */,
 				BBFB190F23AB7528009CD0C1 /* QATextTransaction.m in Sources */,
-				BB9F6C7B23838BEB00F05116 /* QATextDrawer.m in Sources */,
 				BB7BECE72394F81200688028 /* ScratchablelatexDataManager.m in Sources */,
 				BB9F6C7F23838BEB00F05116 /* QAAttributedStringSizeMeasurement.m in Sources */,
 				BB9F6C6F23838BEB00F05116 /* UIImage+ClipsToBounds.m in Sources */,
@@ -646,6 +645,7 @@
 				BB9F6C7023838BEB00F05116 /* QATextRunDelegate.m in Sources */,
 				BB9F6C2323838B8E00F05116 /* RootViewController.m in Sources */,
 				BBFB18D123A81D80009CD0C1 /* QAImageProcesser.m in Sources */,
+				BBA5395E23B10DD500977DD7 /* QATextDraw.m in Sources */,
 				BB9F6C8023838BEB00F05116 /* BaseCell.m in Sources */,
 				BBFB18D023A81D80009CD0C1 /* QAImageBroeserDownloadManager.m in Sources */,
 				BB9F6C6E23838BEB00F05116 /* UIImage+RoundedImage.m in Sources */,

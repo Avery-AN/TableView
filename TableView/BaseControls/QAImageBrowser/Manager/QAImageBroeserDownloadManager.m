@@ -96,7 +96,7 @@ static int MaxDownloadingCounts = 3;
     if (!image_memory) {
         NSString *path = [[SDImageCache sharedImageCache] defaultCachePathForKey:imageUrl.absoluteString];
         if (!path) {
-            NSLog(@"不存在缓存、需要开启新的网络请求...");
+            // NSLog(@"不存在缓存、需要开启新的网络请求...");
             
             if (finishedBlock) {
                 [self.allFinishedBlocks setObject:finishedBlock forKey:imageUrl.absoluteString];
@@ -117,7 +117,7 @@ static int MaxDownloadingCounts = 3;
             [self.allTokens setValue:downLoadToken forKey:imageUrl.absoluteString];
         }
         else {
-            NSLog(@"cache in disk");
+            // NSLog(@"cache in disk");
             
             if (finishedBlock) {
                 NSData *data = [NSData dataWithContentsOfFile:path];
@@ -127,7 +127,7 @@ static int MaxDownloadingCounts = 3;
         }
     }
     else {
-        NSLog(@"cache in memory");
+        // NSLog(@"cache in memory");
         
         if (finishedBlock) {
             finishedBlock(imageUrl, image_memory);
@@ -136,7 +136,7 @@ static int MaxDownloadingCounts = 3;
 }
 
 - (SDWebImageDownloadToken *)downLoadImageWithUrl:(NSURL *)imageUrl {
-    SDWebImageDownloaderOptions options = SDWebImageDownloaderLowPriority | SDWebImageDownloaderIgnoreCachedResponse;
+    SDWebImageDownloaderOptions options = SDWebImageDownloaderLowPriority | SDWebImageDownloaderContinueInBackground;
     SDWebImageDownloadToken *downLoadToken = [[SDWebImageDownloader sharedDownloader] downloadImageWithURL:imageUrl options:options progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
         
     } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
