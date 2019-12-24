@@ -325,9 +325,8 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
         self.contents = self.currentCGImage;
     }
     else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.contents = self.currentCGImage;
-        });
+        self.contents = self.currentCGImage;
+        [CATransaction commit];
     }
 }
 
@@ -466,16 +465,13 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
                                      }
                                      */
                                     
-                                    
-                                    
-                                    dispatch_async(dispatch_get_main_queue(), ^{
-                                        strongSelf.contents = strongSelf.currentCGImage;
-                                        strongSelf->_drawState = QAAttributedLayer_State_Finished;
-                                        // CFAbsoluteTime endTime = CFAbsoluteTimeGetCurrent();
-                                        // CFAbsoluteTime loadTime = endTime - self->startTime_beginDraw;
-                                        // NSLog(@"DrawTime(coretext): %f",loadTime);
-                                        // NSLog(@" ");
-                                    });
+                                    strongSelf.contents = strongSelf.currentCGImage;
+                                    [CATransaction commit];
+                                    strongSelf->_drawState = QAAttributedLayer_State_Finished;
+                                    // CFAbsoluteTime endTime = CFAbsoluteTimeGetCurrent();
+                                    // CFAbsoluteTime loadTime = endTime - self->startTime_beginDraw;
+                                    // NSLog(@"DrawTime(coretext): %f",loadTime);
+                                    // NSLog(@" ");
                                 }];
     });
 }
