@@ -28,12 +28,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)configImageView:(YYAnimatedImageView *)imageView
            defaultImage:(UIImage * _Nullable)defaultImage;
 
-- (void)reprepareShowImageViewWithImageDownloadManager:(QAImageBroeserDownloadManager * _Nonnull)imageDownloadManager;
+- (void)reprepareShowImageViewWithImageDownloadManager:(QAImageBrowserDownloadManager * _Nonnull)imageDownloadManager;
 
 - (void)configContent:(NSDictionary * _Nonnull)dic
          defaultImage:(UIImage * _Nullable)defaultImage
           contentMode:(UIViewContentMode)contentMode
-withImageDownloadManager:(QAImageBroeserDownloadManager * _Nonnull)imageDownloadManager;
+withImageDownloadManager:(QAImageBrowserDownloadManager * _Nonnull)imageDownloadManager;
 
 - (void)clearALLGesturesInView:(UIView * _Nonnull)view;
 

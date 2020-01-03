@@ -50,6 +50,7 @@
 		BB9F6C9223838BF300F05116 /* AdvancedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB9F6C8F23838BF300F05116 /* AdvancedViewController.m */; };
 		BB9F6C9323838BF300F05116 /* AdvancedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BB9F6C9023838BF300F05116 /* AdvancedCell.m */; };
 		BBA5395E23B10DD500977DD7 /* QATextDraw.m in Sources */ = {isa = PBXBuildFile; fileRef = BBA5395C23B10DD400977DD7 /* QATextDraw.m */; };
+		BBAFC63423BEFE0E0027E810 /* QAImageBrowserDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BBAFC63223BEFE0E0027E810 /* QAImageBrowserDownloadManager.m */; };
 		BBCD5DC123A50CBA00950B71 /* 9.JPG in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DB723A50CBA00950B71 /* 9.JPG */; };
 		BBCD5DC223A50CBA00950B71 /* 8.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DB823A50CBA00950B71 /* 8.jpeg */; };
 		BBCD5DC323A50CBA00950B71 /* 4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DB923A50CBA00950B71 /* 4.jpg */; };
@@ -60,7 +61,6 @@
 		BBCD5DC823A50CBA00950B71 /* 3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DBE23A50CBA00950B71 /* 3.jpg */; };
 		BBCD5DC923A50CBA00950B71 /* 1.JPG in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DBF23A50CBA00950B71 /* 1.JPG */; };
 		BBCD5DCA23A50CBA00950B71 /* 0.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DC023A50CBA00950B71 /* 0.jpg */; };
-		BBFB18D023A81D80009CD0C1 /* QAImageBroeserDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BBFB18CE23A81D7F009CD0C1 /* QAImageBroeserDownloadManager.m */; };
 		BBFB18D123A81D80009CD0C1 /* QAImageProcesser.m in Sources */ = {isa = PBXBuildFile; fileRef = BBFB18CF23A81D80009CD0C1 /* QAImageProcesser.m */; };
 		BBFB190F23AB7528009CD0C1 /* QATextTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = BBFB190E23AB7528009CD0C1 /* QATextTransaction.m */; };
 		CD8B8875A520E2CA6C6A9EBB /* Pods_TableView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 175F2055E5583335E94BE624 /* Pods_TableView.framework */; };
@@ -149,6 +149,8 @@
 		BB9F6C9423838DFF00F05116 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		BBA5395C23B10DD400977DD7 /* QATextDraw.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QATextDraw.m; sourceTree = "<group>"; };
 		BBA5395D23B10DD500977DD7 /* QATextDraw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QATextDraw.h; sourceTree = "<group>"; };
+		BBAFC63223BEFE0E0027E810 /* QAImageBrowserDownloadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QAImageBrowserDownloadManager.m; sourceTree = "<group>"; };
+		BBAFC63323BEFE0E0027E810 /* QAImageBrowserDownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QAImageBrowserDownloadManager.h; sourceTree = "<group>"; };
 		BBCD5DB723A50CBA00950B71 /* 9.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 9.JPG; sourceTree = "<group>"; };
 		BBCD5DB823A50CBA00950B71 /* 8.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 8.jpeg; sourceTree = "<group>"; };
 		BBCD5DB923A50CBA00950B71 /* 4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 4.jpg; sourceTree = "<group>"; };
@@ -160,8 +162,6 @@
 		BBCD5DBF23A50CBA00950B71 /* 1.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.JPG; sourceTree = "<group>"; };
 		BBCD5DC023A50CBA00950B71 /* 0.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 0.jpg; sourceTree = "<group>"; };
 		BBFB18CC23A81D7F009CD0C1 /* QAImageProcesser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QAImageProcesser.h; sourceTree = "<group>"; };
-		BBFB18CD23A81D7F009CD0C1 /* QAImageBroeserDownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QAImageBroeserDownloadManager.h; sourceTree = "<group>"; };
-		BBFB18CE23A81D7F009CD0C1 /* QAImageBroeserDownloadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QAImageBroeserDownloadManager.m; sourceTree = "<group>"; };
 		BBFB18CF23A81D80009CD0C1 /* QAImageProcesser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QAImageProcesser.m; sourceTree = "<group>"; };
 		BBFB190D23AB7528009CD0C1 /* QATextTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QATextTransaction.h; sourceTree = "<group>"; };
 		BBFB190E23AB7528009CD0C1 /* QATextTransaction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QATextTransaction.m; sourceTree = "<group>"; };
@@ -245,8 +245,8 @@
 			children = (
 				BB7BECC32390E40C00688028 /* QAImageBrowserManager.h */,
 				BB7BECC22390E40C00688028 /* QAImageBrowserManager.m */,
-				BBFB18CD23A81D7F009CD0C1 /* QAImageBroeserDownloadManager.h */,
-				BBFB18CE23A81D7F009CD0C1 /* QAImageBroeserDownloadManager.m */,
+				BBAFC63323BEFE0E0027E810 /* QAImageBrowserDownloadManager.h */,
+				BBAFC63223BEFE0E0027E810 /* QAImageBrowserDownloadManager.m */,
 				BBFB18CC23A81D7F009CD0C1 /* QAImageProcesser.h */,
 				BBFB18CF23A81D80009CD0C1 /* QAImageProcesser.m */,
 			);
@@ -643,11 +643,11 @@
 				BB9F6C8223838BEB00F05116 /* ScratchablelatexCell.m in Sources */,
 				BB9F6C9123838BF300F05116 /* AdvancedCell+SelfManager.m in Sources */,
 				BB9F6C7023838BEB00F05116 /* QATextRunDelegate.m in Sources */,
+				BBAFC63423BEFE0E0027E810 /* QAImageBrowserDownloadManager.m in Sources */,
 				BB9F6C2323838B8E00F05116 /* RootViewController.m in Sources */,
 				BBFB18D123A81D80009CD0C1 /* QAImageProcesser.m in Sources */,
 				BBA5395E23B10DD500977DD7 /* QATextDraw.m in Sources */,
 				BB9F6C8023838BEB00F05116 /* BaseCell.m in Sources */,
-				BBFB18D023A81D80009CD0C1 /* QAImageBroeserDownloadManager.m in Sources */,
 				BB9F6C6E23838BEB00F05116 /* UIImage+RoundedImage.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

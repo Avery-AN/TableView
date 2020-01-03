@@ -9,7 +9,7 @@
 #import "QAImageBrowserManager.h"
 #import "QAImageBrowserLayout.h"
 #import "QAImageBrowserCell.h"
-#import "QAImageBroeserDownloadManager.h"
+#import "QAImageBrowserDownloadManager.h"
 #import <SDWebImageManager.h>
 
 static void *CollectionContext = &CollectionContext;
@@ -20,7 +20,7 @@ static void *CollectionContext = &CollectionContext;
 @property (nonatomic, unsafe_unretained) UIWindow *window;
 @property (nonatomic) UIView *blackBackgroundView;
 @property (nonatomic, copy) NSArray *images;
-@property (nonatomic) QAImageBroeserDownloadManager *imageDownloadManager;
+@property (nonatomic) QAImageBrowserDownloadManager *imageDownloadManager;
 @property (nonatomic) NSMutableArray *preloadImages;
 @property (nonatomic, assign) int currentPosition;
 @property (nonatomic, unsafe_unretained) YYAnimatedImageView *tapedImageView;
@@ -35,6 +35,7 @@ static void *CollectionContext = &CollectionContext;
 @property (nonatomic) UIPanGestureRecognizer *panGestureRecognizer;
 @property (nonatomic, unsafe_unretained) QAImageBrowserCell *currentImageBrowserCell;
 @property (nonatomic, unsafe_unretained) QAImageBrowserCell *firstImageBrowserCell;
+@property (nonatomic, unsafe_unretained) QAImageBrowserCell *previousImageBrowserCell;
 @property (nonatomic) CGRect imageViewRectInCell;
 @property (nonatomic) CGAffineTransform imageViewTransformInCell;
 @property (nonatomic, copy) QAImageBrowserFinishedBlock finishedBlock;
@@ -70,7 +71,7 @@ static void *CollectionContext = &CollectionContext;
     }
     
     if (!self.imageDownloadManager) {
-        self.imageDownloadManager = [[QAImageBroeserDownloadManager alloc] init];
+        self.imageDownloadManager = [[QAImageBrowserDownloadManager alloc] init];
     }
     self.finishedBlock = finishedBlock;
     self.tapedImageView = (YYAnimatedImageView *)tapedImageView;
@@ -138,7 +139,6 @@ static void *CollectionContext = &CollectionContext;
     self.collectionOffsetX_began = offsetX;
     [self.collectionView setContentOffset:CGPointMake(offsetX, 0)];
     self.collectionView.hidden = YES;
-    [self.collectionView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:CollectionContext];
 }
 - (void)removePanGestureRecognizer {
     if (self.window && self.panGestureRecognizer) {
@@ -215,15 +215,6 @@ static void *CollectionContext = &CollectionContext;
     
     YYAnimatedImageView *imageView = self.currentImageBrowserCell.currentShowImageView;
     self.currentShowingImageView = imageView;
-}
-- (QAImageBrowserCell *)getPreviousImageBrowserCell:(int)currentPosition {
-    int previousPosition = currentPosition - 1;
-    if (previousPosition < 0 || previousPosition >= self.images.count) {
-        return nil;
-    }
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:previousPosition inSection:0];
-    QAImageBrowserCell *imageBrowserCell = (QAImageBrowserCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-    return imageBrowserCell;
 }
 - (void)processQAImageBrowserCellAfterPanCanceled {
     [self hideImageViewInCell:NO];
@@ -354,7 +345,6 @@ static void *CollectionContext = &CollectionContext;
     else {
     }
     
-    [self.collectionView removeObserver:self forKeyPath:@"contentOffset"];
     [self.collectionView removeFromSuperview];
     self.collectionView = nil;
     [self.blackBackgroundView removeFromSuperview];
@@ -522,18 +512,17 @@ static void *CollectionContext = &CollectionContext;
 }
 
 
+/*
 #pragma mark - UICollectionViewDelegate -
 
-/*
- // (when the touch begins)
- // 1. -collectionView:shouldHighlightItemAtIndexPath:
- // 2. -collectionView:didHighlightItemAtIndexPath:
- //
- // (when the touch lifts)
- // 3. -collectionView:shouldSelectItemAtIndexPath: or -collectionView:shouldDeselectItemAtIndexPath:
- // 4. -collectionView:didSelectItemAtIndexPath: or -collectionView:didDeselectItemAtIndexPath:
- // 5. -collectionView:didUnhighlightItemAtIndexPath:
- */
+// (when the touch begins)
+// 1. -collectionView:shouldHighlightItemAtIndexPath:
+// 2. -collectionView:didHighlightItemAtIndexPath:
+//
+// (when the touch lifts)
+// 3. -collectionView:shouldSelectItemAtIndexPath: or -collectionView:shouldDeselectItemAtIndexPath:
+// 4. -collectionView:didSelectItemAtIndexPath: or -collectionView:didDeselectItemAtIndexPath:
+// 5. -collectionView:didUnhighlightItemAtIndexPath:
 
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     return YES;
@@ -547,9 +536,14 @@ static void *CollectionContext = &CollectionContext;
 - (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
     NSLog(@"   didDeselectItem (section - row) :  %ld - %ld", (long)indexPath.section, (long)indexPath.row);
 }
+*/
 
 
 #pragma mark - UIScrollView Delegate -
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.currentPosition inSection:0];
+    self.previousImageBrowserCell = (QAImageBrowserCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+}
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     if (scrollView.contentOffset.x <= -80) {
         [self quitImageBrowser_directly];
@@ -558,56 +552,44 @@ static void *CollectionContext = &CollectionContext;
         [self quitImageBrowser_directly];
     }
 }
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-}
-
-
-#pragma mark - Observe -
-- (void)observeValueForKeyPath:(NSString *)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary *)change
-                       context:(void *)context {  // NSKeyValueChangeOldKey & NSKeyValueChangeNewKey
-    if (context == CollectionContext) {
-        CGFloat pageWidth = self.collectionView.bounds.size.width;
-        CGPoint offset = [[change objectForKey:NSKeyValueChangeNewKey] CGPointValue];
-        
-        int currentPage = self.currentPosition;
-        self.collectionOffsetX_tmp = self.currentPosition * pageWidth;
-        if (offset.x - self.collectionOffsetX_tmp > 3) {
-            if (fabs(offset.x - self.collectionOffsetX_tmp) - pageWidth >= 0) {
-                currentPage = currentPage + 1;
-            }
-        }
-        else if (offset.x - self.collectionOffsetX_tmp < -3) {
-            if (fabs(offset.x - self.collectionOffsetX_tmp) - pageWidth >= 0) {
-                currentPage = currentPage - 1;
-            }
-        }
-        
-        if (currentPage < 0 || currentPage >= self.images.count) {
-            return;
-        }
-        else if (self.currentPosition == currentPage) {
-            return;
-        }
-
-        self.currentPosition = currentPage;
-        
-        if (fabs(offset.x - self.collectionOffsetX_began) - pageWidth >= 0.) {
-            // 将初次点击的imageView进行复位 (CollectionView.cell -> SRCTableView.cell)
-            /** [self makeTapedImageViewBacktoOriginalStateWhenScroll]; */
-            SEL makeTapedImageViewBacktoOriginalStateWhenScrollSelector = NSSelectorFromString(@"makeTapedImageViewBacktoOriginalStateWhenScroll");
-            IMP makeTapedImageViewBacktoOriginalStateWhenScrollImp = [self methodForSelector:makeTapedImageViewBacktoOriginalStateWhenScrollSelector];
-            void (*makeTapedImageViewBacktoOriginalStateWhenScroll)(id, SEL) = (void *)makeTapedImageViewBacktoOriginalStateWhenScrollImp;
-            makeTapedImageViewBacktoOriginalStateWhenScroll(self, makeTapedImageViewBacktoOriginalStateWhenScrollSelector);
-        }
-        
-        QAImageBrowserCell *previousImageBrowserCell = [self getPreviousImageBrowserCell:self.currentPosition];
-        if (previousImageBrowserCell && previousImageBrowserCell.scrollView.zoomScale > 1) {
-            [previousImageBrowserCell.scrollView setZoomScale:1 animated:YES];
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    CGFloat pageWidth = self.collectionView.bounds.size.width;
+    CGPoint offset = scrollView.contentOffset;
+    
+    int currentPage = self.currentPosition;
+    self.collectionOffsetX_tmp = self.currentPosition * pageWidth;
+    if (offset.x - self.collectionOffsetX_tmp > 3) {
+        if (fabs(offset.x - self.collectionOffsetX_tmp) - pageWidth >= 0) {
+            currentPage = currentPage + 1;
         }
     }
-};
+    else if (offset.x - self.collectionOffsetX_tmp < -3) {
+        if (fabs(offset.x - self.collectionOffsetX_tmp) - pageWidth >= 0) {
+            currentPage = currentPage - 1;
+        }
+    }
+    
+    if (currentPage < 0 || currentPage >= self.images.count) {
+        return;
+    }
+    else if (self.currentPosition == currentPage) {
+        return;
+    }
+    
+    self.currentPosition = currentPage;
+    
+    if (fabs(offset.x - self.collectionOffsetX_began) - pageWidth >= 0.) {
+        // 将初次点击的imageView进行复位 (CollectionView.cell -> SRCTableView.cell)
+        /** [self makeTapedImageViewBacktoOriginalStateWhenScroll]; */
+        SEL makeTapedImageViewBacktoOriginalStateWhenScrollSelector = NSSelectorFromString(@"makeTapedImageViewBacktoOriginalStateWhenScroll");
+        IMP makeTapedImageViewBacktoOriginalStateWhenScrollImp = [self methodForSelector:makeTapedImageViewBacktoOriginalStateWhenScrollSelector];
+        void (*makeTapedImageViewBacktoOriginalStateWhenScroll)(id, SEL) = (void *)makeTapedImageViewBacktoOriginalStateWhenScrollImp;
+        makeTapedImageViewBacktoOriginalStateWhenScroll(self, makeTapedImageViewBacktoOriginalStateWhenScrollSelector);
+    }
+    
+    // 恢复初始状态 (处理放大或缩小图片的情况):
+    [self.previousImageBrowserCell.scrollView setZoomScale:1];
+}
 
 
 #pragma mark - MemoryWarning -

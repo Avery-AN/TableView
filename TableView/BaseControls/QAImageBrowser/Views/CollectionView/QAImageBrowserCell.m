@@ -34,6 +34,14 @@
 }
 
 
+#pragma mark - Override Methods -
+- (void)prepareForReuse {
+    [super prepareForReuse];
+
+    [self.scrollView setZoomScale:1];
+}
+
+
 #pragma mark - Public Methods -
 - (void)configImageView:(YYAnimatedImageView *)imageView
            defaultImage:(UIImage * _Nullable)defaultImage {
@@ -53,7 +61,7 @@
         }
     }
 }
-- (void)reprepareShowImageViewWithImageDownloadManager:(QAImageBroeserDownloadManager * _Nonnull)imageDownloadManager {
+- (void)reprepareShowImageViewWithImageDownloadManager:(QAImageBrowserDownloadManager * _Nonnull)imageDownloadManager {
     self.imageView.hidden = NO;
     self.currentShowImageView = self.imageView;
     [self showContentWithContentMode:self.imageView.contentMode imageDownloadManager:imageDownloadManager];
@@ -62,7 +70,7 @@
 - (void)configContent:(NSDictionary * _Nonnull)dic
          defaultImage:(UIImage * _Nullable)defaultImage
           contentMode:(UIViewContentMode)contentMode
-withImageDownloadManager:(QAImageBroeserDownloadManager * _Nonnull)imageDownloadManager {
+withImageDownloadManager:(QAImageBrowserDownloadManager * _Nonnull)imageDownloadManager {
     self.dic = dic;
     self.defaultImage = defaultImage;
     self.imageView.contentMode = contentMode;
@@ -82,7 +90,7 @@ withImageDownloadManager:(QAImageBroeserDownloadManager * _Nonnull)imageDownload
 
 #pragma mark - ShowImages Method -
 - (void)showContentWithContentMode:(UIViewContentMode)contentMode
-              imageDownloadManager:(QAImageBroeserDownloadManager * _Nonnull)imageDownloadManager {
+              imageDownloadManager:(QAImageBrowserDownloadManager * _Nonnull)imageDownloadManager {
     NSString *imageUrl = [self.dic valueForKey:@"url"];
     UIImage *image = [self.dic valueForKey:@"image"];
     if (image) {
@@ -99,7 +107,7 @@ withImageDownloadManager:(QAImageBroeserDownloadManager * _Nonnull)imageDownload
 - (void)showImageWithUrl:(NSURL * _Nonnull)imageUrl
             defaultImage:(UIImage * _Nullable)defaultImage
             contentModel:(UIViewContentMode)contentModel
-    imageDownloadManager:(QAImageBroeserDownloadManager * _Nonnull)imageDownloadManager {
+    imageDownloadManager:(QAImageBrowserDownloadManager * _Nonnull)imageDownloadManager {
     if (!imageUrl || imageUrl.absoluteString.length == 0) {
         return;
     }

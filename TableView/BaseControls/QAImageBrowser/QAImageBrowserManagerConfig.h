@@ -12,7 +12,7 @@
 #import <SDWebImage/SDWebImageDownloader.h>
 #import <SDWebImage/SDImageCache.h>
 #import "QAImageProcesser.h"
-#import "QAImageBroeserDownloadManager.h"
+#import "QAImageBrowserDownloadManager.h"
 // #import <Masonry.h>
 
 #define QAImageBrowserScreenWidth     [UIScreen mainScreen].bounds.size.width
