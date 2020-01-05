@@ -41,8 +41,8 @@ NS_ASSUME_NONNULL_BEGIN
                            wordSpace:(CGFloat)wordSpace
                     maxNumberOfLines:(NSInteger)maxNumberOfLines
                        textAlignment:(NSTextAlignment)textAlignment
-                      truncationText:(NSDictionary *)truncationTextInfo
-                   saveHighlightText:(BOOL)saveHighlightText;
+                   saveHighlightText:(BOOL)saveHighlightText
+                           justified:(BOOL)justified;
 
 @end
 

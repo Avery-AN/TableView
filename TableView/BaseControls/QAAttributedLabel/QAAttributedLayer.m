@@ -309,13 +309,17 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
     
     // 文案的绘制:
     NSInteger numberOfLines = attributedLabel.numberOfLines;
+    BOOL justified = NO;
+    if (attributedText.showMoreTextEffected && attributedLabel.textAlignment == NSTextAlignmentJustified) {
+        justified = YES;
+    }
     [attributedText drawAttributedTextWithContext:context
                                       contentSize:bounds.size
                                         wordSpace:attributedLabel.wordSpace
                                  maxNumberOfLines:numberOfLines
                                     textAlignment:attributedLabel.textAlignment
-                                   truncationText:attributedText.truncationInfo
-                                saveHighlightText:NO];
+                                saveHighlightText:NO
+                                        justified:justified];
     
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     self.currentCGImage = (__bridge id _Nullable)(image.CGImage);
@@ -372,15 +376,20 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
         UIGraphicsBeginImageContextWithOptions(CGSizeMake(bounds.size.width, bounds.size.height), self.opaque, 0);
         CGContextRef context = UIGraphicsGetCurrentContext();
         
+        // 文案的绘制:
         CGSize contentSize = CGSizeMake(ceil(boundsWidth), ceil(boundsHeight));
         NSInteger numberOfLines = attributedLabel.numberOfLines;
+        BOOL justified = NO;
+        if (attributedString.showMoreTextEffected && attributedLabel.textAlignment == NSTextAlignmentJustified) {
+            justified = YES;
+        }
         [attributedString drawAttributedTextWithContext:context
                                             contentSize:contentSize
                                               wordSpace:attributedLabel.wordSpace
                                        maxNumberOfLines:numberOfLines
                                           textAlignment:attributedLabel.textAlignment
-                                         truncationText:attributedString.truncationInfo
-                                      saveHighlightText:YES];
+                                      saveHighlightText:YES
+                                              justified:justified];
     });
 }
 
@@ -570,15 +579,20 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
                 return;
             }
             
+            // 文案的绘制:
             CGSize contentSize = CGSizeMake(ceil(boundsWidth), ceil(boundsHeight));
             NSInteger numberOfLines = attributedLabel.numberOfLines;
+            BOOL justified = NO;
+            if (attributedText.showMoreTextEffected && attributedLabel.textAlignment == NSTextAlignmentJustified) {
+                justified = YES;
+            }
             int drawResult = [attributedText drawAttributedTextWithContext:context
                                                                contentSize:contentSize
                                                                  wordSpace:attributedLabel.wordSpace
                                                           maxNumberOfLines:numberOfLines
                                                              textAlignment:attributedLabel.textAlignment
-                                                            truncationText:attributedText.truncationInfo
-                                                         saveHighlightText:YES];
+                                                         saveHighlightText:YES
+                                                                 justified:justified];
             if (drawResult < 0) {
                 if (cancel) {
                     cancel();
@@ -1120,13 +1134,17 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
     // 文案的绘制:
     QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
     NSInteger numberOfLines = attributedLabel.numberOfLines;
+    BOOL justified = NO;
+    if (attributedText.showMoreTextEffected && attributedLabel.textAlignment == NSTextAlignmentJustified) {
+        justified = YES;
+    }
     [attributedText drawAttributedTextWithContext:context
                                       contentSize:bounds.size
                                         wordSpace:attributedLabel.wordSpace
                                  maxNumberOfLines:numberOfLines
                                     textAlignment:attributedLabel.textAlignment
-                                   truncationText:attributedText.truncationInfo
-                                saveHighlightText:NO];
+                                saveHighlightText:NO
+                                        justified:justified];
     
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();

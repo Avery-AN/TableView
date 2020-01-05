@@ -80,16 +80,15 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
     }
 }
 - (int)drawAttributedTextWithContext:(CGContextRef)context
-                         contentSize:(CGSize)size
+                         contentSize:(CGSize)contentSize
                            wordSpace:(CGFloat)wordSpace
                     maxNumberOfLines:(NSInteger)maxNumberOfLines
                        textAlignment:(NSTextAlignment)textAlignment
-                      truncationText:(NSDictionary *)truncationTextInfo
-                   saveHighlightText:(BOOL)saveHighlightText {
-    if (context == NULL || CGSizeEqualToSize(size, CGSizeZero)) {
+                   saveHighlightText:(BOOL)saveHighlightText
+                           justified:(BOOL)justified {
+    if (context == NULL || CGSizeEqualToSize(contentSize, CGSizeZero)) {
         return -10;
     }
-    
     
     NSMutableAttributedString *attributedString = self;
     if (attributedString.highlightFrameDic &&
@@ -102,16 +101,19 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
             [self getSortedHighlightRanges:attributedString];
         }
         
+        CGFloat contentHeight = contentSize.height;
+        CGFloat contentWidth = contentSize.width;
+        
         // 翻转坐标系:
         CGContextSetTextMatrix(context, CGAffineTransformIdentity);
-        CGContextTranslateCTM(context, 0, size.height);
+        CGContextTranslateCTM(context, 0, contentHeight);
         CGContextScaleCTM(context, 1.0, -1.0);
         
         // 基于attributedString创建CTFramesetter:
         CTFramesetterRef ctFramesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedString);
         
         // 创建绘制路径path:
-        CGRect drawRect = (CGRect) {0, 0, size};
+        CGRect drawRect = (CGRect) {0, 0, contentSize};
         CGMutablePathRef drawPath = CGPathCreateMutable();
         CGPathAddRect(drawPath, NULL, drawRect);
         
@@ -133,11 +135,18 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
             CTLineRef line = CFArrayGetValueAtIndex(lines, lineIndex);
             
             CGFloat lineDescent = 0.0f, lineAscent = 0.0f, lineLeading = 0.0f;
-            CTLineGetTypographicBounds((CTLineRef)line, &lineAscent, &lineDescent, &lineLeading);
+            double lineWidth = CTLineGetTypographicBounds((CTLineRef)line, &lineAscent, &lineDescent, &lineLeading);
             CGFloat lineHeight = lineAscent + lineDescent;
             CGFloat penOffset = (CGFloat)CTLineGetPenOffsetForFlush(line, QAFlushFactorForTextAlignment(textAlignment), drawRect.size.width); // 获取绘制文本时光笔所需的偏移量
             CGContextSetTextPosition(context, penOffset, lineOrigin.y); // 设置每一行位置
-            CTLineDraw(line, context); // 绘制每一行的内容
+            if (justified && lineIndex == numberOfLines - 1 && lineWidth / contentWidth > 0.80) { // 处理最后一行
+                line = CTLineCreateJustifiedLine(line, 1, contentWidth);  // 设置最后一行的两端对齐(当添加了"...全文"之后的情况)
+                CTLineDraw(line, context); // 绘制每一行的内容
+            }
+            else {
+                CTLineDraw(line, context); // 绘制每一行的内容
+            }
+            
             
             // 从CTLine中获取所有的CTRun:
             CFArrayRef runs = CTLineGetGlyphRuns(line);
@@ -176,7 +185,6 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
                 else {
                     // 保存高亮文案在字符中的NSRange以及在CTFrame中的CGRect (以便在label中处理点击事件):
                     if (saveHighlightText) {
-                        CGFloat contentHeight = size.height;
                         int result = [self saveHighlightRangeAndFrame:line
                                                            lineOrigin:lineOrigin
                                                             lineIndex:lineIndex
