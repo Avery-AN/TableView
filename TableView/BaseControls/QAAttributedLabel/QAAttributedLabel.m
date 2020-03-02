@@ -149,7 +149,7 @@ static void *TouchingContext = &TouchingContext;
                 CGRect frame = [value CGRectValue];
                 if (CGRectContainsPoint(frame, point)) {
                     self.tapedHighlightRange = truncationRange;
-                    [layer drawHighlightColor:truncationRange];
+                    [layer drawHighlightColor:truncationRange highlightRects:highlightRects];
 
                     self.tapedHighlightContent = self.seeMoreText;
                     _bits_union_taped.bits |= TapedMore_MASK;
@@ -174,7 +174,7 @@ static void *TouchingContext = &TouchingContext;
                 if (CGRectContainsPoint(frame, point)) {
                     NSRange highlightRange = NSRangeFromString(key);
                     self.tapedHighlightRange = highlightRange;
-                    [layer drawHighlightColor:highlightRange];
+                    [layer drawHighlightColor:highlightRange highlightRects:highlightRects];
 
                     NSDictionary *highlightTextDic = showingAttributedText.highlightTextDic;
                     if (highlightTextDic && highlightTextDic.count > 0) {

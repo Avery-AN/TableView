@@ -237,7 +237,8 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
 
     return attributedText;
 }
-- (void)drawHighlightColor:(NSRange)range {
+- (void)drawHighlightColor:(NSRange)range
+            highlightRects:(NSArray *)highlightRects {
     self.currentCGImage = self.contents;   // 保存当前的self.contents以供clearHighlightColor方法中使用
     
     QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
@@ -255,7 +256,8 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
                             inRange:range
                           textColor:attributedLabel.moreTapedTextColor
                 textBackgroundColor:attributedLabel.moreTapedBackgroundColor
-                         truncation:YES];
+                         truncation:YES
+                     highlightRects:highlightRects];
         }
         else {  // 处理 Links & At & Topic 的高亮
             NSString *contentType = [attributedText.highlightTextTypeDic valueForKey:NSStringFromRange(range)];
@@ -271,7 +273,8 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
                             inRange:range
                           textColor:tapedTextColor
                 textBackgroundColor:tapedBackgroundColor
-                         truncation:NO];
+                         truncation:NO
+                     highlightRects:highlightRects];
         }
     }
 }
@@ -1103,7 +1106,8 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
                   inRange:(NSRange)range
                 textColor:(UIColor * _Nonnull)textColor
       textBackgroundColor:(UIColor * _Nonnull)textBackgroundColor
-               truncation:(BOOL)truncation {
+               truncation:(BOOL)truncation
+           highlightRects:(NSArray *)highlightRects {
     if (!textBackgroundColor && !textColor) {
         return;
     }
@@ -1125,11 +1129,26 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
     }
     _currentTapedRange = range;
     
+    /*
     // 更新attributedText的相关属性设置:
     [self updateAttributeText:attributedText
                 withTextColor:textColor
           textBackgroundColor:textBackgroundColor
                         range:range];
+     */
+    
+    // 更新attributedText的相关属性设置:
+    [self updateAttributeText:attributedText
+                withTextColor:textColor
+          textBackgroundColor:nil
+                        range:range];
+    // 绘制高亮文案的背景色:
+    if (textBackgroundColor) {
+        [QABackgroundDraw drawBackgroundWithRects:highlightRects
+                                           radius:2
+                                  backgroundColor:textBackgroundColor];
+    }
+    
     
     // 文案的绘制:
     QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;

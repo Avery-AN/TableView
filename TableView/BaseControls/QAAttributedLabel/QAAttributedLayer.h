@@ -56,7 +56,8 @@ static dispatch_queue_t _Nonnull QAAttributedLayerDrawQueue() {
 /**
  针对range处的text进行高亮绘制
  */
-- (void)drawHighlightColor:(NSRange)range;
+- (void)drawHighlightColor:(NSRange)range
+            highlightRects:(NSArray * _Nonnull)highlightRects;
 
 /**
  针对ranges处的text批量进行高亮绘制 (SearchText使用)
