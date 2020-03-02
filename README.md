@@ -1,6 +1,7 @@
 # TableView
 
-TableView优化案例
+TableView优化案例<br>
+使用QAAttributedLabel的异步绘制时、即便在iPhone6真机下每个cell包含10张大图时仍能达到60fps
 ================
 
 主要功能点:
