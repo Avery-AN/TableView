@@ -61,6 +61,7 @@
 		BBCD5DC823A50CBA00950B71 /* 3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DBE23A50CBA00950B71 /* 3.jpg */; };
 		BBCD5DC923A50CBA00950B71 /* 1.JPG in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DBF23A50CBA00950B71 /* 1.JPG */; };
 		BBCD5DCA23A50CBA00950B71 /* 0.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DC023A50CBA00950B71 /* 0.jpg */; };
+		BBF82640240BB4FA0079B7E7 /* QABackgroundDraw.m in Sources */ = {isa = PBXBuildFile; fileRef = BBF8263F240BB4FA0079B7E7 /* QABackgroundDraw.m */; };
 		BBFB18D123A81D80009CD0C1 /* QAImageProcesser.m in Sources */ = {isa = PBXBuildFile; fileRef = BBFB18CF23A81D80009CD0C1 /* QAImageProcesser.m */; };
 		BBFB190F23AB7528009CD0C1 /* QATextTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = BBFB190E23AB7528009CD0C1 /* QATextTransaction.m */; };
 		CD8B8875A520E2CA6C6A9EBB /* Pods_TableView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 175F2055E5583335E94BE624 /* Pods_TableView.framework */; };
@@ -161,6 +162,8 @@
 		BBCD5DBE23A50CBA00950B71 /* 3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 3.jpg; sourceTree = "<group>"; };
 		BBCD5DBF23A50CBA00950B71 /* 1.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.JPG; sourceTree = "<group>"; };
 		BBCD5DC023A50CBA00950B71 /* 0.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 0.jpg; sourceTree = "<group>"; };
+		BBF8263E240BB4FA0079B7E7 /* QABackgroundDraw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QABackgroundDraw.h; sourceTree = "<group>"; };
+		BBF8263F240BB4FA0079B7E7 /* QABackgroundDraw.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QABackgroundDraw.m; sourceTree = "<group>"; };
 		BBFB18CC23A81D7F009CD0C1 /* QAImageProcesser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QAImageProcesser.h; sourceTree = "<group>"; };
 		BBFB18CF23A81D80009CD0C1 /* QAImageProcesser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QAImageProcesser.m; sourceTree = "<group>"; };
 		BBFB190D23AB7528009CD0C1 /* QATextTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QATextTransaction.h; sourceTree = "<group>"; };
@@ -349,6 +352,8 @@
 				BBA5395C23B10DD400977DD7 /* QATextDraw.m */,
 				BB9F6C4C23838BEA00F05116 /* QATextRunDelegate.h */,
 				BB9F6C2F23838BEA00F05116 /* QATextRunDelegate.m */,
+				BBF8263E240BB4FA0079B7E7 /* QABackgroundDraw.h */,
+				BBF8263F240BB4FA0079B7E7 /* QABackgroundDraw.m */,
 				BB9F6C3223838BEA00F05116 /* Category */,
 				BB9F6C5023838BEA00F05116 /* Utility */,
 				BB9F6C4623838BEA00F05116 /* Manager */,
@@ -628,6 +633,7 @@
 				BB9F6C9323838BF300F05116 /* AdvancedCell.m in Sources */,
 				BB9F6C7C23838BEB00F05116 /* QAHighlightTextManager.m in Sources */,
 				BB9F6C7123838BEB00F05116 /* QAAttributedLayer.m in Sources */,
+				BBF82640240BB4FA0079B7E7 /* QABackgroundDraw.m in Sources */,
 				BB9F6C7D23838BEB00F05116 /* QAEmojiTextManager.m in Sources */,
 				BB9F6C9223838BF300F05116 /* AdvancedViewController.m in Sources */,
 				BB9F6C7323838BEB00F05116 /* NSString+Md5.m in Sources */,

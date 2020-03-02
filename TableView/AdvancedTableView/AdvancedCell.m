@@ -47,7 +47,7 @@
         _styleLabel.highLightTexts = [NSArray arrayWithObjects:@"大量添加控件",@"直接绘制", nil];
         _styleLabel.highlightTextColor = [UIColor purpleColor];
         _styleLabel.highlightTapedTextColor = [UIColor greenColor];
-//        _styleLabel.highlightTapedBackgroundColor = [UIColor grayColor];
+        _styleLabel.highlightTapedBackgroundColor = [UIColor lightGrayColor];
         _styleLabel.highlightAtTextColor = [UIColor greenColor];
         _styleLabel.highlightLinkTextColor = [UIColor orangeColor];
         _styleLabel.highlightTopicTextColor = [UIColor magentaColor];
