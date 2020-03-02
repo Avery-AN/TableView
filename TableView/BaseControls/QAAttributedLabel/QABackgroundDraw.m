@@ -227,7 +227,6 @@ static CGFloat minRadius = 1;   // 最小弧度
         currentPoint:(CGPoint)currentPoint
            nextPoint:(CGPoint)nextPoint
               radius:(CGFloat)radius {
-    
     // 前后两个点重合的情况
     if ((currentPoint.x - nextPoint.x == 0 && currentPoint.y - nextPoint.y == 0) ||
         (currentPoint.x - previousPoint.x == 0 && currentPoint.y - previousPoint.y == 0)) {
@@ -238,68 +237,68 @@ static CGFloat minRadius = 1;   // 最小弧度
     if (previousPoint.x - currentPoint.x > 0 && previousPoint.y - currentPoint.y == 0 &&
         currentPoint.x - nextPoint.x == 0 && nextPoint.y - currentPoint.y > 0) {  // 左上角(逆时针)
         [self drawLeftTopCornerWithPath:path currentPoint:currentPoint radius:radius clockwise:NO];
-        NSLog(@"左上角-逆时针 (正规四边形)");
+        // NSLog(@"左上角-逆时针 (正规四边形)");
     }
     else if (previousPoint.x - currentPoint.x == 0 && previousPoint.y - currentPoint.y < 0 &&
              currentPoint.x - nextPoint.x < 0 && nextPoint.y - currentPoint.y == 0) {  // 左下角(逆时针)
         [self drawLeftDownCornerWithPath:path currentPoint:currentPoint radius:radius clockwise:NO];
-        NSLog(@"左下角-逆时针 (正规四边形)");
+        // NSLog(@"左下角-逆时针 (正规四边形)");
     }
     else if (previousPoint.x - currentPoint.x < 0 && previousPoint.y - currentPoint.y == 0 &&
              currentPoint.x - nextPoint.x == 0 && nextPoint.y - currentPoint.y < 0) {  // 右下角(逆时针)
         [self drawRightDownCornerWithPath:path currentPoint:currentPoint radius:radius clockwise:NO];
-        NSLog(@"右下角-逆时针 (正规四边形)");
+        // NSLog(@"右下角-逆时针 (正规四边形)");
     }
     else if (previousPoint.x - currentPoint.x == 0 && previousPoint.y - currentPoint.y > 0 &&
              currentPoint.x - nextPoint.x > 0 && nextPoint.y - currentPoint.y == 0) {  // 右上角(逆时针)
         [self drawRightUpCornerWithPath:path currentPoint:currentPoint radius:radius clockwise:NO];
-        NSLog(@"右上角-逆时针 (正规四边形)");
+        // NSLog(@"右上角-逆时针 (正规四边形)");
     }
     
     // 十字形(交叉点处的4个角):
     else if (previousPoint.x - currentPoint.x == 0 && previousPoint.y - currentPoint.y < 0 &&
         currentPoint.x - nextPoint.x > 0 && nextPoint.y - currentPoint.y == 0) {  // 右下角(顺时针)
         [self drawRightDownCornerWithPath:path currentPoint:currentPoint radius:radius clockwise:YES];
-        NSLog(@"右下角-顺时针 (十字形)");
+        // NSLog(@"右下角-顺时针 (十字形)");
     }
     else if (previousPoint.x - currentPoint.x < 0 && previousPoint.y - currentPoint.y == 0 &&
              currentPoint.x - nextPoint.x == 0 && nextPoint.y - currentPoint.y > 0) {  // 右上角(顺时针)
         if (fabs(previousPoint.x - currentPoint.x) < 2*radius) {
-            NSLog(@"左上角-逆时针 (特殊)");
+            // NSLog(@"左上角-逆时针 (特殊)");
             [self drawLeftTopCornerWithPath:path currentPoint:currentPoint radius:radius clockwise:NO];
         }
         else {
             [self drawRightUpCornerWithPath:path currentPoint:currentPoint radius:radius clockwise:YES];
-            NSLog(@"右上角-顺时针 (十字形)");
+            // NSLog(@"右上角-顺时针 (十字形)");
         }
     }
     else if (previousPoint.x - currentPoint.x == 0 && previousPoint.y - currentPoint.y > 0 &&
              currentPoint.x - nextPoint.x < 0 && nextPoint.y - currentPoint.y == 0) {  // 左上角(顺时针)
         if (fabs(currentPoint.x - nextPoint.x) < 2*radius) {
             [self drawRightUpCornerWithPath:path currentPoint:currentPoint radius:radius clockwise:NO];
-            NSLog(@"右上角-逆时针 (特殊)");
+            // NSLog(@"右上角-逆时针 (特殊)");
         }
         else {
             [self drawLeftTopCornerWithPath:path currentPoint:currentPoint radius:radius clockwise:YES];
-            NSLog(@"左上角-顺时针 (十字形)");
+            // NSLog(@"左上角-顺时针 (十字形)");
         }
     }
     else if (previousPoint.x - currentPoint.x > 0 && previousPoint.y - currentPoint.y == 0 &&
              currentPoint.x - nextPoint.x == 0 && nextPoint.y - currentPoint.y < 0) {  // 左下角(顺时针)
         [self drawLeftDownCornerWithPath:path currentPoint:currentPoint radius:radius clockwise:YES];
-        NSLog(@"左下角-顺时针 (十字形)");
+        // NSLog(@"左下角-顺时针 (十字形)");
     }
     
     // 工字形:
     else if (previousPoint.x - currentPoint.x < 0 && previousPoint.y - currentPoint.y == 0 &&
              currentPoint.x - nextPoint.x == 0 && nextPoint.y - currentPoint.y > 0) {  // 右上角(顺时针)
         [self drawRightUpCornerWithPath:path currentPoint:currentPoint radius:radius clockwise:YES];
-        NSLog(@"右上角-顺时针 (工字形)");
+        // NSLog(@"右上角-顺时针 (工字形)");
     }
     else if (previousPoint.x - currentPoint.x == 0 && previousPoint.y - currentPoint.y < 0 &&
              currentPoint.x - nextPoint.x > 0 && nextPoint.y - currentPoint.y == 0) {  // 右下角(顺时针)
         [self drawRightDownCornerWithPath:path currentPoint:currentPoint radius:radius clockwise:YES];
-        NSLog(@"右下角-顺时针 (工字形)");
+        // NSLog(@"右下角-顺时针 (工字形)");
     }
     /***
      else if (previousPoint.x - currentPoint.x > 0 && previousPoint.y - currentPoint.y == 0 &&
