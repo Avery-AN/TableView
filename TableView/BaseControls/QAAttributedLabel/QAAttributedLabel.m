@@ -177,9 +177,12 @@ static void *TouchingContext = &TouchingContext;
                     [layer drawHighlightColor:highlightRange highlightRects:highlightRects];
 
                     NSDictionary *highlightTextDic = showingAttributedText.highlightTextDic;
+                    // NSDictionary *highlightTextChangedDic = showingAttributedText.highlightTextChangedDic;
                     if (highlightTextDic && highlightTextDic.count > 0) {
                         NSString *key = NSStringFromRange(highlightRange);
                         NSString *highlightText = [highlightTextDic valueForKey:key];
+                        // NSString *highlightChangedText = [highlightTextChangedDic valueForKey:key];
+                        
                         NSString *tapedType = [showingAttributedText.highlightTextTypeDic valueForKey:key];
                         if (!tapedType) {
                             return;

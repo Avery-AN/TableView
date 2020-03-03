@@ -33,15 +33,23 @@
             for (NSTextCheckingResult *match in allMatches) {
                 NSRange range = match.range;
                 NSString *substrinsgForMatch = [content substringWithRange:range];
-                NSInteger counts = 0;
-                NSString *str = @"...";
-                while ([substrinsgForMatch hasSuffix:str]) {  // 特殊情况处理
-                    substrinsgForMatch = [substrinsgForMatch substringToIndex:substrinsgForMatch.length-str.length];
-                    counts = counts + str.length;
+                if ([substrinsgForMatch hasSuffix:@"#"]) {   // 处理连接中的#
+                    substrinsgForMatch = [substrinsgForMatch substringToIndex:substrinsgForMatch.length-1];
+                    range = NSMakeRange(range.location, range.length - 1);
+                    [*ranges addObject:NSStringFromRange(range)];
+                    [*links addObject:substrinsgForMatch];
                 }
-                range = NSMakeRange(range.location, range.length - counts);
-                [*ranges addObject:NSStringFromRange(range)];
-                [*links addObject:substrinsgForMatch];
+                else {
+                    NSInteger counts = 0;
+                    NSString *str = @"...";
+                    while ([substrinsgForMatch hasSuffix:str]) {  // 特殊情况处理(链接被截断的情况)
+                        substrinsgForMatch = [substrinsgForMatch substringToIndex:substrinsgForMatch.length-str.length];
+                        counts = counts + str.length;
+                    }
+                    range = NSMakeRange(range.location, range.length - counts);
+                    [*ranges addObject:NSStringFromRange(range)];
+                    [*links addObject:substrinsgForMatch];
+                }
             }
         }
     }
