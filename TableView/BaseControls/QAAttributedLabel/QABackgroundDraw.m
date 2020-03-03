@@ -28,7 +28,7 @@ static CGFloat minRadius = 1;   // 最小弧度
     
     for (id obj in rects) {
         CGRect rect = [obj CGRectValue];
-        CGRect newRect = CGRectMake(ceil(rect.origin.x), ceil(rect.origin.y), ceil(rect.size.width), ceil(rect.size.height));
+        CGRect newRect = CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
         
         NSMutableArray *dots = [NSMutableArray array];
         [self getDotsWithRect:newRect dots:dots];

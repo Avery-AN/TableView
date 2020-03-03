@@ -191,7 +191,8 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
                                                             lineIndex:lineIndex
                                                            lineHeight:lineHeight
                                                                   run:run
-                                                        ContentHeight:contentHeight
+                                                        contentWidth:contentWidth
+                                                        contentHeight:contentHeight
                                                      attributedString:attributedString];
                         if (result < 0) {
                             
@@ -337,6 +338,7 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
 - (CGRect)getRunRectWithAttributedString:(NSMutableAttributedString *)attributedString
                                  context:(CGContextRef)context
                                      run:(CTRunRef)run
+                            contentWidth:(CGFloat)contentWidth
                            contentHeight:(CGFloat)contentHeight {
     // 获取高亮文案的Rect:
     /**
@@ -345,39 +347,31 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
      
      // 获得CTRun的width(包含文字开头&结尾处的空白):
      CTRunGetTypographicBounds(run, CFRangeMake(0, 0), &runAscent, &runDescent, &runLeading);
-     
-     // 代码中判断"#@"的原因:
-     比如: 字符串"#注意啦#"
      */
-    // 获取文字的大小:
+    
     CGRect srcRect = CTRunGetImageBounds(run, context, CFRangeMake(0, 0));
-    CGPoint *runPositionsPointer = (CGPoint *)CTRunGetPositionsPtr(run);
-    CGSize runSize = srcRect.size;
+    CGPoint *runPositionsPointer = (CGPoint *)CTRunGetPositionsPtr(run);  // Returns a direct pointer for the glyph position
+    CGSize runImageBounds = srcRect.size;
     CGRect runRect = CGRectZero;
-    CGFloat originX = floor((*runPositionsPointer).x);
-    int widthAddedValue = 0;
-    if (originX - 1 > 0) {
+    CGFloat originX = (*runPositionsPointer).x;
+    CGFloat widthAddedValue = 0;
+    if (originX - 1. > 0) {
         runRect.origin.x = originX-1;
-        widthAddedValue = 2;
+        widthAddedValue = 3;
     }
     else {
         runRect.origin.x = originX;
-        widthAddedValue = 1.8;
+        widthAddedValue = 1.5;
     }
-    CFRange cfRange = CTRunGetStringRange(run);
-    NSString *text = [attributedString.string substringWithRange:NSMakeRange(cfRange.location, cfRange.length)];
-    if ([text isEqualToString:@"#"] || [text hasPrefix:@"#"] ||
-        [text isEqualToString:@"@"] || [text hasPrefix:@"@"] ||
-        [text isEqualToString:@"..."] || [text hasPrefix:@"..."]) {
-        CGFloat runAscent, runDescent, runLeading;
-        CGFloat typographicWidth = CTRunGetTypographicBounds(run, CFRangeMake(0, 0), &runAscent, &runDescent, &runLeading);
-        runRect.size = CGSizeMake(typographicWidth+widthAddedValue, runSize.height+8);
-    }
-    else {
-        runRect.size = CGSizeMake(runSize.width+widthAddedValue, runSize.height+8);   //
-    }
-    runRect.origin.y = floor(contentHeight - (srcRect.origin.y + srcRect.size.height)) - 4;
-    // runRect.origin.y = contentHeight - (srcRect.origin.y + srcRect.size.height) - 4;
+    // runRect.origin.y = floor(contentHeight - (srcRect.origin.y + srcRect.size.height)) - 4;
+    runRect.origin.y = contentHeight - (srcRect.origin.y + srcRect.size.height) - 4;
+    
+    CGFloat forecastWidth = ceil(runImageBounds.width) + widthAddedValue;
+    CGFloat diff_forecast = (runRect.origin.x + forecastWidth) - contentWidth;
+    CGFloat width = diff_forecast > 0 ? forecastWidth - diff_forecast : forecastWidth;
+    CGFloat height = runImageBounds.height+8;  // 此处也可以对最大高度做类似于最大宽度的判断
+    runRect.size = CGSizeMake(width, height);
+    
     return runRect;
 }
 - (int)saveHighlightRangeAndFrame:(CTLineRef)line
@@ -386,7 +380,8 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
                         lineIndex:(CFIndex)lineIndex
                        lineHeight:(CGFloat)lineHeight
                               run:(CTRunRef)run
-                    ContentHeight:(CGFloat)contentHeight
+                     contentWidth:(CGFloat)contentWidth
+                    contentHeight:(CGFloat)contentHeight
                  attributedString:(NSMutableAttributedString *)attributedString {
     if (self.currentRun != run) {
         self.currentRun = run;
@@ -407,7 +402,6 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
         // 找出highlightRange与currentRunRange的重合位置:
         NSRange overlappingRange = NSIntersectionRange(highlightRange, currentRunRange);
         if (overlappingRange.length > 0) {
-            
             // 获取高亮文案:
             NSString *highlightText = [attributedString.highlightTextChangedDic valueForKey:rangeString];
             if (!highlightText || highlightText.length == 0) {
@@ -421,43 +415,11 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
             if (highlightRange.location == currentRunRange.location &&
                 highlightRange.length == currentRunRange.length) {
                 
-
                 CGRect highlightRect = [self getRunRectWithAttributedString:attributedString
-                                                              context:context run:run
-                                                        contentHeight:contentHeight];
-                
-//                // 获取高亮文案的Rect:
-//                /**
-//                 // 获得CTRun的size大小、这个方法比较精确! (但是得到的rect的x的值只有火星人才能搞懂)
-//                 CTRunGetImageBounds(run, context, CFRangeMake(0, 0));
-//                 */
-//                CGRect srcRect = CTRunGetImageBounds(run, context, CFRangeMake(0, 0));
-//                CGPoint *runPositionsPointer = (CGPoint *)CTRunGetPositionsPtr(run);
-//                CGSize runSize = srcRect.size;
-//                CGRect runRect = CGRectZero;
-//                CGFloat originX = floor((*runPositionsPointer).x);
-//                int widthAddedValue = 0;
-//                if (originX - 1 > 0) {
-//                    runRect.origin.x = originX-1;
-//                    widthAddedValue = 2;
-//                }
-//                else {
-//                    runRect.origin.x = originX;
-//                    widthAddedValue = 1.8;
-//                }
-//                CFRange cfRange = CTRunGetStringRange(run);
-//                NSString *text = [attributedString.string substringWithRange:NSMakeRange(cfRange.location, cfRange.length)];
-//                if ([text isEqualToString:@"#"] || [text hasPrefix:@"#"] ||
-//                    [text isEqualToString:@"@"] || [text hasPrefix:@"@"]) {
-//                    CGFloat runAscent, runDescent, runLeading;
-//                    CGFloat typographicWidth = CTRunGetTypographicBounds(run, CFRangeMake(0, 0), &runAscent, &runDescent, &runLeading);
-//                    runRect.size = CGSizeMake(typographicWidth+widthAddedValue, runSize.height+6);
-//                }
-//                else {
-//                    runRect.size = CGSizeMake(runSize.width+widthAddedValue, runSize.height+6);   //
-//                }
-//                runRect.origin.y = floor(contentHeight - (srcRect.origin.y + srcRect.size.height)) - 3;
-//                CGRect highlightRect = runRect;
+                                                                    context:context
+                                                                        run:run
+                                                               contentWidth:contentWidth
+                                                              contentHeight:contentHeight];
                 
                 int result = [self saveHighlightRect:highlightRect
                                        highlightText:highlightText
@@ -483,41 +445,11 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
                         NSString *subHighlightText = [currentRunString substringWithRange:subRange_previous];
 
                         CGRect highlightRect_previous = [self getRunRectWithAttributedString:attributedString
-                                                                      context:context run:run
-                                                                contentHeight:contentHeight];
-
-//                        // 获取高亮文案的Rect:
-//                        /**
-//                         // 获得CTRun的size大小、这个方法比较精确! (但是得到的rect的x的值只有火星人才能搞懂)
-//                         CTRunGetImageBounds(run, context, CFRangeMake(0, 0));
-//                        */
-//                        CGRect srcRect = CTRunGetImageBounds(run, context, CFRangeMake(0, 0));
-//                        CGPoint *runPositionsPointer = (CGPoint *)CTRunGetPositionsPtr(run);
-//                        CGSize runSize = srcRect.size;
-//                        CGRect runRect = CGRectZero;
-//                        CGFloat originX = floor((*runPositionsPointer).x);
-//                        int widthAddedValue = 0;
-//                        if (originX - 1 > 0) {
-//                            runRect.origin.x = originX-1;
-//                            widthAddedValue = 2;
-//                        }
-//                        else {
-//                            runRect.origin.x = originX;
-//                            widthAddedValue = 1.8;
-//                        }
-//                        CFRange cfRange = CTRunGetStringRange(run);
-//                        NSString *text = [attributedString.string substringWithRange:NSMakeRange(cfRange.location, cfRange.length)];
-//                        if ([text isEqualToString:@"#"] || [text hasPrefix:@"#"] ||
-//                            [text isEqualToString:@"@"] || [text hasPrefix:@"@"]) {
-//                            CGFloat runAscent, runDescent, runLeading;
-//                            CGFloat typographicWidth = CTRunGetTypographicBounds(run, CFRangeMake(0, 0), &runAscent, &runDescent, &runLeading);
-//                            runRect.size = CGSizeMake(typographicWidth+widthAddedValue, runSize.height+6);
-//                        }
-//                        else {
-//                            runRect.size = CGSizeMake(runSize.width+widthAddedValue, runSize.height+6);   //
-//                        }
-//                        runRect.origin.y = floor(contentHeight - (srcRect.origin.y + srcRect.size.height)) - 3;
-//                        CGRect highlightRect_previous = runRect;
+                                                                                     context:context
+                                                                                         run:run
+                                                                                contentWidth:contentWidth
+                                                                               contentHeight:contentHeight];
+                        
                         self.currentPosition_offsetXInRun = highlightRect_previous.size.width;
                         self.currentPositionInRun = subRange_previous.length;
 
@@ -554,44 +486,13 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
                     
                     NSRange subRange = NSMakeRange(0, highlightText.length);
                     NSString *subHighlightText = [currentRunString substringWithRange:subRange];
-                    
 
                     CGRect highlightRect = [self getRunRectWithAttributedString:attributedString
-                                                                  context:context run:run
-                                                            contentHeight:contentHeight];
+                                                                        context:context
+                                                                            run:run
+                                                                   contentWidth:contentWidth
+                                                                  contentHeight:contentHeight];
                     
-//                    // 获取高亮文案的Rect:
-//                    /**
-//                     // 获得CTRun的size大小、这个方法比较精确! (但是得到的rect的x的值只有火星人才能搞懂)
-//                     CTRunGetImageBounds(run, context, CFRangeMake(0, 0));
-//                    */
-//                    CGRect srcRect = CTRunGetImageBounds(run, context, CFRangeMake(0, 0));
-//                    CGPoint *runPositionsPointer = (CGPoint *)CTRunGetPositionsPtr(run);
-//                    CGSize runSize = srcRect.size;
-//                    CGRect runRect = CGRectZero;
-//                    CGFloat originX = floor((*runPositionsPointer).x);
-//                    int widthAddedValue = 0;
-//                    if (originX - 1 > 0) {
-//                        runRect.origin.x = originX-1;
-//                        widthAddedValue = 2;
-//                    }
-//                    else {
-//                        runRect.origin.x = originX;
-//                        widthAddedValue = 1.8;
-//                    }
-//                    CFRange cfRange = CTRunGetStringRange(run);
-//                    NSString *text = [attributedString.string substringWithRange:NSMakeRange(cfRange.location, cfRange.length)];
-//                    if ([text isEqualToString:@"#"] || [text hasPrefix:@"#"] ||
-//                        [text isEqualToString:@"@"] || [text hasPrefix:@"@"]) {
-//                        CGFloat runAscent, runDescent, runLeading;
-//                        CGFloat typographicWidth = CTRunGetTypographicBounds(run, CFRangeMake(0, 0), &runAscent, &runDescent, &runLeading);
-//                        runRect.size = CGSizeMake(typographicWidth+widthAddedValue, runSize.height+6);
-//                    }
-//                    else {
-//                        runRect.size = CGSizeMake(runSize.width+widthAddedValue, runSize.height+6);   //
-//                    }
-//                    runRect.origin.y = floor(contentHeight - (srcRect.origin.y + srcRect.size.height)) - 3;
-//                    CGRect highlightRect = runRect;
                     self.currentPosition_offsetXInRun += highlightRect.size.width;
                     self.currentPositionInRun += subRange.length;
                     
@@ -636,43 +537,11 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
                     }
                     NSString *subHighlightText = [currentRunString substringWithRange:subRange];
                     
-
                     CGRect highlightRect = [self getRunRectWithAttributedString:attributedString
-                                                                  context:context run:run
-                                                            contentHeight:contentHeight];
-                    
-//                    // 获取高亮文案的Rect:
-//                    /**
-//                     // 获得CTRun的size大小、这个方法比较精确! (但是得到的rect的x的值只有火星人才能搞懂)
-//                     CTRunGetImageBounds(run, context, CFRangeMake(0, 0));
-//                    */
-//                    CGRect srcRect = CTRunGetImageBounds(run, context, CFRangeMake(0, 0));
-//                    CGPoint *runPositionsPointer = (CGPoint *)CTRunGetPositionsPtr(run);
-//                    CGSize runSize = srcRect.size;
-//                    CGRect runRect = CGRectZero;
-//                    CGFloat originX = floor((*runPositionsPointer).x);
-//                    int widthAddedValue = 0;
-//                    if (originX - 1 > 0) {
-//                        runRect.origin.x = originX-1;
-//                        widthAddedValue = 2;
-//                    }
-//                    else {
-//                        runRect.origin.x = originX;
-//                        widthAddedValue = 1.8;
-//                    }
-//                    CFRange cfRange = CTRunGetStringRange(run);
-//                    NSString *text = [attributedString.string substringWithRange:NSMakeRange(cfRange.location, cfRange.length)];
-//                    if ([text isEqualToString:@"#"] || [text hasPrefix:@"#"] ||
-//                        [text isEqualToString:@"@"] || [text hasPrefix:@"@"]) {
-//                        CGFloat runAscent, runDescent, runLeading;
-//                        CGFloat typographicWidth = CTRunGetTypographicBounds(run, CFRangeMake(0, 0), &runAscent, &runDescent, &runLeading);
-//                        runRect.size = CGSizeMake(typographicWidth+widthAddedValue, runSize.height+6);
-//                    }
-//                    else {
-//                        runRect.size = CGSizeMake(runSize.width+widthAddedValue, runSize.height+6);   // 保存高度的时候让高度值变大一点、以便于点击。
-//                    }
-//                    runRect.origin.y = floor(contentHeight - (srcRect.origin.y + srcRect.size.height)) - 3;
-//                    CGRect highlightRect = runRect;
+                                                                        context:context
+                                                                            run:run
+                                                                   contentWidth:contentWidth
+                                                                  contentHeight:contentHeight];
                     
                     int result = [self saveHighlightRect:highlightRect
                                            highlightText:subHighlightText
@@ -730,7 +599,7 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
         NSString *line = [self.saveLineInfoDic valueForKey:NSStringFromRange(highlightRange)];
         CFIndex line_index = line.intValue;
         if (line_index == lineIndex) {  // 仍处在同一line里
-            CGRect newRect = CGRectMake(rect.origin.x, highlightRect.origin.y, (rect.size.width + highlightRect.size.width), highlightRect.size.height);
+            CGRect newRect = CGRectMake(rect.origin.x, highlightRect.origin.y, (highlightRect.origin.x - rect.origin.x + highlightRect.size.width), highlightRect.size.height);
             [highlightRects replaceObjectAtIndex:(highlightRects.count-1) withObject:[NSValue valueWithCGRect:newRect]];
             [newlineTexts replaceObjectAtIndex:(highlightRects.count-1) withObject:[NSString stringWithFormat:@"%@%@",text,highlightText]];
         }

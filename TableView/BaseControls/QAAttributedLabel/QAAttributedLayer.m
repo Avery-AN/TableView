@@ -223,11 +223,20 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
     if (attributedText.highlightTextTypeDic == nil) {
         attributedText.highlightTextTypeDic = [NSMutableDictionary dictionary];
     }
+    if (attributedText.highlightTextChangedDic == nil) {
+        attributedText.highlightTextChangedDic = [NSMutableDictionary dictionary];
+    }
+    
     if (attributedText.highlightTextDic == nil) {
         attributedText.highlightTextDic = [NSMutableDictionary dictionary];
     }
-    if (attributedText.highlightTextChangedDic == nil) {
-        attributedText.highlightTextChangedDic = [NSMutableDictionary dictionary];
+    if (attributedLabel.showShortLink) {  // 显示短连接的情况需要保存原始链接到highlightTextDic中
+        NSArray *linkRanges = [highlightRanges valueForKey:@"link"];
+        NSArray *links = [highlightContents valueForKey:@"srcLink"];
+        for (int i = 0; i < linkRanges.count; i++) {
+            NSString *rangeString = [linkRanges objectAtIndex:i];
+            [attributedText.highlightTextDic setValue:[links objectAtIndex:i] forKey:rangeString];
+        }
     }
 
     // 在赋值text的情况下更新attributedLabel的 attributedString 的属性值:
@@ -679,7 +688,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
          */
     }
     else {
-        NSLog(@"生成attributedText");
+        // NSLog(@"生成attributedText");
         attributedText = [self getAttributedStringWithString:content
                                                     maxWidth:boundsWidth];
         if (!attributedText) {
@@ -932,8 +941,6 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
     highlightTextBackgroundColor:(UIColor *)highlightTextBackgroundColor
                    highlightFont:(UIFont *)highlightFont
                 attributedString:(NSMutableAttributedString *)attributedText {
-    QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
-
     for (int i = 0; i < ranges.count; i++) {
         NSString *rangeString = [ranges objectAtIndex:i];
         NSRange highlightRange = NSRangeFromString(rangeString);
@@ -945,15 +952,16 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
         }
         
         [attributedText.highlightTextTypeDic setValue:type forKey:NSStringFromRange(highlightRange)];
-        [attributedText.highlightTextDic setValue:highlightContent forKey:NSStringFromRange(highlightRange)];
         if ([type isEqualToString:@"link"]) {
-            if (attributedLabel.showShortLink) {
-                NSString *shortLink = attributedLabel.shortLink ? : QAShortLink_Default;
-                [attributedText.highlightTextChangedDic setValue:shortLink forKey:NSStringFromRange(highlightRange)];
+            if (![attributedText.highlightTextDic valueForKey:NSStringFromRange(highlightRange)]) {
+                [attributedText.highlightTextDic setValue:highlightContent forKey:NSStringFromRange(highlightRange)];
             }
             else {
-                [attributedText.highlightTextChangedDic removeAllObjects];
+                [attributedText.highlightTextChangedDic setValue:highlightContent forKey:NSStringFromRange(highlightRange)];
             }
+        }
+        else {
+            [attributedText.highlightTextDic setValue:highlightContent forKey:NSStringFromRange(highlightRange)];
         }
     }
     
@@ -1107,7 +1115,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
                 textColor:(UIColor * _Nonnull)textColor
       textBackgroundColor:(UIColor * _Nonnull)textBackgroundColor
                truncation:(BOOL)truncation
-           highlightRects:(NSArray *)highlightRects {
+           highlightRects:(NSArray * _Nonnull)highlightRects {
     if (!textBackgroundColor && !textColor) {
         return;
     }

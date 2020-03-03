@@ -19,30 +19,50 @@
                    isTopicHighlight:(BOOL)isTopicHighlight
                   highlightContents:(NSMutableDictionary * __strong *)highlightContents
                     highlightRanges:(NSMutableDictionary * __strong *)highlightRanges {
-    // 处理高亮显示的link链接:
+    // 处理高亮显示的link链接 (首先处理link、因为有可能涉及到短连接的替换、会影响到range):
     if (isLinkHighlight) {
         NSMutableArray *ranges = [NSMutableArray array];
         NSMutableArray *links = [NSMutableArray array];
         [*content getLinkUrlStringsSaveWithRangeArray:&ranges links:&links];
-        [*highlightRanges setValue:ranges forKey:@"link"];
-        [*highlightContents setValue:links forKey:@"link"];
+        
+        NSMutableArray *srcLinks = [[NSMutableArray alloc] initWithArray:links copyItems:YES];
+        [*highlightContents setValue:srcLinks forKey:@"srcLink"];   // 保存短连接替换前的链接地址
         
         // 处理link短链接:
-        if (*highlightContents && (*highlightContents).count > 0 && isShowShortLink) {
+        if (links.count > 0 && isShowShortLink) {
             if (!shortLink || shortLink.length == 0) {
                 shortLink = QAShortLink_Default;
             }
             
-            for (int i = 0; i < links.count ; i++) {
-                NSString *linkurlstring = [links objectAtIndex:i];
-                *content = [*content stringByReplacingOccurrencesOfString:linkurlstring withString:shortLink];
+            NSInteger diff_pre = 0;
+            for (int i = 0; i < ranges.count; i++) {
+                NSString *rangeString = [ranges objectAtIndex:i];
+                NSRange range = NSRangeFromString(rangeString);
+                
+                NSString *linkString = [links objectAtIndex:i];
+                NSInteger diff = shortLink.length - linkString.length;   // 长度差
+                range.location = range.location + diff_pre;
+                range.length = shortLink.length;
+                [ranges replaceObjectAtIndex:i withObject:NSStringFromRange(range)];
+                diff_pre = diff;
+                
+                [links replaceObjectAtIndex:i withObject:shortLink];
+                *content = [*content stringByReplacingOccurrencesOfString:linkString withString:shortLink];
             }
             
-            // 替换完link短链接后、重新获取高亮显示的短链接的位置:
-            [ranges removeAllObjects];
-            [*content getString:shortLink saveWithRangeArray:&ranges];
-            [*highlightRanges setValue:ranges forKey:@"link"];
+            /**【 下面的代码有重大bug 】
+             for (int i = 0; i < links.count ; i++) {
+                 NSString *linkurlstring = [links objectAtIndex:i];
+                 *content = [*content stringByReplacingOccurrencesOfString:linkurlstring withString:shortLink];
+             }
+             
+             // 替换完link短链接后、重新获取高亮显示的短链接的位置 【 此处有重大bug 】:
+             [ranges removeAllObjects];
+             [*content getString:shortLink saveWithRangeArray:&ranges];
+            */
         }
+        [*highlightRanges setValue:ranges forKey:@"link"];
+        [*highlightContents setValue:links forKey:@"link"];
     }
     
     // 处理高亮显示的"@user":
