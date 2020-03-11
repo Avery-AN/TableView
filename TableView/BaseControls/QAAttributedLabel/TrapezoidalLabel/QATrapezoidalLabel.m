@@ -50,13 +50,15 @@
 }
 
 - (CGSize)getContentSize {
-    QATrapezoidalLayer *trapezoidalLayer = (QATrapezoidalLayer *)self.layer;
-    NSMutableAttributedString *attributedText = nil;
-    CGFloat contentHeight = 0;
-    CGFloat contentWidth = self.bounds.size.width;
-    CGSize contentSize = CGSizeMake(contentWidth, CGFLOAT_MAX);
-    [trapezoidalLayer getBaseInfoWithContentSize:contentSize attributedText:&attributedText contentHeight:&contentHeight];
-    return CGSizeMake(contentWidth, contentHeight);
+    CGSize contentSize = CGSizeZero;
+    NSMutableAttributedString *attributedText = self.attributedString;
+    NSArray *lines = attributedText.lines;
+    if (lines) {
+        contentSize = CGSizeMake(self.bounds.size.width, lines.count*self.trapezoidalLineHeight);
+    }
+    else {
+    }
+    return contentSize;
 }
 - (CGImageRef)getLayerContents {
     QATrapezoidalLayer *layer = (QATrapezoidalLayer *)self.layer;
