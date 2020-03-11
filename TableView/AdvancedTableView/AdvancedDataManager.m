@@ -26,7 +26,7 @@
         CGRect nameFrame = CGRectMake(startX, Avatar_top_gap, Title_width, Title_height);
         [dic setValue:[NSValue valueWithCGRect:nameFrame] forKey:@"name-frame"];
         NSMutableDictionary *nameDic = [NSMutableDictionary dictionaryWithCapacity:0];
-        [nameDic setValue:[UIFont systemFontOfSize:12] forKey:@"font"];
+        [nameDic setValue:[UIFont systemFontOfSize:14] forKey:@"font"];
         [nameDic setValue:HEXColor(@"333333") forKey:@"textColor"];
         [dic setValue:nameDic forKey:@"name-style"];
 
@@ -34,7 +34,7 @@
         CGRect descFrame = CGRectMake(startX, Avatar_top_gap+AvatarSize-Desc_height, Title_width, Desc_height);
         [dic setValue:[NSValue valueWithCGRect:descFrame] forKey:@"desc-frame"];
         NSMutableDictionary *descDic = [NSMutableDictionary dictionaryWithCapacity:0];
-        [descDic setValue:[UIFont systemFontOfSize:12] forKey:@"font"];
+        [descDic setValue:[UIFont systemFontOfSize:14] forKey:@"font"];
         [descDic setValue:HEXColor(@"666666") forKey:@"textColor"];
         [dic setValue:descDic forKey:@"desc-style"];
 
@@ -54,7 +54,7 @@
             [datas addObject:dic];
         }
         if (i % 10 == 1) {
-            [dic setValue:@"https://upload-images.jianshu.io/upload_images/14892748-590eb681e5adfa96" forKey:@"avatar"];
+            [dic setValue:@"https://upload-images.jianshu.io/upload_images/18224698-380ec562c8230618.png" forKey:@"avatar"];
 
             NSString *baseString = [NSString stringWithFormat:@"哈哈哈哈哈哈哈 - %d;",i];
             for (int j = 0; j < i; j++) {
@@ -69,7 +69,7 @@
             [datas addObject:dic];
         }
         if (i % 10 == 2) {
-            [dic setValue:@"https://upload-images.jianshu.io/upload_images/8666040-e168249b5659f7b1.jpeg" forKey:@"avatar"];
+            [dic setValue:@"https://upload-images.jianshu.io/upload_images/15705790-d7125d495dea81ea" forKey:@"avatar"];
 
             NSString *baseString = [NSString stringWithFormat:@"哈哈哈哈哈哈哈 - %d;",i];
             for (int j = 0; j < i; j++) {
@@ -81,7 +81,7 @@
             [datas addObject:dic];
         }
         if (i % 10 == 3) {
-            [dic setValue:@"https://upload-images.jianshu.io/upload_images/17788728-c70af7cb2d08d901.jpg" forKey:@"avatar"];
+            [dic setValue:@"https://upload-images.jianshu.io/upload_images/21611422-50cd464a589b4cd4" forKey:@"avatar"];
 
             NSString *baseString = [NSString stringWithFormat:@"哈哈哈哈哈哈哈 - %d;",i];
             for (int j = 0; j < i; j++) {
@@ -94,7 +94,7 @@
             [datas addObject:dic];
         }
         if (i % 10 == 4) {
-            [dic setValue:@"https://upload-images.jianshu.io/upload_images/15705790-d7125d495dea81ea" forKey:@"avatar"];
+            [dic setValue:@"https://upload-images.jianshu.io/upload_images/22045084-93437dae965a8af5.jpeg" forKey:@"avatar"];
 
             content = [NSString stringWithFormat:@"%@ 这里是第\n【%d】\n条数据！", @" hi~各位!具体代码详见: https://github.com/Avery-AN", i];
             [dic setValue:content forKey:@"content"];
@@ -102,7 +102,7 @@
             [datas addObject:dic];
         }
         if (i % 10 == 5) {
-            [dic setValue:@"https://upload-images.jianshu.io/upload_images/6337952-002bf5cec6ebd442.jpg" forKey:@"avatar"];
+            [dic setValue:@"https://upload-images.jianshu.io/upload_images/18224698-044f07dfdea3350c.png" forKey:@"avatar"];
 
             NSString *baseString = [NSString stringWithFormat:@"哈哈哈哈哈哈哈 - %d;",i];
             for (int j = 0; j < i; j++) {
@@ -126,7 +126,7 @@
             [datas addObject:dic];
         }
         if (i % 10 == 7) {
-            [dic setValue:@"https://upload-images.jianshu.io/upload_images/11027481-3c3e53c8143024b3.jpg" forKey:@"avatar"];
+            [dic setValue:@"https://upload-images.jianshu.io/upload_images/169425-211781b78762cb80" forKey:@"avatar"];
             
             content = [NSString stringWithFormat:@"【%d】%@", i, @"mmap是一种内存映射文件的方法，即将一个文件或者其它对象映射到进程的地址空间，实现文件磁盘地址和进程虚拟地址空间中一段虚拟地址的一一对映关系。实现这样的映射关系后，进程就可以采用指针的方式读写操作这一段内存，而系统会自动回写脏页面到对应的文件磁盘上，即完成了对文件的操作而不必再调用read,write等系统调用函数。相反，内核空间对这段区域的修改也直接反映用户空间，从而可以实现不同进程间的文件共享。"];
             [dic setValue:content forKey:@"content"];
@@ -134,7 +134,7 @@
             [datas addObject:dic];
         }
         if (i % 10 == 8) {
-            [dic setValue:@"https://upload-images.jianshu.io/upload_images/2748485-8caa321e4f1aadf5" forKey:@"avatar"];
+            [dic setValue:@"https://upload-images.jianshu.io/upload_images/21611422-97a219f4fca94a19" forKey:@"avatar"];
             
             content = [NSString stringWithFormat:@"【%d】%@", i, @"mmap适用场景:\n(1) 有一个大file、你需要随时或者多次访问其内容。\n(2) 有一个小的file、你需要一次读入并且会频繁访问。这最适合大小不超过几个虚拟内存页面的文件。\n(3) 缓存一个文件的某一部分，无需映射整个文件，这样可以节省内存空间。"];
             [dic setValue:content forKey:@"content"];

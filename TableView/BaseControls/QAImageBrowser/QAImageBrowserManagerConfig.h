@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import <YYImage/YYImage.h>
-#import <SDWebImage/SDWebImageDownloader.h>
-#import <SDWebImage/SDImageCache.h>
+#import "YYImage.h"
+#import "SDWebImageDownloader.h"
+#import "SDImageCache.h"
 #import "QAImageProcesser.h"
 #import "QAImageBrowserDownloadManager.h"
 // #import <Masonry.h>

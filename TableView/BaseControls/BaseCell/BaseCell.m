@@ -252,8 +252,8 @@ typedef union {
     CGRect cellFrame = [[dic valueForKey:@"cell-frame"] CGRectValue];
     CGRect frame = self.frame;
     frame = (CGRect){frame.origin.x, frame.origin.y, cellFrame.size};
-    self.frame = frame;
     self.contentView.frame = frame;
+    self.frame = frame;
 }
 
 
@@ -549,9 +549,9 @@ typedef union {
 //    }
 //    return _contentImageLayer;
 //}
-- (QAAttributedLabel *)content {
+- (QARichTextLabel *)content {
     if (!_content) {
-        _content = [[QAAttributedLabel alloc] init];
+        _content = [[QARichTextLabel alloc] init];
     }
     return _content;
 }

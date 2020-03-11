@@ -203,11 +203,11 @@ static BOOL openClipsToBounds = YES;
 
 
 #pragma MARK - Property -
-- (QAAttributedLabel *)styleLabel {
+- (QARichTextLabel *)styleLabel {
     if (!_styleLabel) {
         NSInteger content_width = UIWidth - Avatar_left_gap - Avatar_left_gap;
         NSInteger content_height = 15;
-        _styleLabel = [[QAAttributedLabel alloc] initWithFrame:CGRectMake(0, 0, content_width, content_height)];
+        _styleLabel = [[QARichTextLabel alloc] initWithFrame:CGRectMake(0, 0, content_width, content_height)];
         _styleLabel.font = [UIFont systemFontOfSize:17];
         _styleLabel.textColor = HEXColor(@"666666");
         _styleLabel.lineSpace = 1.1;

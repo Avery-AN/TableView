@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface AdvancedCell : BaseCell
 
-@property (nonatomic) QAAttributedLabel *styleLabel;
+@property (nonatomic) QARichTextLabel *styleLabel;
 
 @end
 

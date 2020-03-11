@@ -10,9 +10,6 @@
 #import "AdvancedViewController.h"
 #import "ScratchablelatexViewController.h"
 
-@interface RootViewController ()
-
-@end
 
 @implementation RootViewController
 

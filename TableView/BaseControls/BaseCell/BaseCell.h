@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "QAAttributedLabel.h"
-#import <YYImage/YYImage.h>
-#import <FLAnimatedImage/FLAnimatedImage.h>
+#import "QARichTextLabel.h"
+#import "YYImage.h"
+//#import <FLAnimatedImage/FLAnimatedImage.h>
 
 typedef NS_ENUM(NSUInteger, BaseCell_TapedStyle) {
     BaseCell_Taped_Name = 1,            // 点中了名称
@@ -25,12 +25,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) UIImageView *avatar;
 @property (nonatomic) UIImageView *contentImageView;
 @property (nonatomic) YYAnimatedImageView *yyImageView;
-@property (nonatomic) FLAnimatedImageView *flImageView;
+//@property (nonatomic) FLAnimatedImageView *flImageView;
 /**
  如果不显示gif用这个contentImageLayer即可、无需使用contentImageView、yyImageView、flImageView等UI控件
  */
 @property (nonatomic) CALayer *contentImageLayer;
-@property (nonatomic) QAAttributedLabel *content;
+@property (nonatomic) QARichTextLabel *content;
 @property (nonatomic, unsafe_unretained) NSDictionary *styleInfo;
 @property (nonatomic, copy) void (^ _Nullable baseCellTapAction)(BaseCell *cell, BaseCell_TapedStyle style, NSString *content);
 
@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)showStytle:(NSDictionary *)dic;
 
 /**
- 设置QAAttributedLabel的相关属性
+ 设置AttributedLabel的相关属性
  */
 - (void)setProperties:(NSDictionary *)dic;
 

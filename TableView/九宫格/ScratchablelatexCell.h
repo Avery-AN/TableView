@@ -7,7 +7,7 @@
 //
 
 #import "BaseCell.h"
-#import "QAAttributedLabel.h"
+#import "QARichTextLabel.h"
 
 static NSInteger DefaultTag_contentImageView = 10;
 static NSInteger MaxLines = 3;      // 最多显示3行
@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ScratchablelatexCell : BaseCell
 
-@property (nonatomic) QAAttributedLabel *styleLabel;
+@property (nonatomic) QARichTextLabel *styleLabel;
 
 /**
  如果不显示gif、最好使用Calayer来代替UIImageView

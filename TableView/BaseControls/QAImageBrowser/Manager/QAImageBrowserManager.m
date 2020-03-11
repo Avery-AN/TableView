@@ -10,7 +10,7 @@
 #import "QAImageBrowserLayout.h"
 #import "QAImageBrowserCell.h"
 #import "QAImageBrowserDownloadManager.h"
-#import <SDWebImageManager.h>
+#import "SDWebImageManager.h"
 
 static void *CollectionContext = &CollectionContext;
 

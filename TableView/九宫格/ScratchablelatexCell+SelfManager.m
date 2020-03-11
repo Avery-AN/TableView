@@ -16,23 +16,41 @@
 - (NSDictionary *)getInstanceProperty:(id)instance {
     NSMutableDictionary *dic = [NSMutableDictionary dictionary];
     
+    NSMutableDictionary *dic_base = [NSMutableDictionary dictionary];
     unsigned int count = 0;
-    objc_property_t *properties = class_copyPropertyList([instance class], &count);
+    objc_property_t *properties = class_copyPropertyList([QAAttributedLabel class], &count);
     for (int i = 0; i < count; i++) {
         objc_property_t property = properties[i];
         const char *name = property_getName(property);
         NSString *key = [NSString stringWithUTF8String:name];
-//        NSLog(@"GetInstanceProperty - key: %@",key);
         id value = [instance valueForKey:key];
-//        NSLog(@"GetInstanceProperty - value: %@",value);
         const char *attributes_c = property_getAttributes(property);
         NSString *attributes = [NSString stringWithUTF8String:attributes_c];
-//        NSLog(@"attributes: %@",attributes);
         if (value && [attributes rangeOfString:@",R,"].location == NSNotFound) {  // 排除没有被赋值的属性 & 只读属性
-            [dic setObject:value forKey:key];
+            [dic_base setObject:value forKey:key];
         }
     }
+    [dic setValuesForKeysWithDictionary:dic_base];
     free(properties);
+    
+    if (![[instance class] isKindOfClass:[QAAttributedLabel class]]) {
+        NSMutableDictionary *dic_current = [NSMutableDictionary dictionary];
+        count = 0;
+        properties = class_copyPropertyList([instance class], &count);
+        for (int i = 0; i < count; i++) {
+            objc_property_t property = properties[i];
+            const char *name = property_getName(property);
+            NSString *key = [NSString stringWithUTF8String:name];
+            id value = [instance valueForKey:key];
+            const char *attributes_c = property_getAttributes(property);
+            NSString *attributes = [NSString stringWithUTF8String:attributes_c];
+            if (value && [attributes rangeOfString:@",R,"].location == NSNotFound) {  // 排除没有被赋值的属性 & 只读属性
+                [dic_current setObject:value forKey:key];
+            }
+        }
+        [dic setValuesForKeysWithDictionary:dic_current];
+        free(properties);
+    }
     
     return dic;
 }
