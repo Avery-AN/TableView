@@ -74,6 +74,8 @@
                    lines:lines
               lineWidths:lineWidths
         trapezoidalTexts:trapezoidalTexts_new];
+        
+        CFRelease(line);
     }
     
     return lineWidths.count * trapezoidalLineHeight;
@@ -133,6 +135,7 @@
 
             CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attributedString_new);
             [lines_ addObject:(__bridge id)line];
+            CFRelease(line);
         }
         trapezoidalTexts = trapezoidalTexts_;
         lines = lines_;
@@ -311,9 +314,13 @@
         completion(attributedText);
     }
 }
-- (NSMutableAttributedString *)getAttributedStringWithContents:(NSArray * _Nonnull)contents
-                                                      maxWidth:(CGFloat)maxWidth
-                                             attributedStrings:(NSMutableArray *)attributedStrings {
+- (NSMutableAttributedString * _Nullable)getAttributedStringWithContents:(NSArray * _Nullable)contents
+                                                                maxWidth:(CGFloat)maxWidth
+                                                       attributedStrings:(NSMutableArray *)attributedStrings {
+    if (!contents) {
+        return nil;
+    }
+    
     NSString *showContent = @"";
     for (NSString *content_ in contents) {
         showContent = [NSString stringWithFormat:@"%@%@",showContent,content_];
@@ -354,6 +361,7 @@
     }
     else {
         [lines addObject:(__bridge id)line];
+        
         lineWidth = lineWidth + QATrapezoidal_LeftGap + QATrapezoidal_RightGap;
         [lineWidths addObject:[NSString stringWithFormat:@"%f",lineWidth]];
         [trapezoidalTexts addObject:attributedString];
@@ -393,12 +401,17 @@
         CGFloat ascent = 0, descent = 0, leading = 0;
         CGFloat lineWidth = CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
         
-        
         [lines addObject:(__bridge id)line];
+        CFRelease(line);
+        
         lineWidth = lineWidth + QATrapezoidal_LeftGap + QATrapezoidal_RightGap;
         [lineWidths addObject:[NSString stringWithFormat:@"%f",lineWidth]];
         [trapezoidalTexts addObject:subAttributedString];
     }
+    
+    CFRelease(path);
+    CFRelease(ctFramesetter);
+    CFRelease(ctFrame);
 }
 - (void)drawAttributedTextBackground:(NSMutableAttributedString *)attributedText
                          contentSize:(CGSize)contentSize

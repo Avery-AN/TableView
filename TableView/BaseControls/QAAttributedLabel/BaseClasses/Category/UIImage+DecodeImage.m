@@ -14,7 +14,7 @@ static BOOL ProcessBytesPerRowAlignment = YES;  // 是否要进行字节对齐
 
 #pragma mark - Public Methods -
 
-- (UIImage *)decodeImage {
+- (UIImage * _Nullable)decodeImage {
     if (!self) {
         return nil;
     }
@@ -54,8 +54,11 @@ static BOOL ProcessBytesPerRowAlignment = YES;  // 是否要进行字节对齐
         
         // CGBitmapContextCreate(void * __nullable data, size_t width, size_t height, size_t bitsPerComponent, size_t bytesPerRow, CGColorSpaceRef cg_nullable space, uint32_t bitmapInfo);
         CGContextRef context = CGBitmapContextCreate(NULL, imageSize.width, imageSize.height, bitsPerComponent, bytesPerRow, colorSpace, bitmapInfo);
-        if (!context)
-            return NULL;
+        if (!context) {
+            CFRelease(colorSpace);
+            CGContextRelease(context);
+            return nil;
+        }
         
         CGContextDrawImage(context, imageRect, imageRef); // decode
         CGImageRef decodeImageRef = CGBitmapContextCreateImage(context);
@@ -63,6 +66,7 @@ static BOOL ProcessBytesPerRowAlignment = YES;  // 是否要进行字节对齐
         
         CGContextRelease(context);
         CGImageRelease(decodeImageRef);
+        CFRelease(colorSpace);
         
         return decodeImage;
     }

@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIImage (DecodeImage)
 
-- (UIImage *)decodeImage;
+- (UIImage * _Nullable)decodeImage;
 
 @end
 

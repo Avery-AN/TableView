@@ -36,12 +36,12 @@ static CGFloat minRadius = 1;   // 最小弧度
     }
 }
 
-+ (UIBezierPath *)drawBackgroundWithMaxWidth:(CGFloat)maxWidth
-                                  lineWidths:(NSArray * _Nonnull)lineWidths
-                                  lineHeight:(CGFloat)lineHeight
-                                      radius:(CGFloat)radius
-                               textAlignment:(Background_TextAlignment)textAlignment
-                             backgroundColor:(UIColor * _Nonnull)backgroundColor {
++ (UIBezierPath * _Nullable)drawBackgroundWithMaxWidth:(CGFloat)maxWidth
+                                            lineWidths:(NSArray * _Nonnull)lineWidths
+                                            lineHeight:(CGFloat)lineHeight
+                                                radius:(CGFloat)radius
+                                         textAlignment:(Background_TextAlignment)textAlignment
+                                       backgroundColor:(UIColor * _Nonnull)backgroundColor {
     if (!backgroundColor) {
         return nil;
     }
@@ -142,14 +142,10 @@ static CGFloat minRadius = 1;   // 最小弧度
         CGFloat lineWidth = 0;
         if (textAlignment == Background_TextAlignment_Left) {
             if (dotIndex == 0) {
-                currentLine = 0;   // 当前点所在的行数
-                lineWidth = [[lineWidths objectAtIndex:currentLine] floatValue];
                 currentX = 0;
                 currentY = 0;
             }
             else if (dotIndex == 1) {
-                currentLine = lineWidths.count - 1;
-                lineWidth = [[lineWidths objectAtIndex:currentLine] floatValue];
                 currentX = 0;
                 currentY = lineHeight * lineWidths.count;
             }
@@ -162,14 +158,10 @@ static CGFloat minRadius = 1;   // 最小弧度
         }
         else {
             if (dotIndex == dotCounts - 1) {
-                currentLine = 0;   // 当前点所在的行数
-                lineWidth = [[lineWidths objectAtIndex:currentLine] floatValue];
                 currentX = viewWidth;
                 currentY = 0;
             }
             else if (dotIndex == dotCounts - 2) {
-                currentLine = lineWidths.count - 1;
-                lineWidth = [[lineWidths objectAtIndex:currentLine] floatValue];
                 currentX = viewWidth;
                 currentY = lineHeight * lineWidths.count;
             }

@@ -141,7 +141,7 @@
 		BB7BECE62394F81200688028 /* ScratchablelatexDataManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScratchablelatexDataManager.m; sourceTree = "<group>"; };
 		BB7BECEB23965C2D00688028 /* demo.GIF */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = demo.GIF; sourceTree = "<group>"; };
 		BB97A75D23A5E2A900A3BA7A /* QAImageBrowserManagerConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QAImageBrowserManagerConfig.h; sourceTree = "<group>"; };
-		BB9F6C0523838A7000F05116 /* TableView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TableView.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB9F6C0523838A7000F05116 /* RichTextLabel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RichTextLabel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB9F6C0823838A7000F05116 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		BB9F6C0923838A7000F05116 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		BB9F6C1423838A7200F05116 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -444,7 +444,7 @@
 		BB9F6C0623838A7000F05116 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BB9F6C0523838A7000F05116 /* TableView.app */,
+				BB9F6C0523838A7000F05116 /* RichTextLabel.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -577,14 +577,14 @@
 			isa = PBXGroup;
 			children = (
 				BBB7BBA92418801C00347814 /* Md5 */,
-				BBB7BBAE2418801C00347814 /* UIImage+QACutImage.m */,
-				BBB7BBAF2418801C00347814 /* UIImage+DecodeImage.h */,
-				BBB7BBB02418801C00347814 /* NSString+QAReplace.h */,
 				BBB7BBB12418801C00347814 /* NSMutableAttributedString+QAAttributedString.h */,
+				BBB7BBB52418801C00347814 /* NSMutableAttributedString+QAAttributedString.m */,
+				BBB7BBB02418801C00347814 /* NSString+QAReplace.h */,
 				BBB7BBB22418801C00347814 /* NSString+QAReplace.m */,
+				BBB7BBAF2418801C00347814 /* UIImage+DecodeImage.h */,
 				BBB7BBB32418801C00347814 /* UIImage+DecodeImage.m */,
 				BBB7BBB42418801C00347814 /* UIImage+QACutImage.h */,
-				BBB7BBB52418801C00347814 /* NSMutableAttributedString+QAAttributedString.m */,
+				BBB7BBAE2418801C00347814 /* UIImage+QACutImage.m */,
 			);
 			path = Category;
 			sourceTree = "<group>";
@@ -612,10 +612,10 @@
 		BBB7BBBE2418801C00347814 /* Manager */ = {
 			isa = PBXGroup;
 			children = (
-				BBB7BBBF2418801C00347814 /* QAHighlightTextManager.m */,
 				BBB7BBC02418801C00347814 /* QAEmojiTextManager.h */,
-				BBB7BBC12418801C00347814 /* QAHighlightTextManager.h */,
 				BBB7BBC22418801C00347814 /* QAEmojiTextManager.m */,
+				BBB7BBC12418801C00347814 /* QAHighlightTextManager.h */,
+				BBB7BBBF2418801C00347814 /* QAHighlightTextManager.m */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -623,8 +623,8 @@
 		BBB7BBC92418801C00347814 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
-				BBB7BBCA2418801C00347814 /* QAAttributedStringSizeMeasurement.m */,
 				BBB7BBCB2418801C00347814 /* QAAttributedStringSizeMeasurement.h */,
+				BBB7BBCA2418801C00347814 /* QAAttributedStringSizeMeasurement.m */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -862,7 +862,7 @@
 			);
 			name = TableView;
 			productName = TableView;
-			productReference = BB9F6C0523838A7000F05116 /* TableView.app */;
+			productReference = BB9F6C0523838A7000F05116 /* RichTextLabel.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1154,7 +1154,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = Avery.TableView;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = RichTextLabel;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -1173,7 +1173,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = Avery.TableView;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = RichTextLabel;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;

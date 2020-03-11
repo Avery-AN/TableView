@@ -24,12 +24,12 @@ NS_ASSUME_NONNULL_BEGIN
                          radius:(CGFloat)radius
                 backgroundColor:(UIColor * _Nonnull)backgroundColor;
 
-+ (UIBezierPath *)drawBackgroundWithMaxWidth:(CGFloat)maxWidth
-                                  lineWidths:(NSArray * _Nonnull)lineWidths
-                                  lineHeight:(CGFloat)lineHeight
-                                      radius:(CGFloat)radius
-                               textAlignment:(Background_TextAlignment)textAlignment
-                             backgroundColor:(UIColor * _Nonnull)backgroundColor;
++ (UIBezierPath * _Nullable)drawBackgroundWithMaxWidth:(CGFloat)maxWidth
+                                            lineWidths:(NSArray * _Nonnull)lineWidths
+                                            lineHeight:(CGFloat)lineHeight
+                                                radius:(CGFloat)radius
+                                         textAlignment:(Background_TextAlignment)textAlignment
+                                       backgroundColor:(UIColor * _Nonnull)backgroundColor;
 
 @end
 

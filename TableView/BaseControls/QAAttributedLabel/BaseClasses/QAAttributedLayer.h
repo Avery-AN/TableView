@@ -57,7 +57,7 @@ static dispatch_queue_t _Nonnull QAAttributedLayerDrawQueue() {
 - (void)fillContents:(QAAttributedLabel * _Nonnull)attributedLabel;
 
 // 获取绘制attributedLabel时需要绘制的AttributedString
-- (void)getDrawAttributedTextWithLabel:(id _Nonnull )label
+- (void)getDrawAttributedTextWithLabel:(id _Nonnull)label
                             selfBounds:(CGRect)bounds
                    checkAttributedText:(BOOL(^_Nullable)(NSString * _Nullable content))checkBlock
                             completion:(void(^_Nullable)(NSMutableAttributedString *_Nullable))completion;

@@ -27,7 +27,7 @@
             CGImageRef sourceImageRef = [self CGImage];
             CGImageRef newImageRef = CGImageCreateWithImageInRect(sourceImageRef, rect);
             UIImage *newImage = [UIImage imageWithCGImage:newImageRef scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp];
-            CGImageRelease(sourceImageRef);
+            CGImageRelease(newImageRef);
             
             return newImage;
         }
@@ -42,7 +42,7 @@
             CGImageRef sourceImageRef = [self CGImage];
             CGImageRef newImageRef = CGImageCreateWithImageInRect(sourceImageRef, newRect);
             UIImage *newImage = [UIImage imageWithCGImage:newImageRef scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp];
-            CGImageRelease(sourceImageRef);
+            CGImageRelease(newImageRef);
             
             return newImage;
         }

@@ -97,6 +97,7 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
         saveHighlightText = NO;
     }
     
+    BOOL lineCreated = NO;
     @autoreleasepool {
         if (saveHighlightText) {
             [self getSortedHighlightRanges:attributedString];
@@ -131,26 +132,27 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
         CTFrameGetLineOrigins(ctFrame, CFRangeMake(0, numberOfLines), lineOrigins);
         
         // 遍历CTFrame中的每一行CTLine:
-        for (CFIndex lineIndex = 0; lineIndex < numberOfLines; lineIndex++) {
+        for (int lineIndex = 0; lineIndex < numberOfLines; lineIndex++) {
             CGPoint lineOrigin = lineOrigins[lineIndex];
-            CTLineRef line = CFArrayGetValueAtIndex(lines, lineIndex);
+            CTLineRef lineRef = CFArrayGetValueAtIndex(lines, lineIndex);
             
             CGFloat lineDescent = 0.0f, lineAscent = 0.0f, lineLeading = 0.0f;
-            double lineWidth = CTLineGetTypographicBounds((CTLineRef)line, &lineAscent, &lineDescent, &lineLeading);
-            CGFloat lineHeight = lineAscent + lineDescent;
-            CGFloat penOffset = (CGFloat)CTLineGetPenOffsetForFlush(line, QAFlushFactorForTextAlignment(textAlignment), drawRect.size.width); // 获取绘制文本时光笔所需的偏移量
+            double lineWidth = CTLineGetTypographicBounds((CTLineRef)lineRef, &lineAscent, &lineDescent, &lineLeading);
+            // CGFloat lineHeight = lineAscent + lineDescent;
+            CGFloat penOffset = (CGFloat)CTLineGetPenOffsetForFlush(lineRef, QAFlushFactorForTextAlignment(textAlignment), drawRect.size.width); // 获取绘制文本时光笔所需的偏移量
             CGContextSetTextPosition(context, penOffset, lineOrigin.y); // 设置每一行位置
             if (justified && lineIndex == numberOfLines - 1 && lineWidth / contentWidth > 0.80) { // 处理最后一行
-                line = CTLineCreateJustifiedLine(line, 1, contentWidth);  // 设置最后一行的两端对齐(当添加了"...全文"之后的情况)
-                CTLineDraw(line, context); // 绘制每一行的内容
+                lineCreated = YES;
+                lineRef = CTLineCreateJustifiedLine(lineRef, 1, contentWidth);  // 设置最后一行的两端对齐(当添加了"...全文"之后的情况)
+                CTLineDraw(lineRef, context); // 绘制每一行的内容
             }
             else {
-                CTLineDraw(line, context); // 绘制每一行的内容
+                CTLineDraw(lineRef, context); // 绘制每一行的内容
             }
             
             
             // 从CTLine中获取所有的CTRun:
-            CFArrayRef runs = CTLineGetGlyphRuns(line);
+            CFArrayRef runs = CTLineGetGlyphRuns(lineRef);
             long runCounts = CFArrayGetCount(runs);
             
             // 遍历CTLine中的每一个CTRun:
@@ -177,7 +179,7 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
                     // 绘制附件的内容:
                     [self drawAttachmentContentInContext:context
                                                  ctframe:ctFrame
-                                                    line:line
+                                                    line:lineRef
                                               lineOrigin:lineOrigin
                                                      run:run
                                                 delegate:delegate
@@ -192,10 +194,12 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
                                                                      contentHeight:contentHeight
                                                                   attributedString:attributedString
                                                                            context:context
-                                                                              line:line
+                                                                              line:lineRef
                                                                                run:run];
                         if (result < 0) {
-                            
+                            if (lineCreated) {
+                                CFRelease(lineRef);
+                            }
                             CFRelease(drawPath);
                             CFRelease(ctFrame);
                             CFRelease(ctFramesetter);
@@ -204,6 +208,10 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
                         }
                     }
                 }
+            }
+            
+            if (lineCreated) {
+                CFRelease(lineRef);
             }
         }
         
@@ -490,8 +498,8 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
                     }
                     
                     [currentRunString deleteCharactersInRange:subRange];
-                    NSInteger length = currentRunString.length;
-                    subRange = NSMakeRange(0, length);
+                    // NSInteger length = currentRunString.length;
+                    // subRange = NSMakeRange(0, length);
                     if (currentRunString.length == 0) {
                         break;
                     }

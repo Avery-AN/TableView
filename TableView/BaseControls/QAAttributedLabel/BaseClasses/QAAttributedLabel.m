@@ -104,8 +104,9 @@ static void *TouchingContext = &TouchingContext;
         if (!currentCGImage) {
             return;
         }
-        CGImageRef newCGImage = [UIImage cutCGImage:currentCGImage withRect:(CGRect){{0, 0}, size}];
-        layer.contents = (__bridge id _Nullable)(newCGImage);
+        CGImageRef newCGImageRef = [UIImage cutCGImage:currentCGImage withRect:(CGRect){{0, 0}, size}];
+        layer.contents = (__bridge id _Nullable)(newCGImageRef);
+        CFRelease(newCGImageRef);
         
         self.frame = (CGRect) {frame.origin, size};
     }

@@ -14,7 +14,7 @@
 @property (nonatomic, unsafe_unretained, nullable) UIFont *font;
 @property (nonatomic, assign) NSUInteger numberOfLines;         // 行数
 @property (nonatomic, assign) CGFloat lineSpace;                // 行间距
-@property (nonatomic, assign) NSUInteger wordSpace;             // 字间距
+@property (nonatomic, assign) int wordSpace;                    // 字间距
 @property (nonatomic, assign) CGFloat paragraphSpace;           // 段间距
 @property (nonatomic, assign) NSLineBreakMode lineBreakMode;    // 换行模式
 @property (nonatomic, assign) NSTextAlignment textAlignment;    // 对齐方式

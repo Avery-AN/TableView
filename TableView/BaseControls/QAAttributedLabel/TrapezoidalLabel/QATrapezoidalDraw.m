@@ -144,6 +144,10 @@
                                                      run:run
                                                 delegate:delegate
                                                wordSpace:wordSpace];
+                    
+                    CFRelease(ctFramesetter);
+                    CFRelease(drawPath);
+                    CFRelease(ctFrame);
                 }
                 else {
                     // 保存高亮文案在字符中的NSRange以及CGRect (以便在label中处理点击事件):

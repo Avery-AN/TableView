@@ -91,7 +91,7 @@
     _truncationTextAttributes[(id)kCTBackgroundColorAttributeName] = (id)textBackgroundColor.CGColor;
     
     // 设置字间距:
-    NSInteger wordSpace = self.wordSpace;
+    int wordSpace = self.wordSpace;
     CFNumberRef wordsSpaceRef = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt8Type, &wordSpace);
     _truncationTextAttributes[(id)kCTKernAttributeName] = (__bridge id)wordsSpaceRef;
     
@@ -112,6 +112,7 @@
     CTParagraphStyleRef theParagraphRef = CTParagraphStyleCreate(theSettings, kNumberOfSettings);
     _truncationTextAttributes[(id)kCTParagraphStyleAttributeName] = (__bridge id)theParagraphRef;
     CFRelease(theParagraphRef);
+    CFRelease(wordsSpaceRef);
     
     return _truncationTextAttributes;
 }
@@ -155,7 +156,7 @@
     _textAttributes[(NSString *)kCTBackgroundColorAttributeName] = (id)textBackgroundColor.CGColor;
     
     // 设置字间距:
-    NSInteger wordSpace = self.wordSpace;
+    int wordSpace = self.wordSpace;
     CFNumberRef wordsSpaceRef = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt8Type, &wordSpace);
     _textAttributes[(NSString *)kCTKernAttributeName] = (__bridge id)wordsSpaceRef;
     CFRelease(wordsSpaceRef);

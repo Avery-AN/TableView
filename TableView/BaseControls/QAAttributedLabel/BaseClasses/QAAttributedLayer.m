@@ -606,7 +606,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
 - (void)getTapedTextColor:(UIColor * __strong *)tapedTextColor
      tapedBackgroundColor:(UIColor * __strong *)tapedBackgroundColor
           withContentType:(NSString *)contentType
-                  inLabel:(QAAttributedLabel *)attributedLabel {
+                  inLabel:(QAAttributedLabel * _Nonnull)attributedLabel {
     if ([contentType isEqualToString:@"link"]) {
         *tapedTextColor = attributedLabel.highlightLinkTapedTextColor;
         if (!*tapedTextColor) {
@@ -718,18 +718,18 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
             truncationInfo:(NSDictionary *)truncationInfo
            attributedLabel:(QAAttributedLabel *)attributedLabel
           attributedString:(NSMutableAttributedString *)attributedText {
-    UIColor *highlightTextColor = attributedLabel.highlightTextColor;
-    if (!highlightTextColor) {
-        highlightTextColor = HighlightTextColor_DEFAULT;
-    }
-    UIColor *highlightTextBackgroundColor = attributedLabel.highlightTextBackgroundColor;
-    if (!highlightTextBackgroundColor) {
-        highlightTextBackgroundColor = HighlightTextBackgroundColor_DEFAULT;
-    }
-    UIFont *highlightFont = attributedLabel.highlightFont;
-    if (!highlightFont) {
-        highlightFont = attributedLabel.font;
-    }
+//    UIColor *highlightTextColor = attributedLabel.highlightTextColor;
+//    if (!highlightTextColor) {
+//        highlightTextColor = HighlightTextColor_DEFAULT;
+//    }
+//    UIColor *highlightTextBackgroundColor = attributedLabel.highlightTextBackgroundColor;
+//    if (!highlightTextBackgroundColor) {
+//        highlightTextBackgroundColor = HighlightTextBackgroundColor_DEFAULT;
+//    }
+//    UIFont *highlightFont = attributedLabel.highlightFont;
+//    if (!highlightFont) {
+//        highlightFont = attributedLabel.font;
+//    }
     
     // 异常处理:
     if ([self isCancelByCheckingContent:attributedText.string]) {
@@ -743,18 +743,15 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
         NSMutableArray *linkRanges = [highlightRanges valueForKey:@"link"];
         NSMutableArray *linkContents = [highlightContents valueForKey:@"link"];
         if (linkRanges && [linkRanges isKindOfClass:[NSArray class]] && linkRanges.count > 0) {
-            UIColor *color = attributedLabel.highlightLinkTextColor;
-            if (color) {
-                highlightTextColor = color;
-            }
+//            UIColor *color = attributedLabel.highlightLinkTextColor;
+//            if (color) {
+//                highlightTextColor = color;
+//            }
             ranges = linkRanges;
             contents = linkContents;
             int result = [self saveHighlightTextWithType:@"link"
                                                   ranges:ranges
                                                 contents:contents
-                                      highlightTextColor:highlightTextColor
-                            highlightTextBackgroundColor:highlightTextBackgroundColor
-                                           highlightFont:highlightFont
                                         attributedString:attributedText];
             if (result < 0) {
                 return -1;
@@ -764,18 +761,15 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
         NSMutableArray *atRanges = [highlightRanges valueForKey:@"at"];
         NSMutableArray *atContents = [highlightContents valueForKey:@"at"];
         if (atRanges && [atRanges isKindOfClass:[NSArray class]] && atRanges.count > 0) {
-            UIColor *color = attributedLabel.highlightAtTextColor;
-            if (color) {
-                highlightTextColor = color;
-            }
+//            UIColor *color = attributedLabel.highlightAtTextColor;
+//            if (color) {
+//                highlightTextColor = color;
+//            }
             ranges = atRanges;
             contents = atContents;
             int result = [self saveHighlightTextWithType:@"at"
                                                   ranges:ranges
                                                 contents:contents
-                                      highlightTextColor:highlightTextColor
-                            highlightTextBackgroundColor:highlightTextBackgroundColor
-                                           highlightFont:highlightFont
                                         attributedString:attributedText];
             if (result < 0) {
                 return -2;
@@ -785,18 +779,15 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
         NSMutableArray *topicRanges = [highlightRanges valueForKey:@"topic"];
         NSMutableArray *topicContents = [highlightContents valueForKey:@"topic"];
         if (topicRanges && [topicRanges isKindOfClass:[NSArray class]] && topicRanges.count > 0) {
-            UIColor *color = attributedLabel.highlightAtTextColor;
-            if (color) {
-                highlightTextColor = color;
-            }
+//            UIColor *color = attributedLabel.highlightAtTextColor;
+//            if (color) {
+//                highlightTextColor = color;
+//            }
             ranges = topicRanges;
             contents = topicContents;
             int result = [self saveHighlightTextWithType:@"topic"
                                                   ranges:ranges
                                                 contents:contents
-                                      highlightTextColor:highlightTextColor
-                            highlightTextBackgroundColor:highlightTextBackgroundColor
-                                           highlightFont:highlightFont
                                         attributedString:attributedText];
             if (result < 0) {
                 return -3;
@@ -804,10 +795,10 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
         }
         
         if (attributedText.showMoreTextEffected && truncationInfo && truncationInfo.count > 0) {
-            UIFont *truncationFont = attributedLabel.font;
-            UIColor *highlightTextColor = attributedLabel.moreTapedTextColor;
-            UIColor *highlightTextBackgroundColor = attributedLabel.moreTapedBackgroundColor;
-            truncationFont = [truncationInfo valueForKey:@"truncationFont"];
+            // UIFont *truncationFont = attributedLabel.font;
+            // UIColor *highlightTextColor = attributedLabel.moreTapedTextColor;
+            // UIColor *highlightTextBackgroundColor = attributedLabel.moreTapedBackgroundColor;
+            // UIFont *truncationFont = [truncationInfo valueForKey:@"truncationFont"];
             NSString *truncationRangeString = [truncationInfo valueForKey:@"truncationRange"];
             NSString *truncationText = [truncationInfo valueForKey:@"truncationText"];
             
@@ -817,9 +808,6 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
                 int result = [self saveHighlightTextWithType:@"seeMore"
                                                       ranges:ranges
                                                     contents:contents
-                                          highlightTextColor:highlightTextColor
-                                highlightTextBackgroundColor:highlightTextBackgroundColor
-                                               highlightFont:highlightFont
                                             attributedString:attributedText];
                 if (result < 0) {
                     return -4;
@@ -833,9 +821,6 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
 - (int)saveHighlightTextWithType:(NSString *)type
                           ranges:(NSMutableArray *)ranges
                         contents:(NSMutableArray *)contents
-              highlightTextColor:(UIColor *)highlightTextColor
-    highlightTextBackgroundColor:(UIColor *)highlightTextBackgroundColor
-                   highlightFont:(UIFont *)highlightFont
                 attributedString:(NSMutableAttributedString *)attributedText {
     for (int i = 0; i < ranges.count; i++) {
         NSString *rangeString = [ranges objectAtIndex:i];
@@ -895,6 +880,9 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
                     return [self isCancelByCheckingContent:attributedText.string];
                 }];
                 if (!attributes || attributes.count == 0) {
+                    CFRelease(path);
+                    CFRelease(ctFrame);
+                    CFRelease(framesetter);
                     return -30;
                 }
                 NSMutableAttributedString *muTruncationText = [[NSMutableAttributedString alloc] initWithString:truncationText attributes:attributes];
@@ -1008,10 +996,10 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
 - (void)drawTapedContents:(NSMutableAttributedString * _Nonnull)attributedText
                    bounds:(CGRect)bounds
                   inRange:(NSRange)range
-                textColor:(UIColor * _Nonnull)textColor
-      textBackgroundColor:(UIColor * _Nonnull)textBackgroundColor
+                textColor:(UIColor * _Nullable)textColor
+      textBackgroundColor:(UIColor * _Nullable)textBackgroundColor
                truncation:(BOOL)truncation
-           highlightRects:(NSArray * _Nonnull)highlightRects {
+           highlightRects:(NSArray * _Nullable)highlightRects {
     if (!textBackgroundColor && !textColor) {
         return;
     }

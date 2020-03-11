@@ -53,7 +53,7 @@
             rangeToSize = CFRangeMake(0, rangeToLayout.location + rangeToLayout.length);
         }
         else if (maximumNumberOfLines == 0) {
-            lastVisibleLineIndex = numberOfAllLines - 1;
+            // lastVisibleLineIndex = numberOfAllLines - 1;
             rangeToSize = CFRangeMake(0, attributedString.length);
         }
     }

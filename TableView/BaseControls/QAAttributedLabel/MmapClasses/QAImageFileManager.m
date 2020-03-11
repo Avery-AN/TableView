@@ -204,11 +204,13 @@ void (*mmapAction)(id, SEL, NSString *, QAImageMmapStyle, NSInteger, NSString *,
 }
 - (void)clearTheBattlefield {
     if (self.fileDescriptor >= 0) {
-        int closeResult = close(self.fileDescriptor);  // 关闭文件描述符
+        close(self.fileDescriptor);  // 关闭文件描述符
+        // int closeResult = close(self.fileDescriptor);  // 关闭文件描述符
         // NSLog(@"关闭文件描述符: %d",closeResult);
     }
     if (self.bytes) {
-        int closeResult = munmap(self.bytes, self.totalLength);  // 解除映射
+        munmap(self.bytes, self.totalLength);  // 解除映射
+        // int closeResult = munmap(self.bytes, self.totalLength);  // 解除映射
         self.bytes = NULL;
         // NSLog(@"解除映射: %d",closeResult);
     }
@@ -301,6 +303,8 @@ void (*mmapAction)(id, SEL, NSString *, QAImageMmapStyle, NSInteger, NSString *,
     
     CGContextRef contextRef = CGBitmapContextCreate(self.bytes, pixelSize.width, pixelSize.height, bitsPerComponent, bytesPerRow, colorSpace, bitmapInfo);
     if (!contextRef) {
+        CGColorSpaceRelease(colorSpace);
+        CGContextRelease(contextRef);
         return;
     }
     CGContextTranslateCTM(contextRef, 0, pixelSize.height);
