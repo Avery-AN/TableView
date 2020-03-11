@@ -18,4 +18,5 @@ demo中所用图片来源于网络、如若侵权烦请联系我、我将会尽�
 效果图如下:<br>
 -------------
 ![TableView](https://github.com/Avery-AN/TableView/raw/master/DEMO_images/demo.png)<br>
-![九宫格](https://github.com/Avery-AN/TableView/raw/master/DEMO_images/demo2.png)<br>
+![TapedStyle](https://github.com/Avery-AN/TableView/raw/master/DEMO_images/demo2.png)<br>
+![九宫格](https://github.com/Avery-AN/TableView/raw/master/DEMO_images/demo3.png)<br>
