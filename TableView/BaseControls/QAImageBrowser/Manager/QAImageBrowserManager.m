@@ -472,14 +472,14 @@ static void *CollectionContext = &CollectionContext;
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     return self.images.count;
 }
-- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
-    if (kind == QAImageBrowser_headerIdentifier) {
-    }
-    else if (kind == QAImageBrowser_footerIdentifier) {
-    }
-
-    return nil;
-}
+//- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+//    if (kind == QAImageBrowser_headerIdentifier) {
+//    }
+//    else if (kind == QAImageBrowser_footerIdentifier) {
+//    }
+//
+//    return nil;
+//}
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     QAImageBrowserCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:QAImageBrowser_cellID forIndexPath:indexPath];
     

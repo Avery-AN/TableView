@@ -10,7 +10,7 @@
 
 @implementation UIImage (ClipsToBounds)
 
-- (UIImage *)clipsToBoundsWithSize:(CGSize)size {
+- (UIImage * _Nullable)clipsToBoundsWithSize:(CGSize)size {
     if (!self) {
         return nil;
     }
@@ -47,15 +47,15 @@
     CGImageRef sourceImageRef = [self CGImage];
     CGImageRef newImageRef = CGImageCreateWithImageInRect(sourceImageRef, newRect);
     UIImage *newImage = [UIImage imageWithCGImage:newImageRef scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp];
-    CGImageRelease(sourceImageRef);
+    CGImageRelease(newImageRef);
     imageRef = newImage.CGImage;
     
     
     
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     size_t bitsPerComponent = CGImageGetBitsPerComponent(imageRef); // 像素的每个颜色分量使用的bit数，在RGB颜色空间下值为8
-    size_t bitsPerPixel = CGImageGetBitsPerPixel(imageRef); // 一个像素使用的总bit数
-    size_t bytesPerRow = CGImageGetBytesPerRow(imageRef); // 位图的每一行使用的字节数，大小至少为 width * bytes per pixel 字节
+    // size_t bitsPerPixel = CGImageGetBitsPerPixel(imageRef); // 一个像素使用的总bit数
+    // size_t bytesPerRow = CGImageGetBytesPerRow(imageRef); // 位图的每一行使用的字节数，大小至少为 width * bytes per pixel 字节
     
     CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(imageRef) & kCGBitmapAlphaInfoMask;
     BOOL hasAlpha = NO;
@@ -73,11 +73,14 @@
     
     // CGBitmapContextCreate(void * __nullable data, size_t width, size_t height, size_t bitsPerComponent, size_t bytesPerRow, CGColorSpaceRef cg_nullable space, uint32_t bitmapInfo);
     CGContextRef context = CGBitmapContextCreate(NULL, imageSize.width, imageSize.height, bitsPerComponent, 0, colorSpace, bitmapInfo);
-    if (!context)
+    if (!context) {
+        CFRelease(colorSpace);
         return NULL;
+    }
     CGContextDrawImage(context, imageRect, imageRef); // decode
     CGImageRef decodeImageRef = CGBitmapContextCreateImage(context);
     CGContextRelease(context);
+    CFRelease(colorSpace);
     
     UIImage *decodeImage = [UIImage imageWithCGImage:decodeImageRef scale:self.scale orientation:self.imageOrientation];
     CGImageRelease(decodeImageRef);

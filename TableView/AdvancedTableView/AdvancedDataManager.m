@@ -181,7 +181,6 @@
 
 
         dic = [datas objectAtIndex:5];
-        content = [dic valueForKey:@"content"];
         content = [NSString stringWithFormat:@"https://www.cctv.com%@",@"这里是中国中央电视台。"];
         [dic setValue:content forKey:@"content"];
 
@@ -199,25 +198,21 @@
 
 
         dic = [datas objectAtIndex:12];
-        content = [dic valueForKey:@"content"];
         content = @"⚡️🌧🐟🌹\n⛰🐶🌧🐟🌹🐱🐰🐶🐘🐶😺\n1234567890\nABCDEFG";
         [dic setValue:content forKey:@"content"];
 
         
         dic = [datas objectAtIndex:16];
-        content = [dic valueForKey:@"content"];
         content = @"hello world";
         [dic setValue:content forKey:@"content"];
         
         
         dic = [datas objectAtIndex:33];
-        content = [dic valueForKey:@"content"];
         content = @"hi~\nAvery AN ~~~";
         [dic setValue:content forKey:@"content"];
         
         
         dic = [datas objectAtIndex:40];
-        content = [dic valueForKey:@"content"];
         content = @"回家吃饭[nezha]\n回家吃饭[nezha][nezha]\n回家吃饭[nezha][nezha][nezha]\n回家吃饭吧 bla bla bla";
         [dic setValue:content forKey:@"content"];
         

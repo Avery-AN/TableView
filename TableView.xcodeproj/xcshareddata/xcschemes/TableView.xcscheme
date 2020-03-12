@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "BB9F6C0423838A7000F05116"
-               BuildableName = "TableView.app"
+               BuildableName = "RichTextLabel.app"
                BlueprintName = "TableView"
                ReferencedContainer = "container:TableView.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BB9F6C0423838A7000F05116"
-            BuildableName = "TableView.app"
+            BuildableName = "RichTextLabel.app"
             BlueprintName = "TableView"
             ReferencedContainer = "container:TableView.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BB9F6C0423838A7000F05116"
-            BuildableName = "TableView.app"
+            BuildableName = "RichTextLabel.app"
             BlueprintName = "TableView"
             ReferencedContainer = "container:TableView.xcodeproj">
          </BuildableReference>

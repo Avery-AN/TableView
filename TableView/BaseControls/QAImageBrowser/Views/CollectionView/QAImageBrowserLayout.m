@@ -9,11 +9,11 @@
 #import "QAImageBrowserLayout.h"
 
 @interface QAImageBrowserLayout ()
-@property (nonatomic, copy) NSMutableDictionary *cellLayoutInfo;    // 存放cell的布局
-@property (nonatomic, copy) NSMutableDictionary *headerLayoutInfo;  // 存放header的布局
-@property (nonatomic, copy) NSMutableDictionary *footerLayoutInfo;  // 存放footer的布局
-@property (nonatomic, copy) NSMutableDictionary *bottomYForItem;
-@property (nonatomic, copy) NSMutableDictionary *bottomRightForItem;
+@property (nonatomic) NSMutableDictionary *cellLayoutInfo;    // 存放cell的布局
+@property (nonatomic) NSMutableDictionary *headerLayoutInfo;  // 存放header的布局
+@property (nonatomic) NSMutableDictionary *footerLayoutInfo;  // 存放footer的布局
+@property (nonatomic) NSMutableDictionary *bottomYForItem;
+@property (nonatomic) NSMutableDictionary *bottomRightForItem;
 @property (nonatomic, assign) CGFloat currentContentHeight;         // 当前内容的高度
 @property (nonatomic, assign) CGFloat currentContentWidth;          // 当前内容的宽度
 @end
@@ -118,7 +118,6 @@
             }
             else if (totalWidth < 0) {
                 NSLog(@"FUCK U ~~~");
-                itemSpace = 0;
                 return;
             }
             else {
@@ -192,7 +191,6 @@
             }
             else if (totalWidth < 0) {
                 NSLog(@"FUCK U ~~~");
-                itemSpace = 0;
                 return;
             }
             else {

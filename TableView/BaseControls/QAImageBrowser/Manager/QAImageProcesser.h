@@ -13,9 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface QAImageProcesser : NSObject
 
-+ (CGRect)caculateOriginImageSize:(UIImage *)image;
++ (CGRect)caculateOriginImageSize:(UIImage * _Nonnull)image;
 
-+ (UIImage *)decodeImage:(UIImage *)image;
++ (UIImage * _Nullable)decodeImage:(UIImage * _Nonnull)image;
 
 @end
 

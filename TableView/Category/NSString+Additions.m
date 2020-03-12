@@ -231,9 +231,9 @@ CTLineBreakMode _CTLineBreakModeFromNSLineBreakMode(NSLineBreakMode lineBreakMod
         {kCTParagraphStyleSpecifierLineBreakMode,sizeof(CTLineBreakMode),&lineBreakMode}
     },6);
     
-    NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)font1,(NSString*)kCTFontAttributeName,
-                                textColor.CGColor,kCTForegroundColorAttributeName,
-                                style,kCTParagraphStyleAttributeName,
+    NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)font1,(id)kCTFontAttributeName,
+                                (__bridge id)textColor.CGColor,(id)kCTForegroundColorAttributeName,
+                                (__bridge id)style,(id)kCTParagraphStyleAttributeName,
                                 nil];
     //Create path to work with a frame with applied margins
     CGMutablePathRef path = CGPathCreateMutable();

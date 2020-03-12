@@ -308,7 +308,6 @@
         
         
         dic = [datas objectAtIndex:5];
-        content = [dic valueForKey:@"content"];
         content = [NSString stringWithFormat:@"https://www.cctv.com%@",@"这里是中国中央电视台。"];
         [dic setValue:content forKey:@"content"];
         
