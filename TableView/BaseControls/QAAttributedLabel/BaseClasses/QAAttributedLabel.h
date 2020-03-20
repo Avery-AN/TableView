@@ -55,7 +55,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLabel_TapedStyle) {
 @property (nonatomic, assign) NSUInteger numberOfLines;             // 需要显示文本的行数
 @property (nonatomic, assign) CGFloat paragraphSpace;               // 段间距
 @property (nonatomic, assign) CGFloat lineSpace;                    // 行间距
-@property (nonatomic, assign) NSUInteger wordSpace;                 // 字间距
+@property (nonatomic, assign) int wordSpace;                        // 字间距
 @property (nonatomic, assign) BOOL display_async;           // 是否异步绘制 (默认为NO)
 @property (nonatomic, assign) BOOL linkHighlight;           // 网页链接是否需要高亮显示 (默认为NO)
 @property (nonatomic, assign) BOOL showShortLink;           // 是否展示短链接 ("https://www.avery.com" -> "网页短链接"; 默认为NO)

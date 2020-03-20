@@ -253,7 +253,7 @@
 - (void)setLineSpace:(CGFloat)lineSpace {
     _lineSpace = lineSpace;
 }
-- (void)setWordSpace:(NSUInteger)wordSpace {
+- (void)setWordSpace:(int)wordSpace {
     _wordSpace = wordSpace;
 }
 - (void)setParagraphSpace:(CGFloat)paragraphSpace {

@@ -47,7 +47,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
 - (NSMutableAttributedString * _Nullable)getAttributedStringWithString:(NSString * _Nonnull)content
                                                               maxWidth:(CGFloat)maxWidth {
     NSString *showContent = [content copy];
-    QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
+    QAAttributedLabel *attributedLabel = GetAttributedLabel(self);
 
     // 获取需要高亮显示的文案与位置 (link & @user & topic):
     NSMutableDictionary *highlightContents = [NSMutableDictionary dictionary];
@@ -230,7 +230,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
             highlightRects:(NSArray *)highlightRects {
     self.currentCGImage = self.contents;   // 保存当前的self.contents以供clearHighlightColor方法中使用
     
-    QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
+    QAAttributedLabel *attributedLabel = GetAttributedLabel(self);
     NSMutableAttributedString *attributedText = attributedLabel.attributedString;
     CGRect bounds = attributedLabel.bounds;
     NSString *truncationText = attributedLabel.seeMoreText ? : QASeeMoreText_DEFAULT;
@@ -274,7 +274,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
 - (void)drawHighlightColorWithSearchRanges:(NSArray * _Nonnull)ranges
                              attributeInfo:(NSDictionary * _Nonnull)info
                         inAttributedString:(NSMutableAttributedString * _Nonnull)attributedText {
-    QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
+    QAAttributedLabel *attributedLabel = GetAttributedLabel(self);
     CGRect bounds = attributedLabel.bounds;
     
     // 更新attributedText的相关属性设置 (设置attributedText中搜索到的文案的高亮属性):
@@ -334,7 +334,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
         // 在后台去恢复点击之前的数据:
         dispatch_async(QAAttributedLayerDrawQueue(), ^{
             // 清除当点击高亮文案时所做的文案高亮属性的修改 (将点击时添加的高亮颜色去掉、并恢复到点击之前的颜色状态):
-            QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
+            QAAttributedLabel *attributedLabel = GetAttributedLabel(self);
             NSMutableAttributedString *attributedText = attributedLabel.attributedString;
             if (attributedText) {
                 // 更新attributedText的相关属性设置:
@@ -351,7 +351,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
     }
 }
 - (void)drawTextBackgroundWithAttributedString:(NSMutableAttributedString * _Nonnull)attributedString {
-    QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
+    QAAttributedLabel *attributedLabel = GetAttributedLabel(self);
     CGRect bounds = attributedLabel.bounds;
     
     dispatch_async(QAAttributedLayerDrawQueue(), ^{
@@ -631,7 +631,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
 }
 - (void)setHighlightAttributeInfoForAttributedText:(NSMutableAttributedString *)attributedText
                                    highlightRanges:(NSDictionary *)highlightRanges {
-    QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
+    QAAttributedLabel *attributedLabel = GetAttributedLabel(self);
     
     UIColor *highlightTextColor = attributedLabel.highlightTextColor;
     if (!highlightTextColor) {
@@ -855,7 +855,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
 - (int)processSeemoreText:(NSMutableAttributedString * _Nonnull)attributedText
                      size:(CGSize)size
                completion:(void(^)(BOOL showMoreTextEffected, NSMutableAttributedString * _Nonnull attributedString))completion {
-    QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
+    QAAttributedLabel *attributedLabel = GetAttributedLabel(self);
     self.renderText = nil;
     
     // 基于attributedText创建CTFrame:
@@ -1036,7 +1036,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
                         range:range];
     
     // 绘制富文本 & 高亮文案的点击背景色:
-    QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
+    QAAttributedLabel *attributedLabel = GetAttributedLabel(self);
     NSInteger numberOfLines = attributedLabel.numberOfLines;
     BOOL justified = NO;
     if (attributedText.showMoreTextEffected && attributedLabel.textAlignment == NSTextAlignmentJustified) {
@@ -1183,7 +1183,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
     return 0;
 }
 - (BOOL)isCancelByCheckingContent:(NSString *)content {  // 返回YES表示需要取消本次绘制
-    QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
+    QAAttributedLabel *attributedLabel = GetAttributedLabel(self);
     if (_drawState == QAAttributedLayer_State_Canled) {
         return YES;
     }
@@ -1205,7 +1205,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
  */
 - (NSMutableAttributedString * _Nullable)getAttributedStringWithAttributedString:(NSMutableAttributedString * _Nonnull)attributedString maxWidth:(CGFloat)maxWidth {
     __block NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithAttributedString:attributedString];
-    QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
+    QAAttributedLabel *attributedLabel = GetAttributedLabel(self);
     
     // 处理自定义的Emoji:
     [QAEmojiTextManager processDiyEmojiText:attributedText

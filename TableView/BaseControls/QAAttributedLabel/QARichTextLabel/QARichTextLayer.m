@@ -9,8 +9,10 @@
 #import "QARichTextLayer.h"
 #import "QATextDraw.h"
 #import "QAHighlightTextManager.h"
-#import "QAAttributedLabel.h"
+#import "QARichTextLabel.h"
 #import "QATextLayout.h"
+
+@class QARichTextLabel;
 
 @implementation QARichTextLayer
 
@@ -19,7 +21,7 @@
     // NSLog(@"%s",__func__);
     super.contents = super.contents;
 
-    QAAttributedLabel *attributedLabel = (QAAttributedLabel *)self.delegate;
+    QARichTextLabel *attributedLabel = (QARichTextLabel *)GetAttributedLabel(self);
     if (!attributedLabel) {
         [self clearAllBackup];
         self.contents = nil;

@@ -323,13 +323,18 @@ static void *TouchingContext = &TouchingContext;
     self.needUpdate = YES;
     [self _update];
     
+    
     /**
      self.needUpdate = YES;
 
      #if !TARGET_INTERFACE_BUILDER
-         [[QATextTransaction transactionWithTarget:self selector:@selector(_updateIfNeeded)] commit];
+        // this code will run in the app itself
+        // 此处编译的代码,在app运行调用
+        [[QATextTransaction transactionWithTarget:self selector:@selector(_updateIfNeeded)] commit];
      #else
-         [self _update];
+        // this code will execute only in IB
+        // 此处编译的代码,在IB中调用
+        [self _update];
      #endif
      */
 }
@@ -530,7 +535,7 @@ static void *TouchingContext = &TouchingContext;
     self.textLayout.lineSpace = _lineSpace;
     [self _commitUpdate];
 }
-- (void)setWordSpace:(NSUInteger)wordSpace {
+- (void)setWordSpace:(int)wordSpace {
     _wordSpace = wordSpace;
     self.textLayout.wordSpace = _wordSpace;
     [self _commitUpdate];

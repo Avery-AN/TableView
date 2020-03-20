@@ -21,7 +21,7 @@
     // NSLog(@"%s",__func__);
     super.contents = super.contents;
 
-    QATrapezoidalLabel *attributedLabel = (QATrapezoidalLabel *)self.delegate;
+    QATrapezoidalLabel *attributedLabel = (QATrapezoidalLabel *)GetAttributedLabel(self);
     if (!attributedLabel) {
         [self clearAllBackup];
         self.contents = nil;
@@ -88,7 +88,7 @@
             textAlignment:(NSTextAlignment)textAlignment
         saveHighlightText:(BOOL)saveHighlightText
                 justified:(BOOL)justified {
-    QATrapezoidalLabel *attributedLabel = (QATrapezoidalLabel *)self.delegate;
+    QATrapezoidalLabel *attributedLabel = (QATrapezoidalLabel *)GetAttributedLabel(self);
     NSInteger trapezoidalLineHeight = attributedLabel.trapezoidalLineHeight;
     UIColor *lineBackgroundColor = attributedLabel.lineBackgroundColor;
     
@@ -114,7 +114,7 @@
                 wordSpace:(CGFloat)wordSpace
         saveHighlightText:(BOOL)saveHighlightText
                   context:(CGContextRef)context {
-    QATrapezoidalLabel *attributedLabel = (QATrapezoidalLabel *)self.delegate;
+    QATrapezoidalLabel *attributedLabel = (QATrapezoidalLabel *)GetAttributedLabel(self);
     NSInteger trapezoidalLineHeight = attributedLabel.trapezoidalLineHeight;
 
     NSArray *trapezoidalTexts = nil;
@@ -170,7 +170,7 @@
         }
     }
     
-    QATrapezoidalLabel *attributedLabel = (QATrapezoidalLabel *)self.delegate;
+    QATrapezoidalLabel *attributedLabel = (QATrapezoidalLabel *)GetAttributedLabel(self);
     CGFloat trapezoidalLineHeight = attributedLabel.trapezoidalLineHeight;
     
     NSInteger widthAdded = 1;
@@ -211,7 +211,7 @@
                                    highlightRects:(NSArray *)highlightRects
                               textBackgroundColor:(UIColor *)textBackgroundColor
                                             range:(NSRange)range {
-    QATrapezoidalLabel *attributedLabel = (QATrapezoidalLabel *)self.delegate;
+    QATrapezoidalLabel *attributedLabel = (QATrapezoidalLabel *)GetAttributedLabel(self);
     NSInteger trapezoidalLineHeight = attributedLabel.trapezoidalLineHeight;
     UIColor *lineBackgroundColor = attributedLabel.lineBackgroundColor;
     
@@ -244,7 +244,7 @@
 - (void)getBaseInfoWithContentSize:(CGSize)contentSize
                     attributedText:(NSMutableAttributedString * __strong *)attributedText
                      contentHeight:(CGFloat *)contentHeight {
-    QATrapezoidalLabel *attributedLabel = (QATrapezoidalLabel *)self.delegate;
+    QATrapezoidalLabel *attributedLabel = (QATrapezoidalLabel *)GetAttributedLabel(self);
     NSArray *trapezoidalTexts = attributedLabel.trapezoidalTexts;
     if (!trapezoidalTexts || trapezoidalTexts.count == 0) {
         *attributedText = nil;

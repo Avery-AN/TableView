@@ -11,6 +11,9 @@
 #import <stdatomic.h>
 @class QAAttributedLabel, QATextDrawer;
 
+static inline id _Nonnull GetAttributedLabel (CALayer * _Nonnull layer) {
+    return layer.delegate;
+}
 
 static dispatch_queue_t _Nonnull QAAttributedLayerDrawQueue() {
 #define MAX_QUEUE_COUNT 16
