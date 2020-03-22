@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
  获取文案所占用的size
  */
 - (void)getTextContentSizeWithLayer:(QAAttributedLayer * _Nonnull)layer
-                            content:(id _Nonnull)content
+                            content:(id _Nonnull)contents
                            maxWidth:(CGFloat)width
                     completionBlock:(GetTextContentSizeBlock _Nullable)block;
 

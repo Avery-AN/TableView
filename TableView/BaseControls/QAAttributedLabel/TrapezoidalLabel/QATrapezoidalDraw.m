@@ -62,14 +62,14 @@
             CGRect rect_line = CTLineGetImageBounds(line, context);
             
             CGFloat offsetX = 0;
-            if (textAlignment == NSTextAlignmentLeft) {
-                offsetX = leftGap;  // 左对齐
+            if (textAlignment == NSTextAlignmentLeft) {     // 左对齐
+                offsetX = leftGap;
             }
-            else if (textAlignment == NSTextAlignmentRight) {
-                offsetX = contentSize.width - rightGap - lineWidth;  // 右对齐
+            else if (textAlignment == NSTextAlignmentRight) {   // 右对齐
+                offsetX = contentSize.width - rightGap - lineWidth;
             }
-            else {
-                offsetX = (contentSize.width - lineWidth) / 2.;   // 居中对齐
+            else {   // 居中对齐
+                offsetX = (contentSize.width - lineWidth) / 2.;
             }
             
             /**

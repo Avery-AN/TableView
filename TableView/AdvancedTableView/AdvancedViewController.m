@@ -9,11 +9,11 @@
 #import "AdvancedViewController.h"
 #import "AdvancedCell.h"
 #import "AdvancedCell+SelfManager.h"
-#import "AdvancedDataManager.h"
+#import "AdvancedDataGetterManager.h"
 #import "QAImageBrowserManager.h"
 #import "TrapezoidalCell.h"
+#import "AdvancedDataProcessManager.h"
 
-static NSInteger TrapezoidalLineHeight = 56;
 
 @interface AdvancedViewController () <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic) NSMutableArray *showDatas;
@@ -27,8 +27,6 @@ static NSInteger TrapezoidalLineHeight = 56;
 @property (nonatomic) __block CADisplayLink *displayLink;
 @property (nonatomic) dispatch_source_t timer;
 @property (nonatomic) QAImageBrowserManager *imageBrowserManager;
-@property (nonatomic) NSMutableDictionary *trapezoidalDic_index2;
-@property (nonatomic) NSMutableDictionary *trapezoidalDic_index3;
 @end
 
 
@@ -77,76 +75,14 @@ static NSInteger TrapezoidalLineHeight = 56;
  模拟网络请求
  */
 - (void)generateContent {
-    {   // 这里只生成第2行的数据:
-        self.trapezoidalDic_index2 = [NSMutableDictionary dictionary];
-        
-        [self.trapezoidalDic_index2 setValue:@"label style" forKey:@"name"];
-        NSInteger startX = TrapezoidalCell_Avatar_left_gap+TrapezoidalCell_AvatarSize+TrapezoidalCell_Avatar_title_gap;
-        NSInteger Title_width = UIWidth - TrapezoidalCell_Title_gap_right - startX;
-        CGRect name_frame = CGRectMake(startX, Avatar_top_gap, Title_width, Title_height);
-        [self.trapezoidalDic_index2 setValue:[NSValue valueWithCGRect:name_frame] forKey:@"name-frame"];
-        
-        [self.trapezoidalDic_index2 setValue:@"测试label样式" forKey:@"desc"];
-        CGRect desc_frame = CGRectMake(startX, TrapezoidalCell_Avatar_top_gap+TrapezoidalCell_AvatarSize-Desc_height, Title_width, Desc_height);
-        [self.trapezoidalDic_index2 setValue:[NSValue valueWithCGRect:desc_frame] forKey:@"desc-frame"];
-        
-        NSMutableDictionary *style = [NSMutableDictionary dictionary];
-        [style setValue:[UIFont systemFontOfSize:14] forKey:@"font"];
-        [style setValue:HEXColor(@"333333") forKey:@"textColor"];
-        [self.trapezoidalDic_index2 setValue:style forKey:@"name-style"];
-        
-        [self.trapezoidalDic_index2 setValue:@"https://upload-images.jianshu.io/upload_images/19956441-90202bedb62e0c90.jpg" forKey:@"avatar"];
-        CGRect avatar_frame = CGRectMake(TrapezoidalCell_Avatar_left_gap, TrapezoidalCell_Avatar_top_gap, TrapezoidalCell_AvatarSize, TrapezoidalCell_AvatarSize);
-        [self.trapezoidalDic_index2 setValue:[NSValue valueWithCGRect:avatar_frame] forKey:@"avatar-frame"];
-        
-        
-        [self.trapezoidalDic_index2 setValue:[self.trapezoidalDic_index2 valueForKey:@"avatar"] forKey:@"contentImageView"];
-        CGFloat imageWidth = UIWidth - TrapezoidalCell_ContentImageView_left - TrapezoidalCell_ContentImageView_right;
-        CGFloat imageHeight = imageWidth / TrapezoidalCell_ContentImageView_width_height_rate;
-        CGFloat imageY = TrapezoidalCell_Avatar_top_gap + TrapezoidalCell_AvatarSize + TrapezoidalCell_Avatar_content_gap;
-        [self.trapezoidalDic_index2 setValue:[NSValue valueWithCGRect:CGRectMake(TrapezoidalCell_ContentImageView_left, imageY, imageWidth, imageHeight)] forKey:@"contentImageView-frame"];
-        
-        
-        NSMutableArray *texts = [NSMutableArray array];
-        [texts addObject:@"其它样式的Label"];
-        [texts addObject:@"[nezha] Tiktok [nezha]"];
-        [texts addObject:@"将点击背景处理成#圆角#"];
-        [self.trapezoidalDic_index2 setValue:texts forKey:@"trapezoidalTexts"];
-        CGFloat contentHeight = texts.count*TrapezoidalLineHeight;  // 这里只是临时计算
-        CGFloat contentY = imageY + imageHeight + TrapezoidalCell_ContentImageView_bottomControl_gap;
-        CGRect content_frame = CGRectMake(TrapezoidalCell_Content_left, contentY, UIWidth - (TrapezoidalCell_Content_left+TrapezoidalCell_Content_right), contentHeight);
-        [self.trapezoidalDic_index2 setValue:[NSValue valueWithCGRect:content_frame] forKey:@"content-frame"];
-        
-        CGFloat cellHeight = contentY + contentHeight+TrapezoidalCell_Content_bottom;
-        CGRect cell_frame = CGRectMake(0, 0, UIWidth, cellHeight);
-        [self.trapezoidalDic_index2 setValue:[NSValue valueWithCGRect:cell_frame] forKey:@"cell-frame"];
-        
-        
-        
-        self.trapezoidalDic_index3 = [[NSMutableDictionary alloc] initWithDictionary:self.trapezoidalDic_index2];
-        [self.trapezoidalDic_index3 setValue:@"https://upload-images.jianshu.io/upload_images/11206370-77f9900187553dca" forKey:@"avatar"];
-        [self.trapezoidalDic_index3 setValue:@"https://upload-images.jianshu.io/upload_images/11206370-77f9900187553dca" forKey:@"contentImageView"];
-        [self.trapezoidalDic_index3 setValue:[NSValue valueWithCGRect:name_frame] forKey:@"name-frame"];
-        [self.trapezoidalDic_index3 setValue:[NSValue valueWithCGRect:desc_frame] forKey:@"desc-frame"];
-        NSMutableArray *texts_ = [NSMutableArray array];
-        [texts_ addObject:@"左对齐Label"];
-        [texts_ addObject:@"Tiktok"];
-        [texts_ addObject:@"#圆角#点击背景😃"];
-        [self.trapezoidalDic_index3 setValue:texts_ forKey:@"trapezoidalTexts"];
-        contentHeight = texts_.count*TrapezoidalLineHeight;  // 这里只是临时计算
-        contentY = imageY + imageHeight + TrapezoidalCell_ContentImageView_bottomControl_gap;
-        content_frame = CGRectMake(TrapezoidalCell_Content_left, contentY, UIWidth - (TrapezoidalCell_Content_left+TrapezoidalCell_Content_right), contentHeight);
-        [self.trapezoidalDic_index3 setValue:[NSValue valueWithCGRect:content_frame] forKey:@"content-frame"];
-        
-        cellHeight = contentY + contentHeight+TrapezoidalCell_Content_bottom;
-        cell_frame = CGRectMake(0, 0, UIWidth, cellHeight);
-        [self.trapezoidalDic_index3 setValue:[NSValue valueWithCGRect:cell_frame] forKey:@"cell-frame"];
+    NSMutableArray *totals = [NSMutableArray array];
+    
+    {   // 生成RichTexts数据:
+        NSMutableArray *originalDatas = [AdvancedDataGetterManager getDatas];
+        [totals addObjectsFromArray:originalDatas];
     }
     
-    {   // 生成其它行的数据:
-        NSMutableArray *originalDatas = [AdvancedDataManager getDatas];
-        [self processDatas:originalDatas];
-    }
+    [self processDatas:totals];
 }
 - (void)processDatas:(NSMutableArray *)originalDatas {
     if (!self.showDatas) {
@@ -165,9 +101,11 @@ static NSInteger TrapezoidalLineHeight = 56;
         maxConcurrentOperationCount = originalDatas.count;
     }
     NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:maxConcurrentOperationCount];
-    [AdvancedCell getStytle:originalDatas maxConcurrentOperationCount:maxConcurrentOperationCount completion:^(NSInteger start, NSInteger end) {
+    [AdvancedDataProcessManager processData:originalDatas
+                maxConcurrentOperationCount:maxConcurrentOperationCount
+                                 completion:^(NSInteger start, NSInteger end) {
         // NSLog(@"已获取到新数据: %ld - %ld", (long)start , (long)end);
-        
+
         [indexPaths removeAllObjects];
         for (NSInteger i = start; i <= end; i++) {
             [self.showDatas addObject:[originalDatas objectAtIndex:i]];
@@ -191,35 +129,19 @@ static NSInteger TrapezoidalLineHeight = 56;
     return 1;
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.showDatas.count+2;
+    return self.showDatas.count;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 2) {
-        NSValue *value = [self.trapezoidalDic_index2 valueForKey:@"cell-frame"];
-        CGRect rect = value.CGRectValue;
-        return rect.size.height;
-    }
-    else if (indexPath.row == 3) {
-        NSValue *value = [self.trapezoidalDic_index3 valueForKey:@"cell-frame"];
-        CGRect rect = value.CGRectValue;
-        return rect.size.height;
-    }
-    else {
-        NSDictionary *dic = nil;
-        if (indexPath.row <= 2) {
-            dic = [self.showDatas objectAtIndex:indexPath.row];
-        }
-        else {
-            dic = [self.showDatas objectAtIndex:indexPath.row-2];
-        }
-        CGRect cellFrame = [[dic valueForKey:@"cell-frame"] CGRectValue];
-        NSInteger defaultHeight = Avatar_top_gap + AvatarSize + Avatar_bottomControl_gap;
-        return cellFrame.size.height - defaultHeight > 0 ? cellFrame.size.height : defaultHeight;
-    }
+    NSDictionary *dic = [self.showDatas objectAtIndex:indexPath.row];
+    CGRect cellFrame = [[dic valueForKey:@"cell-frame"] CGRectValue];
+    NSInteger defaultHeight = Avatar_top_gap + AvatarSize + Avatar_bottomControl_gap;
+    return cellFrame.size.height - defaultHeight > 0 ? cellFrame.size.height : defaultHeight;
 }
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView
                  cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
-    if (indexPath.row == 2 || indexPath.row == 3) {
+    NSDictionary *dic = [self.showDatas objectAtIndex:indexPath.row];
+    
+    if ([dic valueForKey:@"trapezoidalTexts"]) {
         TrapezoidalCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TrapezoidalCell"];
         if (cell == nil) {
             cell = [[TrapezoidalCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"TrapezoidalCell"];
@@ -236,17 +158,11 @@ static NSInteger TrapezoidalLineHeight = 56;
             };
         }
         
-        if (indexPath.row == 2) {
-            cell.trapezoidalLabel.highLightTexts = nil;
-            cell.trapezoidalLabel.textAlignment = NSTextAlignmentCenter;
-            [cell setTrapezoidalTexts:self.trapezoidalDic_index2 lineHeight:TrapezoidalLineHeight];
-        }
-        else {
+        cell.trapezoidalLabel.highLightTexts = nil;
+        if (indexPath.row % 2 == 0) {
             cell.trapezoidalLabel.highLightTexts = [NSArray arrayWithObject:@"Tiktok"];
-            cell.trapezoidalLabel.textAlignment = NSTextAlignmentLeft;
-            // cell.trapezoidalLabel.textAlignment = NSTextAlignmentRight;
-            [cell setTrapezoidalTexts:self.trapezoidalDic_index3 lineHeight:TrapezoidalLineHeight];
         }
+        [cell setTrapezoidalTexts:dic];
 
         return cell;
     }
@@ -281,13 +197,6 @@ static NSInteger TrapezoidalLineHeight = 56;
             return cell;
         }
         else {
-            NSDictionary *dic = nil;
-            if (indexPath.row <= 2) {
-                dic = [self.showDatas objectAtIndex:indexPath.row];
-            }
-            else {
-                dic = [self.showDatas objectAtIndex:indexPath.row-2];
-            }
             [cell showStytle:dic];
 
             return cell;

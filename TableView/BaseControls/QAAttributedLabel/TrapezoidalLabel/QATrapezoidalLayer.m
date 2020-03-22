@@ -57,6 +57,28 @@
     }
     return YES;
 }
+- (void)getDrawAttributedTextWithLabel:(id)label
+                            selfBounds:(CGRect)bounds
+                   checkAttributedText:(BOOL(^)(NSString *content))checkBlock
+                            completion:(void(^)(NSMutableAttributedString *))completion {
+    QATrapezoidalLabel *attributedLabel = label;
+    if (attributedLabel.srcAttributedString && attributedLabel.srcAttributedString.lines.count > 0 && completion) {
+        completion(attributedLabel.srcAttributedString);
+        return;
+    }
+    else if (attributedLabel.attributedString && attributedLabel.attributedString.trapezoidalTexts_new.count > 0 && completion) {
+        completion(attributedLabel.srcAttributedString);
+        return;
+    }
+    
+    NSMutableAttributedString *attributedText = nil;
+    CGFloat contentHeight = 0;
+    [self getBaseInfoWithContentSize:bounds.size trapezoidalTexts:attributedLabel.trapezoidalTexts attributedText:&attributedText contentHeight:&contentHeight];
+    
+    if (completion) {
+        completion(attributedText);
+    }
+}
 - (CGFloat)updateContentsHeightWithTrapezoidalTexts:(NSArray *)trapezoidalTexts
                                          lineWidths:(NSMutableArray *)lineWidths
                                               lines:(NSMutableArray *)lines
@@ -242,13 +264,14 @@
     }
 }
 - (void)getBaseInfoWithContentSize:(CGSize)contentSize
+                  trapezoidalTexts:(NSArray *)trapezoidalTexts
                     attributedText:(NSMutableAttributedString * __strong *)attributedText
                      contentHeight:(CGFloat *)contentHeight {
     QATrapezoidalLabel *attributedLabel = (QATrapezoidalLabel *)GetAttributedLabel(self);
-    NSArray *trapezoidalTexts = attributedLabel.trapezoidalTexts;
-    if (!trapezoidalTexts || trapezoidalTexts.count == 0) {
+    if (!trapezoidalTexts || ![trapezoidalTexts isKindOfClass:[NSArray class]] || trapezoidalTexts.count == 0) {
         *attributedText = nil;
         *contentHeight = 0;
+        return;
     }
     
     CGFloat boundsWidth = contentSize.width;
@@ -296,24 +319,6 @@
 
 
 #pragma mark - Private Methods -
-- (void)getDrawAttributedTextWithLabel:(id)label
-                            selfBounds:(CGRect)bounds
-                   checkAttributedText:(BOOL(^)(NSString *content))checkBlock
-                            completion:(void(^)(NSMutableAttributedString *))completion {
-    QATrapezoidalLabel *attributedLabel = label;
-    if (attributedLabel.srcAttributedString && attributedLabel.srcAttributedString.lines.count > 0 && completion) {
-        completion(attributedLabel.srcAttributedString);
-        return;
-    }
-    
-    NSMutableAttributedString *attributedText = nil;
-    CGFloat contentHeight = 0;
-    [self getBaseInfoWithContentSize:bounds.size attributedText:&attributedText contentHeight:&contentHeight];
-    
-    if (completion) {
-        completion(attributedText);
-    }
-}
 - (NSMutableAttributedString * _Nullable)getAttributedStringWithContents:(NSArray * _Nullable)contents
                                                                 maxWidth:(CGFloat)maxWidth
                                                        attributedStrings:(NSMutableArray *)attributedStrings {
@@ -423,7 +428,7 @@
         [QABackgroundDraw drawBackgroundWithMaxWidth:contentSize.width
                                           lineWidths:attributedText.lineWidths
                                           lineHeight:trapezoidalLineHeight
-                                              radius:6
+                                              radius:5
                                        textAlignment:Background_TextAlignment_Left
                                      backgroundColor:lineBackgroundColor];
     }
@@ -431,7 +436,7 @@
         [QABackgroundDraw drawBackgroundWithMaxWidth:contentSize.width
                                           lineWidths:attributedText.lineWidths
                                           lineHeight:trapezoidalLineHeight
-                                              radius:6
+                                              radius:5
                                        textAlignment:Background_TextAlignment_Right
                                      backgroundColor:lineBackgroundColor];
     }
@@ -439,7 +444,7 @@
         [QABackgroundDraw drawBackgroundWithMaxWidth:contentSize.width
                                           lineWidths:attributedText.lineWidths
                                           lineHeight:trapezoidalLineHeight
-                                              radius:6
+                                              radius:5
                                        textAlignment:Background_TextAlignment_Center
                                      backgroundColor:lineBackgroundColor];
     }

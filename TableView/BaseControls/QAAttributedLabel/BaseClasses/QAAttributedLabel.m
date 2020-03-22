@@ -348,14 +348,19 @@ static void *TouchingContext = &TouchingContext;
     // NSLog(@"%s",__func__);
     
     self.needUpdate = NO;
-    if ([[NSThread currentThread] isMainThread]) {
-        [self.layer setNeedsDisplay];
-    }
-    else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.layer setNeedsDisplay];
-        });
-    }
+    [self.layer setNeedsDisplay];
+    
+//    self.needUpdate = NO;
+//    if ([[NSThread currentThread] isMainThread]) {
+//        NSLog(@"【【 setNeedsDisplay （0）】】");
+//        [self.layer setNeedsDisplay];
+//    }
+//    else {
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            NSLog(@"【【 setNeedsDisplay （1）】】");
+//            [self.layer setNeedsDisplay];
+//        });
+//    }
 }
 
 
@@ -595,7 +600,7 @@ static void *TouchingContext = &TouchingContext;
     [self _commitUpdate];
 }
 - (void)setAttributedString:(NSMutableAttributedString *)attributedString {
-    _srcAttributedString = attributedString;
+    _srcAttributedString = attributedString;  // 保存attributedString的初始赋值
     
     if ([attributedString isKindOfClass:[NSMutableAttributedString class]]) {
          //_attributedString = attributedString;  // strong

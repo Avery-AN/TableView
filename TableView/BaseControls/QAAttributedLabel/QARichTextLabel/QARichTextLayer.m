@@ -67,64 +67,6 @@
     }
     return YES;
 }
-- (int)drawAttributedText:(NSMutableAttributedString *)attributedText
-                  context:(CGContextRef)context
-              contentSize:(CGSize)contentSize
-                wordSpace:(CGFloat)wordSpace
-         maxNumberOfLines:(NSInteger)numberOfLines
-            textAlignment:(NSTextAlignment)textAlignment
-        saveHighlightText:(BOOL)saveHighlightText
-                justified:(BOOL)justified {
-    int drawResult = [attributedText drawAttributedTextWithContext:context
-                                                       contentSize:contentSize
-                                                         wordSpace:wordSpace
-                                                  maxNumberOfLines:numberOfLines
-                                                     textAlignment:textAlignment
-                                                 saveHighlightText:saveHighlightText
-                                                         justified:justified];
-    return drawResult;
-}
-
-- (void)drawBackgroundWithRects:(NSArray *_Nonnull)highlightRects
-                backgroundColor:(UIColor *_Nullable)backgroundColor
-                 attributedText:(NSMutableAttributedString *)attributedText
-                          range:(NSRange)range {
-    [QABackgroundDraw drawBackgroundWithRects:highlightRects
-                                       radius:3
-                              backgroundColor:backgroundColor];
-}
-- (void)drawAttributedTextAndTapedBackgroungcolor:(NSMutableAttributedString * _Nonnull)attributedText
-                                          context:(CGContextRef _Nonnull)context
-                                      contentSize:(CGSize)contentSize
-                                        wordSpace:(CGFloat)wordSpace
-                                 maxNumberOfLines:(NSInteger)numberOfLines
-                                    textAlignment:(NSTextAlignment)textAlignment
-                                saveHighlightText:(BOOL)saveHighlightText
-                                        justified:(BOOL)justified
-                                   highlightRects:(NSArray *)highlightRects
-                              textBackgroundColor:(UIColor *)textBackgroundColor
-                                            range:(NSRange)range {
-    // 绘制高亮文案的背景色:
-    if (textBackgroundColor) {
-        [self drawBackgroundWithRects:highlightRects
-                      backgroundColor:textBackgroundColor
-                       attributedText:attributedText
-                                range:range];
-    }
-
-    // 文案的绘制:
-    [self drawAttributedText:attributedText
-                     context:context
-                 contentSize:contentSize
-                   wordSpace:wordSpace
-            maxNumberOfLines:numberOfLines
-               textAlignment:textAlignment
-           saveHighlightText:saveHighlightText
-                   justified:justified];
-}
-
-
-#pragma mark - Private Methods -
 - (void)getDrawAttributedTextWithLabel:(id)label
                             selfBounds:(CGRect)bounds
                    checkAttributedText:(BOOL(^)(NSString *content))checkBlock
@@ -208,6 +150,62 @@
             completion(attributedText);
         }
     }
+}
+
+- (int)drawAttributedText:(NSMutableAttributedString *)attributedText
+                  context:(CGContextRef)context
+              contentSize:(CGSize)contentSize
+                wordSpace:(CGFloat)wordSpace
+         maxNumberOfLines:(NSInteger)numberOfLines
+            textAlignment:(NSTextAlignment)textAlignment
+        saveHighlightText:(BOOL)saveHighlightText
+                justified:(BOOL)justified {
+    int drawResult = [attributedText drawAttributedTextWithContext:context
+                                                       contentSize:contentSize
+                                                         wordSpace:wordSpace
+                                                  maxNumberOfLines:numberOfLines
+                                                     textAlignment:textAlignment
+                                                 saveHighlightText:saveHighlightText
+                                                         justified:justified];
+    return drawResult;
+}
+
+- (void)drawBackgroundWithRects:(NSArray *_Nonnull)highlightRects
+                backgroundColor:(UIColor *_Nullable)backgroundColor
+                 attributedText:(NSMutableAttributedString *)attributedText
+                          range:(NSRange)range {
+    [QABackgroundDraw drawBackgroundWithRects:highlightRects
+                                       radius:3
+                              backgroundColor:backgroundColor];
+}
+- (void)drawAttributedTextAndTapedBackgroungcolor:(NSMutableAttributedString * _Nonnull)attributedText
+                                          context:(CGContextRef _Nonnull)context
+                                      contentSize:(CGSize)contentSize
+                                        wordSpace:(CGFloat)wordSpace
+                                 maxNumberOfLines:(NSInteger)numberOfLines
+                                    textAlignment:(NSTextAlignment)textAlignment
+                                saveHighlightText:(BOOL)saveHighlightText
+                                        justified:(BOOL)justified
+                                   highlightRects:(NSArray *)highlightRects
+                              textBackgroundColor:(UIColor *)textBackgroundColor
+                                            range:(NSRange)range {
+    // 绘制高亮文案的背景色:
+    if (textBackgroundColor) {
+        [self drawBackgroundWithRects:highlightRects
+                      backgroundColor:textBackgroundColor
+                       attributedText:attributedText
+                                range:range];
+    }
+
+    // 文案的绘制:
+    [self drawAttributedText:attributedText
+                     context:context
+                 contentSize:contentSize
+                   wordSpace:wordSpace
+            maxNumberOfLines:numberOfLines
+               textAlignment:textAlignment
+           saveHighlightText:saveHighlightText
+                   justified:justified];
 }
 
 @end

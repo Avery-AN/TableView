@@ -48,6 +48,11 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
                                                               maxWidth:(CGFloat)maxWidth {
     NSString *showContent = [content copy];
     QAAttributedLabel *attributedLabel = GetAttributedLabel(self);
+    
+    if (attributedLabel.noRichTexts == YES) {  // 不包含富文本
+        NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:showContent attributes:attributedLabel.textLayout.textAttributes];
+        return attributedText;
+    }
 
     // 获取需要高亮显示的文案与位置 (link & @user & topic):
     NSMutableDictionary *highlightContents = [NSMutableDictionary dictionary];
@@ -305,6 +310,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
     if (attributedText.showMoreTextEffected && attributedLabel.textAlignment == NSTextAlignmentJustified) {
         justified = YES;
     }
+    
     [self drawAttributedText:attributedText
                      context:context
                  contentSize:bounds.size
@@ -376,13 +382,18 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
         if (attributedString.showMoreTextEffected && attributedLabel.textAlignment == NSTextAlignmentJustified) {
             justified = YES;
         }
+        BOOL saveHighlightText = YES;
+        if (attributedLabel.noRichTexts) {
+            saveHighlightText = NO;
+        }
+        
         [self drawAttributedText:attributedString
                          context:context
                      contentSize:contentSize
                        wordSpace:attributedLabel.wordSpace
                 maxNumberOfLines:numberOfLines
                    textAlignment:attributedLabel.textAlignment
-               saveHighlightText:YES
+               saveHighlightText:saveHighlightText
                        justified:justified];
     });
 }
@@ -487,7 +498,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
     // 给上下文填充背景色:
     CGContextSetFillColorWithColor(context, attributedLabel.backgroundColor.CGColor);
     CGContextFillRect(context, attributedLabel.bounds);
-    
+
     // 绘制文案:
     __weak typeof(self) weakSelf = self;
     [self fillContentsWithContext:context
@@ -525,6 +536,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
                      checkAttributedText:checkBlock
                               completion:^(NSMutableAttributedString *attributedText) {
         __strong typeof(weakSelf) strongSelf = weakSelf;
+        BOOL noRichTexts = attributedLabel.noRichTexts;
         
         if (!attributedText) {
             if (cancel) {
@@ -538,7 +550,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
             CGFloat boundsHeight = bounds.size.height;
             
             // 处理搜索结果:
-            if (attributedText.searchRanges && attributedText.searchRanges.count > 0) {
+            if (noRichTexts == NO && attributedText.searchRanges && attributedText.searchRanges.count > 0) {
                 UIColor *textColor = [attributedText.searchAttributeInfo valueForKey:@"textColor"];
                 UIColor *textBackgroundColor = [attributedText.searchAttributeInfo valueForKey:@"textBackgroundColor"];
                 for (NSString *rangeString in attributedText.searchRanges) {
@@ -557,16 +569,18 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
             }
             
             // 保存高亮相关信息(link & at & Topic & Seemore)到attributedText对应的属性中:
-            int saveResult = [strongSelf saveHighlightRanges:attributedText.highlightRanges
-                                           highlightContents:attributedText.highlightContents
-                                              truncationInfo:attributedText.truncationInfo
-                                             attributedLabel:attributedLabel
-                                            attributedString:attributedText];
-            if (saveResult < 0) {
-                if (cancel) {
-                    cancel();
+            if (noRichTexts == NO) {
+                int saveResult = [strongSelf saveHighlightRanges:attributedText.highlightRanges
+                                               highlightContents:attributedText.highlightContents
+                                                  truncationInfo:attributedText.truncationInfo
+                                                 attributedLabel:attributedLabel
+                                                attributedString:attributedText];
+                if (saveResult < 0) {
+                    if (cancel) {
+                        cancel();
+                    }
+                    return;
                 }
-                return;
             }
             
             // 文案的绘制:
@@ -576,14 +590,19 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
             if (attributedText.showMoreTextEffected && attributedLabel.textAlignment == NSTextAlignmentJustified) {
                 justified = YES;
             }
-            int drawResult = [self drawAttributedText:attributedText
-                                              context:context
-                                          contentSize:contentSize
-                                            wordSpace:attributedLabel.wordSpace
-                                     maxNumberOfLines:numberOfLines
-                                        textAlignment:attributedLabel.textAlignment
-                                    saveHighlightText:YES
-                                            justified:justified];
+            BOOL saveHighlightText = YES;
+            if (noRichTexts == YES) {
+                saveHighlightText = NO;
+            }
+            
+            int drawResult = [strongSelf drawAttributedText:attributedText
+                                                    context:context
+                                                contentSize:contentSize
+                                                  wordSpace:attributedLabel.wordSpace
+                                           maxNumberOfLines:numberOfLines
+                                              textAlignment:attributedLabel.textAlignment
+                                          saveHighlightText:saveHighlightText
+                                                  justified:justified];
             if (drawResult < 0) {
                 if (cancel) {
                     cancel();

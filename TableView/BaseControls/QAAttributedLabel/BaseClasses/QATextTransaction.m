@@ -51,7 +51,7 @@ static void QATextTransactionSetup() {
         observer = CFRunLoopObserverCreate(CFAllocatorGetDefault(),
                                            kCFRunLoopBeforeWaiting | kCFRunLoopExit, // 监听2个状态
                                            true,        // repeat
-                                           (2000000-1), // 设定观察者的优先级 after CATransaction(2000000) 这是为了确保系统的动画优先执行，之后再执行异步渲染。
+                                           (2000000+1), // 设定观察者的优先级 after CATransaction(2000000) 这是为了确保系统的动画优先执行，之后再执行异步渲染。
                                            QARunLoopObserverCallBack,
                                            NULL);
         CFRunLoopAddObserver(runloop, observer, kCFRunLoopCommonModes);

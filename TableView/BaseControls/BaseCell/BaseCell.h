@@ -11,6 +11,9 @@
 #import "YYImage.h"
 //#import <FLAnimatedImage/FLAnimatedImage.h>
 
+
+NS_ASSUME_NONNULL_BEGIN
+
 typedef NS_ENUM(NSUInteger, BaseCell_TapedStyle) {
     BaseCell_Taped_Name = 1,            // 点中了名称
     BaseCell_Taped_Desc,                // 点中了简介
@@ -19,9 +22,10 @@ typedef NS_ENUM(NSUInteger, BaseCell_TapedStyle) {
     BaseCell_Taped_Content              // 点中了content
 };
 
-NS_ASSUME_NONNULL_BEGIN
 
 @interface BaseCell : UITableViewCell
+@property (nonatomic) QARichTextLabel *nameLabel;
+@property (nonatomic) QARichTextLabel *descLabel;
 @property (nonatomic) UIImageView *avatar;
 @property (nonatomic) UIImageView *contentImageView;
 @property (nonatomic) YYAnimatedImageView *yyImageView;

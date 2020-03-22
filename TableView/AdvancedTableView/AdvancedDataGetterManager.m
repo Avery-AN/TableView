@@ -1,19 +1,28 @@
 //
-//  AdvancedDataManager.m
+//  AdvancedDataGetterManager.m
 //  TableView
 //
 //  Created by Avery An on 2019/12/2.
 //  Copyright © 2019 Avery. All rights reserved.
 //
 
-#import "AdvancedDataManager.h"
+#import "AdvancedDataGetterManager.h"
 #import "AdvancedCell.h"
+#import "TrapezoidalCell.h"
 
-@implementation AdvancedDataManager
+@implementation AdvancedDataGetterManager
 
+#pragma mark - Public Methods -
 + (NSMutableArray *)getDatas {
     NSMutableArray *datas = [NSMutableArray array];
+    [self getRichTextCellDatas:datas];
+    [self getTrapezoidalCellDatas:datas];
+    return datas;
+}
 
+
+#pragma mark - Private Methods -
++ (void)getRichTextCellDatas:(NSMutableArray *)datas {
     for (int i = 0; i < 281; i++) {
         NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:0];
 
@@ -222,8 +231,75 @@
         content = [content stringByAppendingString:@"https://www.avery.com.cn"];
         [dic setValue:content forKey:@"content"];
     }
-    
-    return datas;
+}
+
++ (void)getTrapezoidalCellDatas:(NSMutableArray *)datas {  // 这里只生成TrapezoidalCell的数据
+    {
+        NSMutableDictionary *trapezoidalDic_index1 = [NSMutableDictionary dictionary];
+        [trapezoidalDic_index1 setValue:@"label style" forKey:@"name"];
+        NSInteger startX = TrapezoidalCell_Avatar_left_gap+TrapezoidalCell_AvatarSize+TrapezoidalCell_Avatar_title_gap;
+        NSInteger Title_width = UIWidth - TrapezoidalCell_Title_gap_right - startX;
+        CGRect name_frame = CGRectMake(startX, Avatar_top_gap, Title_width, Title_height);
+        [trapezoidalDic_index1 setValue:[NSValue valueWithCGRect:name_frame] forKey:@"name-frame"];
+
+        [trapezoidalDic_index1 setValue:@"测试label样式" forKey:@"desc"];
+        CGRect desc_frame = CGRectMake(startX, TrapezoidalCell_Avatar_top_gap+TrapezoidalCell_AvatarSize-Desc_height, Title_width, Desc_height);
+        [trapezoidalDic_index1 setValue:[NSValue valueWithCGRect:desc_frame] forKey:@"desc-frame"];
+
+        NSMutableDictionary *style = [NSMutableDictionary dictionary];
+        [style setValue:[UIFont systemFontOfSize:14] forKey:@"font"];
+        [style setValue:HEXColor(@"333333") forKey:@"textColor"];
+        [trapezoidalDic_index1 setValue:style forKey:@"name-style"];
+
+        [trapezoidalDic_index1 setValue:@"https://upload-images.jianshu.io/upload_images/19956441-90202bedb62e0c90.jpg" forKey:@"avatar"];
+        CGRect avatar_frame = CGRectMake(TrapezoidalCell_Avatar_left_gap, TrapezoidalCell_Avatar_top_gap, TrapezoidalCell_AvatarSize, TrapezoidalCell_AvatarSize);
+        [trapezoidalDic_index1 setValue:[NSValue valueWithCGRect:avatar_frame] forKey:@"avatar-frame"];
+
+
+        [trapezoidalDic_index1 setValue:[trapezoidalDic_index1 valueForKey:@"avatar"] forKey:@"contentImageView"];
+        CGFloat imageWidth = UIWidth - TrapezoidalCell_ContentImageView_left - TrapezoidalCell_ContentImageView_right;
+        CGFloat imageHeight = imageWidth / TrapezoidalCell_ContentImageView_width_height_rate;
+        CGFloat imageY = TrapezoidalCell_Avatar_top_gap + TrapezoidalCell_AvatarSize + TrapezoidalCell_Avatar_content_gap;
+        [trapezoidalDic_index1 setValue:[NSValue valueWithCGRect:CGRectMake(TrapezoidalCell_ContentImageView_left, imageY, imageWidth, imageHeight)] forKey:@"contentImageView-frame"];
+
+
+        NSMutableArray *texts = [NSMutableArray array];
+        [texts addObject:@"其它样式的Label"];
+        [texts addObject:@"[nezha] Tiktok [nezha]"];
+        [texts addObject:@"将点击背景做#圆角#处理"];
+        [trapezoidalDic_index1 setValue:texts forKey:@"trapezoidalTexts"];
+        [trapezoidalDic_index1 setValue:@(NSTextAlignmentCenter) forKey:@"TextAlignment"];
+        [datas insertObject:trapezoidalDic_index1 atIndex:2];
+
+
+        NSMutableDictionary *trapezoidalDic_index2 = [[NSMutableDictionary alloc] initWithDictionary:trapezoidalDic_index1];
+        [trapezoidalDic_index2 setValue:@"https://upload-images.jianshu.io/upload_images/11206370-77f9900187553dca" forKey:@"avatar"];
+        [trapezoidalDic_index2 setValue:@"https://upload-images.jianshu.io/upload_images/11206370-77f9900187553dca" forKey:@"contentImageView"];
+        [trapezoidalDic_index2 setValue:[NSValue valueWithCGRect:name_frame] forKey:@"name-frame"];
+        [trapezoidalDic_index2 setValue:[NSValue valueWithCGRect:desc_frame] forKey:@"desc-frame"];
+        NSMutableArray *texts_2 = [NSMutableArray array];
+        [texts_2 addObject:@"左对齐Label"];
+        [texts_2 addObject:@"Tiktok"];
+        [texts_2 addObject:@"#圆角#点击背景😃"];
+        [trapezoidalDic_index2 setValue:texts_2 forKey:@"trapezoidalTexts"];
+        [trapezoidalDic_index2 setValue:@(NSTextAlignmentLeft) forKey:@"TextAlignment"];
+        [datas insertObject:trapezoidalDic_index2 atIndex:3];
+        
+        
+
+        NSMutableDictionary *trapezoidalDic_index3 = [[NSMutableDictionary alloc] initWithDictionary:trapezoidalDic_index1];
+        [trapezoidalDic_index3 setValue:@"https://upload-images.jianshu.io/upload_images/3398976-b8f4ba28567bc9b8" forKey:@"avatar"];
+        [trapezoidalDic_index3 setValue:@"https://upload-images.jianshu.io/upload_images/3398976-b8f4ba28567bc9b8" forKey:@"contentImageView"];
+        [trapezoidalDic_index3 setValue:[NSValue valueWithCGRect:name_frame] forKey:@"name-frame"];
+        [trapezoidalDic_index3 setValue:[NSValue valueWithCGRect:desc_frame] forKey:@"desc-frame"];
+        NSMutableArray *texts_3 = [NSMutableArray array];
+        [texts_3 addObject:@"右对齐Label"];
+        [texts_3 addObject:@"@Tiktok"];
+        [texts_3 addObject:@"😃#圆角#点击背景"];
+        [trapezoidalDic_index3 setValue:texts_3 forKey:@"trapezoidalTexts"];
+        [trapezoidalDic_index3 setValue:@(NSTextAlignmentRight) forKey:@"TextAlignment"];
+        [datas insertObject:trapezoidalDic_index3 atIndex:4];
+    }
 }
 
 @end

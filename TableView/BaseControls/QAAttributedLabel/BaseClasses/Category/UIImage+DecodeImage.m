@@ -13,7 +13,6 @@ static BOOL ProcessBytesPerRowAlignment = YES;  // 是否要进行字节对齐
 @implementation UIImage (DecodeImage)
 
 #pragma mark - Public Methods -
-
 - (UIImage * _Nullable)decodeImage {
     if (!self) {
         return nil;

@@ -44,6 +44,8 @@ typedef union {
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+        [self.contentView addSubview:self.nameLabel];
+        [self.contentView addSubview:self.descLabel];
         [self.contentView addSubview:self.avatar];
         // [self.contentView addSubview:self.contentImageView];
         // [self.contentView addSubview:self.flImageView];
@@ -159,6 +161,16 @@ typedef union {
 
 #pragma mark - Cell的布局 -
 - (void)masonryLayout:(NSDictionary *)dic {
+    {
+        UIFont *font = [dic valueForKey:@"font"];
+        CGRect rect = [[dic valueForKey:@"name-frame"] CGRectValue];
+        self.nameLabel.frame = rect;
+        self.nameLabel.font = font;
+        rect = [[dic valueForKey:@"desc-frame"] CGRectValue];
+        self.descLabel.frame = rect;
+        self.descLabel.font = font;
+    }
+    
     if ([[dic allKeys] indexOfObject:NSStringFromSelector(@selector(avatar))] != NSNotFound) {
         self.avatar.hidden = NO;
         CGRect rect = [[dic valueForKey:@"avatar-frame"] CGRectValue];
@@ -282,18 +294,18 @@ typedef union {
     else {  // cell尚未被异步绘制
         // 异步绘制:
         self.drawed = YES;
-        CGRect cellFrame = [[dic valueForKey:@"cell-frame"] CGRectValue];
+//        CGRect cellFrame = [[dic valueForKey:@"cell-frame"] CGRectValue];
         
-        @weakify(self)
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            @strongify(self)
+//        @weakify(self)
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//            @strongify(self)
             
-            UIGraphicsBeginImageContextWithOptions(cellFrame.size, YES, 0);
-            CGContextRef context = UIGraphicsGetCurrentContext();
-            
-            // *** 【1】背景颜色填充:
-            [[UIColor whiteColor] set];
-            CGContextFillRect(context, cellFrame); // 全局背景色
+//            UIGraphicsBeginImageContextWithOptions(cellFrame.size, YES, 0);
+//            CGContextRef context = UIGraphicsGetCurrentContext();
+//
+//            // *** 【1】背景颜色填充:
+//            [[UIColor whiteColor] set];
+//            CGContextFillRect(context, cellFrame); // 全局背景色
             
             // *** 【2】avatar
             if ([[dic allKeys] indexOfObject:NSStringFromSelector(@selector(avatar))] != NSNotFound) {
@@ -312,35 +324,43 @@ typedef union {
                 }];
             }
             
-            
             // *** 【3】用户名 & desc 的绘制:
             {
                 NSString *userName = [dic valueForKey:@"name"];
-                CGRect nameFrame = [[dic valueForKey:@"name-frame"] CGRectValue];
-                NSDictionary *style = [dic valueForKey:@"name-style"];
-                NSInteger startX = nameFrame.origin.x;
-                NSInteger startY = nameFrame.origin.y;
-                [userName drawInContext:context
-                           withPosition:CGPointMake(startX, startY)
-                                   font:[style valueForKey:@"font"]
-                              textColor:[style valueForKey:@"textColor"]
-                                 height:nameFrame.size.height
-                          lineBreakMode:NSLineBreakByCharWrapping
-                          textAlignment:NSTextAlignmentLeft];
-                
-                
+                self.nameLabel.text = userName;
                 NSString *desc = [dic valueForKey:@"desc"];
-                CGRect descFrame = [[dic valueForKey:@"desc-frame"] CGRectValue];
-                startX = descFrame.origin.x;
-                startY = descFrame.origin.y;
-                [desc drawInContext:context
-                       withPosition:CGPointMake(startX, startY)
-                               font:[style valueForKey:@"font"]
-                          textColor:[style valueForKey:@"textColor"]
-                             height:descFrame.size.height
-                      lineBreakMode:NSLineBreakByCharWrapping
-                      textAlignment:NSTextAlignmentLeft];
+                self.descLabel.text = desc;
             }
+            
+            
+//            // *** 【3】用户名 & desc 的绘制:
+//            {
+//                NSString *userName = [dic valueForKey:@"name"];
+//                CGRect nameFrame = [[dic valueForKey:@"name-frame"] CGRectValue];
+//                NSDictionary *style = [dic valueForKey:@"name-style"];
+//                NSInteger startX = nameFrame.origin.x;
+//                NSInteger startY = nameFrame.origin.y;
+//                [userName drawInContext:context
+//                           withPosition:CGPointMake(startX, startY)
+//                                   font:[style valueForKey:@"font"]
+//                              textColor:[style valueForKey:@"textColor"]
+//                                 height:nameFrame.size.height
+//                          lineBreakMode:NSLineBreakByCharWrapping
+//                          textAlignment:NSTextAlignmentLeft];
+//
+//
+//                NSString *desc = [dic valueForKey:@"desc"];
+//                CGRect descFrame = [[dic valueForKey:@"desc-frame"] CGRectValue];
+//                startX = descFrame.origin.x;
+//                startY = descFrame.origin.y;
+//                [desc drawInContext:context
+//                       withPosition:CGPointMake(startX, startY)
+//                               font:[style valueForKey:@"font"]
+//                          textColor:[style valueForKey:@"textColor"]
+//                             height:descFrame.size.height
+//                      lineBreakMode:NSLineBreakByCharWrapping
+//                      textAlignment:NSTextAlignmentLeft];
+//            }
             
             
             // *** 【4】content
@@ -439,13 +459,13 @@ typedef union {
             }
             
             
-            // *** 【6】
-            UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.contentView.layer.contents = (__bridge id)image.CGImage;
-            });
-        });
+//            // *** 【6】
+//            UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+//            UIGraphicsEndImageContext();
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                self.contentView.layer.contents = (__bridge id)image.CGImage;
+//            });
+//        });
     }
 }
 
@@ -496,6 +516,22 @@ typedef union {
 
 
 #pragma mark - Properties -
+- (QARichTextLabel *)nameLabel {
+    if (!_nameLabel) {
+        _nameLabel = [[QARichTextLabel alloc] init];
+        _nameLabel.noRichTexts = YES;
+        _nameLabel.display_async = YES;
+    }
+    return _nameLabel;
+}
+- (QARichTextLabel *)descLabel {
+    if (!_descLabel) {
+        _descLabel = [[QARichTextLabel alloc] init];
+        _descLabel.noRichTexts = YES;
+        _descLabel.display_async = YES;
+    }
+    return _descLabel;
+}
 - (UIImageView *)avatar {
     if (!_avatar) {
         _avatar = [[UIImageView alloc] init];

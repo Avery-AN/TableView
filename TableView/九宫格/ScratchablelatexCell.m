@@ -173,9 +173,9 @@ static BOOL openClipsToBounds = YES;
 - (void)draw:(NSDictionary *)dic {
     [super draw:dic];
     
-    [self drawScratchablelatex];  // 九宫格的绘制
+    [self drawScratchablelatexContent];  // 九宫格的绘制
 }
-- (void)drawScratchablelatex {
+- (void)drawScratchablelatexContent {
     NSArray *contentImageViews = [self.styleInfo valueForKey:@"contentImageViews"];
     if (contentImageViews && [contentImageViews isKindOfClass:[NSArray class]]) {
         for (int i = 0; i < contentImageViews.count; i++) {

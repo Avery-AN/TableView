@@ -24,6 +24,8 @@ static NSInteger TrapezoidalCell_ContentImageView_right = 10;
 static NSInteger TrapezoidalCell_ContentImageView_bottomControl_gap = 10;  // ContentImageView与其下方的控件之间的间隔
 static CGFloat TrapezoidalCell_ContentImageView_width_height_rate = 16/9.;
 
+static NSInteger TrapezoidalLineHeight = 56;  // 单行高度
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface TrapezoidalCell : BaseCell
@@ -34,9 +36,13 @@ NS_ASSUME_NONNULL_BEGIN
  设置文案与单行的行高度
  
  @param trapezoidalTexts 显示文本
- @param lineHeight 单行行高
+ @param textAlignment 文本对齐方式
  */
-- (void)setTrapezoidalTexts:(NSDictionary *)trapezoidalTexts lineHeight:(CGFloat)lineHeight;
+- (void)setTrapezoidalTexts:(NSDictionary * _Nonnull)trapezoidalTexts
+              textAlignment:(NSTextAlignment)textAlignment;
+
+
+- (void)setTrapezoidalTexts:(NSDictionary * _Nonnull)trapezoidalTexts;
 
 @end
 

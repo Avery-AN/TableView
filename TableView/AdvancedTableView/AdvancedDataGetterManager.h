@@ -1,5 +1,5 @@
 //
-//  AdvancedDataManager.h
+//  AdvancedDataGetterManager.h
 //  TableView
 //
 //  Created by Avery An on 2019/12/2.
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface AdvancedDataManager : NSObject
+@interface AdvancedDataGetterManager : NSObject
 
 + (NSMutableArray *)getDatas;
 

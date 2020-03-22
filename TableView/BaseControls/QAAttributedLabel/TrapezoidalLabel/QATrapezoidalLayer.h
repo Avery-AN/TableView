@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface QATrapezoidalLayer : QAAttributedLayer
 
 - (void)getBaseInfoWithContentSize:(CGSize)contentSize
+                  trapezoidalTexts:(NSArray *)trapezoidalTexts
                     attributedText:(NSMutableAttributedString * _Nonnull __strong *_Nonnull)attributedText
                      contentHeight:(CGFloat *)contentHeight;
 

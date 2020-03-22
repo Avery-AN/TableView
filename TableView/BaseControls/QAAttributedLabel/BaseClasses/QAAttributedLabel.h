@@ -11,6 +11,12 @@
 #import "QATextLayout.h"
 @class QAAttributedLayer;
 
+
+@protocol QAAttributedLabelProperty <NSObject>
+- (NSDictionary * _Nullable)getInstanceProperty:(QAAttributedLabel *_Nonnull)instance;
+@end
+
+
 typedef void (^GetTextContentSizeBlock)(CGSize size, NSMutableAttributedString * _Nullable attributedString);
 
 typedef NS_ENUM(NSUInteger, QAAttributedLabel_TapedStyle) {
@@ -49,6 +55,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLabel_TapedStyle) {
 
 @property (nonatomic, copy, nullable) UIFont *font;
 @property (nonatomic, copy, null_resettable) UIColor *textColor;
+@property (nonatomic, assign) BOOL noRichTexts;                     // 不处理富文本(默认为NO)
 @property (nonatomic, assign, readonly) NSInteger length;           // 显示文案的长度
 @property (nonatomic, assign) NSTextAlignment textAlignment;        // 文本的对齐方式
 @property (nonatomic, assign) NSLineBreakMode lineBreakMode;        // 换行模式

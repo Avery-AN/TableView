@@ -52,7 +52,7 @@ static dispatch_queue_t _Nonnull QAAttributedLayerDrawQueue() {
 @property (nonatomic, copy, nullable, readonly) NSMutableAttributedString *attributedText_backup;
 @property (nonatomic, copy, nullable, readonly) NSString *text_backup;
 
-// 获取u与content锁对应的AttributedString
+// 获取与content锁对应的AttributedString
 - (NSMutableAttributedString * _Nullable)getAttributedStringWithString:(NSString * _Nonnull)content
                                                               maxWidth:(CGFloat)maxWidth;
 

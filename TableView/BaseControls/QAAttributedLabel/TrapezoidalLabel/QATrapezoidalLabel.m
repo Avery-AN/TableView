@@ -28,10 +28,10 @@
 
 #pragma mark - Public Methods -
 - (void)getTextContentSizeWithLayer:(id _Nonnull)layer
-                            content:(id _Nonnull)content
+                            content:(id _Nonnull)contents
                            maxWidth:(CGFloat)maxWidth
                     completionBlock:(GetTextContentSizeBlock _Nullable)block {
-    if (!content || ![content isKindOfClass:[NSArray class]]) {
+    if (!contents || ![contents isKindOfClass:[NSArray class]]) {
         return;
     }
     else if (![layer isKindOfClass:[QATrapezoidalLayer class]]) {
@@ -43,7 +43,7 @@
     NSMutableAttributedString *attributedText = nil;
     CGFloat contentHeight = 0;
     CGSize contentSize = CGSizeMake(maxWidth, CGFLOAT_MAX);
-    [trapezoidalLayer getBaseInfoWithContentSize:contentSize attributedText:&attributedText contentHeight:&contentHeight];
+    [trapezoidalLayer getBaseInfoWithContentSize:contentSize trapezoidalTexts:contents attributedText:&attributedText contentHeight:&contentHeight];
     if (self.getTextContentSizeBlock) {
         self.getTextContentSizeBlock(CGSizeMake(maxWidth, contentHeight), attributedText);
     }
@@ -89,9 +89,14 @@
         else {
             offsetX = (self.bounds.size.width - lineWidth) / 2. + QATrapezoidal_LeftGap;
         }
-        CGFloat offsetY = lineIndex*self.trapezoidalLineHeight + (self.trapezoidalLineHeight-highlightRect.size.height)/2.;
         
-        CGRect newRect = CGRectMake(highlightRect.origin.x+offsetX, highlightRect.origin.y + offsetY, highlightRect.size.width, highlightRect.size.height);
+        /**
+         这里尽可能的让可点击区域大一点
+         */
+        CGFloat offsetY = lineIndex * self.trapezoidalLineHeight;
+        CGFloat height = self.trapezoidalLineHeight;
+        
+        CGRect newRect = CGRectMake(highlightRect.origin.x+offsetX, offsetY, highlightRect.size.width, height);
         if (CGRectContainsPoint(newRect, point)) {
             hited = YES;
             break;
