@@ -176,7 +176,7 @@
     
     if (datas.count > 11) {
         NSMutableDictionary *dic = [datas objectAtIndex:1];
-        [dic setValue:@"https://qq.yh31.com/tp/zjbq/201711142021166458.gif" forKey:@"contentImageView"];
+        [dic setValue:@"https://avery.com.gif" forKey:@"contentImageView"];
         NSString *content = [dic valueForKey:@"content"];
         content = [content stringByAppendingString:@"滑动时按需加载，这个在大量图片展示，网络加载的时候很管用！@Avery-AN（SDWebImage已经实现异步加载，配合这条性能杠杠的）。对象的调整也经常是消耗 CPU 资源的地方。@这里是另外的一个需要注意的地方 CALayer:CALayer 内部并没有属性，当调用属性方法时，它内部是通过运行时 resolveInstanceMethod 为对象临时添加一个方法，哈哈哈😁❄️🌧🐟🌹@这是另外的一个人、并把对应属性值保存到内部的一个 Dictionary 里，同时还会通知 delegate、创建动画等等，非常消耗资源。UIView 的关于显示相关的属性（比如 frame/bounds/transform）等实际上都是 CALayer 属性映射来的，所以对 UIView 的这些属性进行调整时，消耗的资源要远大于一般的属性。对此你在应用中，应该尽量减少不必要的属性修改。当视图层次调整时，UIView、CALayer 之间会出现很多方法调用与通知，所以在优化性能时，应该尽量避免调整视图层次、添加和移除视图。"];
         [dic setValue:content forKey:@"content"];

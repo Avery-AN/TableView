@@ -291,181 +291,129 @@ typedef union {
     if (self.drawed) {  // cell已经被绘制
         return;
     }
-    else {  // cell尚未被异步绘制
-        // 异步绘制:
+    else {  // cell尚未被绘制
         self.drawed = YES;
-//        CGRect cellFrame = [[dic valueForKey:@"cell-frame"] CGRectValue];
         
-//        @weakify(self)
-//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//            @strongify(self)
+        // *** 【1】avatar
+        if ([[dic allKeys] indexOfObject:NSStringFromSelector(@selector(avatar))] != NSNotFound) {
+            NSString *avatar = [dic valueForKey:@"avatar"];
             
-//            UIGraphicsBeginImageContextWithOptions(cellFrame.size, YES, 0);
-//            CGContextRef context = UIGraphicsGetCurrentContext();
-//
-//            // *** 【1】背景颜色填充:
-//            [[UIColor whiteColor] set];
-//            CGContextFillRect(context, cellFrame); // 全局背景色
-            
-            // *** 【2】avatar
-            if ([[dic allKeys] indexOfObject:NSStringFromSelector(@selector(avatar))] != NSNotFound) {
-                NSString *avatar = [dic valueForKey:@"avatar"];
-                
-                SDWebImageOptions opt = SDWebImageRetryFailed | SDWebImageAvoidAutoSetImage;
-                [self.avatar sd_setImageWithURL:[NSURL URLWithString:avatar]
-                               placeholderImage:nil
-                                        options:opt
-                                      completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) { dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    UIImage *roundedImage = [image roundedImage];
+            SDWebImageOptions opt = SDWebImageRetryFailed | SDWebImageAvoidAutoSetImage;
+            [self.avatar sd_setImageWithURL:[NSURL URLWithString:avatar]
+                           placeholderImage:nil
+                                    options:opt
+                                  completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) { dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                UIImage *roundedImage = [image roundedImage];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.avatar.image = roundedImage;
+                });
+            });
+            }];
+        }
+        
+        // *** 【2】用户名 & desc 的绘制:
+        {
+            NSString *userName = [dic valueForKey:@"name"];
+            self.nameLabel.text = userName;
+            NSString *desc = [dic valueForKey:@"desc"];
+            self.descLabel.text = desc;
+        }
+        
+        
+        // *** 【3】content
+        if ([[dic allKeys] indexOfObject:NSStringFromSelector(@selector(content))] != NSNotFound) {
+            NSMutableAttributedString *attributedText = [dic valueForKey:@"content-attributed"];
+            self.content.attributedString = attributedText;
+        }
+        
+        
+        // *** 【4】contentImageView
+        if ([[dic allKeys] indexOfObject:NSStringFromSelector(@selector(contentImageView))] != NSNotFound) {
+            NSString *imageUrl = [dic valueForKey:@"contentImageView"];
+            if ([imageUrl hasSuffix:@".gif"]) {  // 本例中只是加载了本地的gif
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    NSBundle *bundle = [NSBundle mainBundle];
+                    NSString *resourcePath = [bundle resourcePath];
+                    NSString *filePath = [resourcePath stringByAppendingPathComponent:@"demo.GIF"];
+                    YYImage *yyImage = [YYImage imageWithContentsOfFile:filePath];
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        self.avatar.image = roundedImage;
+                        self.yyImageView.image = yyImage;
                     });
                 });
-                }];
             }
-            
-            // *** 【3】用户名 & desc 的绘制:
-            {
-                NSString *userName = [dic valueForKey:@"name"];
-                self.nameLabel.text = userName;
-                NSString *desc = [dic valueForKey:@"desc"];
-                self.descLabel.text = desc;
-            }
-            
-            
-//            // *** 【3】用户名 & desc 的绘制:
-//            {
-//                NSString *userName = [dic valueForKey:@"name"];
-//                CGRect nameFrame = [[dic valueForKey:@"name-frame"] CGRectValue];
-//                NSDictionary *style = [dic valueForKey:@"name-style"];
-//                NSInteger startX = nameFrame.origin.x;
-//                NSInteger startY = nameFrame.origin.y;
-//                [userName drawInContext:context
-//                           withPosition:CGPointMake(startX, startY)
-//                                   font:[style valueForKey:@"font"]
-//                              textColor:[style valueForKey:@"textColor"]
-//                                 height:nameFrame.size.height
-//                          lineBreakMode:NSLineBreakByCharWrapping
-//                          textAlignment:NSTextAlignmentLeft];
-//
-//
-//                NSString *desc = [dic valueForKey:@"desc"];
-//                CGRect descFrame = [[dic valueForKey:@"desc-frame"] CGRectValue];
-//                startX = descFrame.origin.x;
-//                startY = descFrame.origin.y;
-//                [desc drawInContext:context
-//                       withPosition:CGPointMake(startX, startY)
-//                               font:[style valueForKey:@"font"]
-//                          textColor:[style valueForKey:@"textColor"]
-//                             height:descFrame.size.height
-//                      lineBreakMode:NSLineBreakByCharWrapping
-//                      textAlignment:NSTextAlignmentLeft];
-//            }
-            
-            
-            // *** 【4】content
-            if ([[dic allKeys] indexOfObject:NSStringFromSelector(@selector(content))] != NSNotFound) {
-                NSMutableAttributedString *attributedText = [dic valueForKey:@"content-attributed"];
-                self.content.attributedString = attributedText;
-            }
-            
-            
-            // *** 【5】contentImageView
-            if ([[dic allKeys] indexOfObject:NSStringFromSelector(@selector(contentImageView))] != NSNotFound) {
-                NSString *imageUrl = [dic valueForKey:@"contentImageView"];
-                if ([imageUrl isEqualToString:@"https://qq.yh31.com/tp/zjbq/201711142021166458.gif"]) {  // 本例中只是加载了本地的gif
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                        NSBundle *bundle = [NSBundle mainBundle];
-                        NSString *resourcePath = [bundle resourcePath];
-                        NSString *filePath = [resourcePath stringByAppendingPathComponent:@"demo.GIF"];
-                        YYImage *yyImage = [YYImage imageWithContentsOfFile:filePath];
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            self.yyImageView.image = yyImage;
-                        });
-                    });
-                }
-                else {
-                    SDWebImageOptions opt = SDWebImageRetryFailed | SDWebImageAvoidAutoSetImage;
-                    [self.yyImageView sd_setImageWithURL:[NSURL URLWithString:imageUrl]
-                                             placeholderImage:nil
-                                                      options:opt
-                                                    completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-                                                        if ([imageUrl hasSuffix:@".gif"]) { dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                                                            NSString *path = [[SDImageCache sharedImageCache] defaultCachePathForKey:imageURL.absoluteString];
-                                                            NSData *data = [NSData dataWithContentsOfFile:path];
-                                                            YYImage *yyImage = [YYImage imageWithData:data];
-                                                            dispatch_async(dispatch_get_main_queue(), ^{
-                                                                self.yyImageView.image = yyImage;
-                                                            });
-                                                            
-                                                            /*
-                                                             FLAnimatedImage *flImage = [FLAnimatedImage animatedImageWithGIFData:data];
-                                                             dispatch_async(dispatch_get_main_queue(), ^{
-                                                                 self.flImageView.animatedImage = flImage;
-                                                             });
-                                                             */
-                                                            });
-                                                        }
-                                                        else {
-                                                            // self.contentImageView.image = image;
-                                                            self.yyImageView.image = image;
-                                                        }
-                                                    }];
-                }
-                
-                /*
-                [self.contentImageView sd_setImageWithURL:[NSURL URLWithString:imageUrl]
-                                                completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-                                                }];
-                 */
-                
-                /*
+            else {
                 SDWebImageOptions opt = SDWebImageRetryFailed | SDWebImageAvoidAutoSetImage;
-                [self.contentImageView sd_setImageWithURL:[NSURL URLWithString:imageUrl]
-                             placeholderImage:nil
-                                      options:opt
-                                    completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-                                        if ([imageUrl hasSuffix:@".gif"]) {
-                                            // UIImageView显示jif的时候fps会下降到46左右 (严重影响流畅性)
-                                            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                                                NSString *path = [[SDImageCache sharedImageCache] defaultCachePathForKey:imageURL.absoluteString];
-                                                NSData *data = [NSData dataWithContentsOfFile:path];
-                                                UIImage *gifImage = [UIImage sd_animatedGIFWithData:data];
-                                                dispatch_async(dispatch_get_main_queue(), ^{
-                                                    self.contentImageView.image = gifImage;
-                                                });
-                                            });
-                                        }
-                                        else {
-                                            self.contentImageView.image = image;
-                                        }
-                                    }];
-                */
-                
-                /*
-                [[SDWebImageDownloader sharedDownloader]
-                 downloadImageWithURL:[NSURL URLWithString:imageUrl]
-                 options:SDWebImageDownloaderContinueInBackground progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
-
-                 } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
-                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                         UIImage *decodeImage = [image decodeImage];  // image的解码
-                         dispatch_async(dispatch_get_main_queue(), ^{
-                             self.contentImageLayer.contents = (__bridge id _Nullable)(decodeImage.CGImage);
-                         });
-                     });
-                 }];
-                 */
+                [self.yyImageView sd_setImageWithURL:[NSURL URLWithString:imageUrl]
+                                         placeholderImage:nil
+                                                  options:opt
+                                                completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                                                    if ([imageUrl hasSuffix:@".gif"]) { dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                                                        NSString *path = [[SDImageCache sharedImageCache] defaultCachePathForKey:imageURL.absoluteString];
+                                                        NSData *data = [NSData dataWithContentsOfFile:path];
+                                                        YYImage *yyImage = [YYImage imageWithData:data];
+                                                        dispatch_async(dispatch_get_main_queue(), ^{
+                                                            self.yyImageView.image = yyImage;
+                                                        });
+                                                        
+                                                        /*
+                                                         FLAnimatedImage *flImage = [FLAnimatedImage animatedImageWithGIFData:data];
+                                                         dispatch_async(dispatch_get_main_queue(), ^{
+                                                             self.flImageView.animatedImage = flImage;
+                                                         });
+                                                         */
+                                                        });
+                                                    }
+                                                    else {
+                                                        // self.contentImageView.image = image;
+                                                        self.yyImageView.image = image;
+                                                    }
+                                                }];
             }
             
+            /*
+            [self.contentImageView sd_setImageWithURL:[NSURL URLWithString:imageUrl]
+                                            completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                                            }];
+             */
             
-//            // *** 【6】
-//            UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-//            UIGraphicsEndImageContext();
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                self.contentView.layer.contents = (__bridge id)image.CGImage;
-//            });
-//        });
+            /*
+            SDWebImageOptions opt = SDWebImageRetryFailed | SDWebImageAvoidAutoSetImage;
+            [self.contentImageView sd_setImageWithURL:[NSURL URLWithString:imageUrl]
+                         placeholderImage:nil
+                                  options:opt
+                                completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                                    if ([imageUrl hasSuffix:@".gif"]) {
+                                        // UIImageView显示jif的时候fps会下降到46左右 (严重影响流畅性)
+                                        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                                            NSString *path = [[SDImageCache sharedImageCache] defaultCachePathForKey:imageURL.absoluteString];
+                                            NSData *data = [NSData dataWithContentsOfFile:path];
+                                            UIImage *gifImage = [UIImage sd_animatedGIFWithData:data];
+                                            dispatch_async(dispatch_get_main_queue(), ^{
+                                                self.contentImageView.image = gifImage;
+                                            });
+                                        });
+                                    }
+                                    else {
+                                        self.contentImageView.image = image;
+                                    }
+                                }];
+            */
+            
+            /*
+            [[SDWebImageDownloader sharedDownloader]
+             downloadImageWithURL:[NSURL URLWithString:imageUrl]
+             options:SDWebImageDownloaderContinueInBackground progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+
+             } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
+                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                     UIImage *decodeImage = [image decodeImage];  // image的解码
+                     dispatch_async(dispatch_get_main_queue(), ^{
+                         self.contentImageLayer.contents = (__bridge id _Nullable)(decodeImage.CGImage);
+                     });
+                 });
+             }];
+             */
+        }
     }
 }
 
