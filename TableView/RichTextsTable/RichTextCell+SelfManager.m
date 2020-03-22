@@ -1,16 +1,16 @@
 //
-//  AdvancedCell+SelfManager.m
+//  RichTextCell+SelfManager.m
 //  TestProject
 //
 //  Created by Avery An on 2019/8/28.
 //  Copyright © 2019 Avery An. All rights reserved.
 //
 
-#import "AdvancedCell+SelfManager.h"
+#import "RichTextCell+SelfManager.h"
 #import "QAAttributedLabelConfig.h"
 #import <objc/runtime.h>
 
-@implementation AdvancedCell (SelfManager)
+@implementation RichTextCell (SelfManager)
 
 #pragma mark - GetInstanceProperty -
 - (NSDictionary *)getInstanceProperty:(QARichTextLabel *)instance {

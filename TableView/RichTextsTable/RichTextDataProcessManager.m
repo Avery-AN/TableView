@@ -1,18 +1,18 @@
 //
-//  AdvancedDataProcessManager.m
+//  RichTextDataProcessManager.m
 //  TableView
 //
 //  Created by Avery An on 2020/3/21.
 //  Copyright © 2020 Avery. All rights reserved.
 //
 
-#import "AdvancedDataProcessManager.h"
-#import "AdvancedCell+SelfManager.h"
+#import "RichTextDataProcessManager.h"
+#import "RichTextCell+SelfManager.h"
 #import "TrapezoidalCell+SelfManager.h"
 #import "QATrapezoidalLayer.h"
 #import "QARichTextLayer.h"
 
-@implementation AdvancedDataProcessManager
+@implementation RichTextDataProcessManager
 
 + (void)processData:(NSMutableArray *)srcArray
 maxConcurrentOperationCount:(NSInteger)maxConcurrentOperationCount completion:(DataProcessManagerCompletionBlock)completionBlock {
@@ -48,7 +48,7 @@ maxConcurrentOperationCount:(NSInteger)maxConcurrentOperationCount completion:(D
         NSMutableArray *RichTextcells = [NSMutableArray arrayWithCapacity:maxConcurrentOperationCount];
         NSMutableArray *RichTextcellLayers = [NSMutableArray arrayWithCapacity:maxConcurrentOperationCount];
         for (int i = 0; i < maxConcurrentOperationCount; i++) {
-            AdvancedCell *cell = [[AdvancedCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:[NSString stringWithFormat:@"style-%ld",(i % maxConcurrentOperationCount)]];
+            RichTextCell *cell = [[RichTextCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:[NSString stringWithFormat:@"style-%ld",(i % maxConcurrentOperationCount)]];
             
             [RichTextcells addObject:cell];
             [RichTextcellLayers addObject:cell.styleLabel.layer];
@@ -86,7 +86,7 @@ maxConcurrentOperationCount:(NSInteger)maxConcurrentOperationCount completion:(D
                     }
                 }
                 else {
-                    AdvancedCell *cell = [RichTextcells objectAtIndex:(i % maxConcurrentOperationCount)];
+                    RichTextCell *cell = [RichTextcells objectAtIndex:(i % maxConcurrentOperationCount)];
                     QARichTextLayer *layer = [RichTextcellLayers objectAtIndex:(i % maxConcurrentOperationCount)];
                     if (!styleProperties) {
                         styleProperties = [cell getInstanceProperty:cell.styleLabel];

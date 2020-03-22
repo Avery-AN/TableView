@@ -1,5 +1,5 @@
 //
-//  AdvancedViewController.h
+//  RichTextViewController.h
 //  TestProject
 //
 //  Created by Avery An on 2019/8/25.
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface AdvancedViewController : UIViewController
+@interface RichTextViewController : UIViewController
 
 @end
 

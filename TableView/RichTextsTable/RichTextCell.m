@@ -1,14 +1,14 @@
 //
-//  AdvancedCell.m
+//  RichTextCell.m
 //  TestProject
 //
 //  Created by Avery An on 2019/8/25.
 //  Copyright © 2019 Avery An. All rights reserved.
 //
 
-#import "AdvancedCell.h"
+#import "RichTextCell.h"
 
-@implementation AdvancedCell
+@implementation RichTextCell
 
 #pragma mark - Life Cycle -
 - (void)dealloc {

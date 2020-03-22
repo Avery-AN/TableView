@@ -1,16 +1,16 @@
 //
-//  AdvancedCell+SelfManager.h
+//  RichTextCell+SelfManager.h
 //  TestProject
 //
 //  Created by Avery An on 2019/8/28.
 //  Copyright © 2019 Avery An. All rights reserved.
 //
 
-#import "AdvancedCell.h"
+#import "RichTextCell.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface AdvancedCell (SelfManager) <QAAttributedLabelProperty>
+@interface RichTextCell (SelfManager) <QAAttributedLabelProperty>
 
 - (void)getStyleWithQueue:(dispatch_queue_t)dispatchQueue
             dispatchGroup:(dispatch_group_t)dispatchGroup

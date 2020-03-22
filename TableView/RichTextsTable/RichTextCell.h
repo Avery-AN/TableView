@@ -1,5 +1,5 @@
 //
-//  AdvancedCell.h
+//  RichTextCell.h
 //  TestProject
 //
 //  Created by Avery An on 2019/8/25.
@@ -26,7 +26,7 @@ static CGFloat ContentImageView_width_height_rate = 16/9.;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface AdvancedCell : BaseCell
+@interface RichTextCell : BaseCell
 
 @property (nonatomic) QARichTextLabel *styleLabel;
 

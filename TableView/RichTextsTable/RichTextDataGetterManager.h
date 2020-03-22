@@ -1,5 +1,5 @@
 //
-//  AdvancedDataGetterManager.h
+//  RichTextDataGetterManager.h
 //  TableView
 //
 //  Created by Avery An on 2019/12/2.
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface AdvancedDataGetterManager : NSObject
+@interface RichTextDataGetterManager : NSObject
 
 + (NSMutableArray *)getDatas;
 

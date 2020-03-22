@@ -7,7 +7,7 @@
 //
 
 #import "RootViewController.h"
-#import "AdvancedViewController.h"
+#import "RichTextViewController.h"
 #import "ScratchablelatexViewController.h"
 
 
@@ -24,7 +24,7 @@
     UIButton *button_1 = [UIButton buttonWithType:UIButtonTypeCustom];
     button_1.backgroundColor = [UIColor orangeColor];
     button_1.frame = CGRectMake(60, 160, 256, 60);
-    [button_1 setTitle:@"Advanced TableView" forState:UIControlStateNormal];
+    [button_1 setTitle:@"RichText Cell" forState:UIControlStateNormal];
     [button_1 addTarget:self action:@selector(action_1) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:button_1];
     
@@ -36,7 +36,7 @@
     [self.view addSubview:button_2];
 }
 - (void)action_1 {
-    AdvancedViewController *vc = [AdvancedViewController new];
+    RichTextViewController *vc = [RichTextViewController new];
     [self.navigationController pushViewController:vc animated:YES];
 }
 - (void)action_2 {

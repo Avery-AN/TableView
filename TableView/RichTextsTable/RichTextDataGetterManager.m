@@ -1,16 +1,16 @@
 //
-//  AdvancedDataGetterManager.m
+//  RichTextDataGetterManager.m
 //  TableView
 //
 //  Created by Avery An on 2019/12/2.
 //  Copyright © 2019 Avery. All rights reserved.
 //
 
-#import "AdvancedDataGetterManager.h"
-#import "AdvancedCell.h"
+#import "RichTextDataGetterManager.h"
+#import "RichTextCell.h"
 #import "TrapezoidalCell.h"
 
-@implementation AdvancedDataGetterManager
+@implementation RichTextDataGetterManager
 
 #pragma mark - Public Methods -
 + (NSMutableArray *)getDatas {

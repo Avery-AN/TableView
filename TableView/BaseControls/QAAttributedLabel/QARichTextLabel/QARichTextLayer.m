@@ -175,7 +175,7 @@
                  attributedText:(NSMutableAttributedString *)attributedText
                           range:(NSRange)range {
     [QABackgroundDraw drawBackgroundWithRects:highlightRects
-                                       radius:3
+                                       radius:2
                               backgroundColor:backgroundColor];
 }
 - (void)drawAttributedTextAndTapedBackgroungcolor:(NSMutableAttributedString * _Nonnull)attributedText

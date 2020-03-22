@@ -1,5 +1,5 @@
 //
-//  AdvancedDataProcessManager.h
+//  RichTextDataProcessManager.h
 //  TableView
 //
 //  Created by Avery An on 2020/3/21.
@@ -12,7 +12,7 @@ typedef void (^DataProcessManagerCompletionBlock)(NSInteger start, NSInteger end
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface AdvancedDataProcessManager : NSObject
+@interface RichTextDataProcessManager : NSObject
 
 + (void)processData:(NSMutableArray *)srcArray
          maxConcurrentOperationCount:(NSInteger)maxConcurrentOperationCount completion:(DataProcessManagerCompletionBlock)completionBlock;

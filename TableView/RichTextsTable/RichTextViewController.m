@@ -1,21 +1,21 @@
 //
-//  AdvancedViewController.m
+//  RichTextViewController.m
 //  TestProject
 //
 //  Created by Avery An on 2019/8/25.
 //  Copyright © 2019 Avery An. All rights reserved.
 //
 
-#import "AdvancedViewController.h"
-#import "AdvancedCell.h"
-#import "AdvancedCell+SelfManager.h"
-#import "AdvancedDataGetterManager.h"
+#import "RichTextViewController.h"
+#import "RichTextCell.h"
+#import "RichTextCell+SelfManager.h"
+#import "RichTextDataGetterManager.h"
 #import "QAImageBrowserManager.h"
 #import "TrapezoidalCell.h"
-#import "AdvancedDataProcessManager.h"
+#import "RichTextDataProcessManager.h"
 
 
-@interface AdvancedViewController () <UITableViewDataSource, UITableViewDelegate>
+@interface RichTextViewController () <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic) NSMutableArray *showDatas;
 @property (nonatomic, assign) __block BOOL setOldValue;  // 监听时使用
 @property (nonatomic, assign) __block CGFloat oldValue;  // 监听时使用
@@ -30,7 +30,7 @@
 @end
 
 
-@implementation AdvancedViewController
+@implementation RichTextViewController
 
 #pragma mark - Life Cycle -
 - (void)dealloc {
@@ -75,14 +75,9 @@
  模拟网络请求
  */
 - (void)generateContent {
-    NSMutableArray *totals = [NSMutableArray array];
-    
-    {   // 生成RichTexts数据:
-        NSMutableArray *originalDatas = [AdvancedDataGetterManager getDatas];
-        [totals addObjectsFromArray:originalDatas];
-    }
-    
-    [self processDatas:totals];
+    // 生成RichTexts数据:
+    NSMutableArray *originalDatas = [RichTextDataGetterManager getDatas];
+    [self processDatas:originalDatas];
 }
 - (void)processDatas:(NSMutableArray *)originalDatas {
     if (!self.showDatas) {
@@ -92,7 +87,8 @@
         [self.showDatas removeAllObjects];
     }
     
-    /*
+    /**
+     PS: 处理数据的时候每5条为一组、每处理完一组数据后就更新UI。
      maxConcurrentOperationCount的主要作用是加快首屏cell的渲染
      maxConcurrentOperationCount的值可以根据cell的height以及tableView.contentView.height来计算
      */
@@ -101,12 +97,12 @@
         maxConcurrentOperationCount = originalDatas.count;
     }
     NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:maxConcurrentOperationCount];
-    [AdvancedDataProcessManager processData:originalDatas
+    [RichTextDataProcessManager processData:originalDatas
                 maxConcurrentOperationCount:maxConcurrentOperationCount
                                  completion:^(NSInteger start, NSInteger end) {
         // NSLog(@"已获取到新数据: %ld - %ld", (long)start , (long)end);
-
         [indexPaths removeAllObjects];
+        
         for (NSInteger i = start; i <= end; i++) {
             [self.showDatas addObject:[originalDatas objectAtIndex:i]];
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
@@ -117,7 +113,6 @@
             // [self observerTableviewVelocity];
         }
         else {
-            // [self.tableView reloadData];
             [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationNone];
         }
     }];
@@ -167,9 +162,9 @@
         return cell;
     }
     else {
-        AdvancedCell *cell = [tableView dequeueReusableCellWithIdentifier:@"AdvancedCell"];
+        RichTextCell *cell = [tableView dequeueReusableCellWithIdentifier:@"AdvancedCell"];
         if (cell == nil) {
-            cell = [[AdvancedCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"AdvancedCell"];
+            cell = [[RichTextCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"AdvancedCell"];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
 
             __weak typeof(self) weakSelf = self;
@@ -184,9 +179,9 @@
 
 
             /**
-             这里仅仅是为了测试 QAAttributedLabel的 'searchTexts:' 这个方法
-             这里仅仅是为了测试 QAAttributedLabel的 'searchTexts:' 这个方法
-             这里仅仅是为了测试 QAAttributedLabel的 'searchTexts:' 这个方法
+             这里仅仅是为了模拟 QAAttributedLabel的 'searchTexts:' 这个方法
+             这里仅仅是为了模拟 QAAttributedLabel的 'searchTexts:' 这个方法
+             这里仅仅是为了模拟 QAAttributedLabel的 'searchTexts:' 这个方法
              */
             cell.content.highLightTexts = nil;
             if (indexPath.row == 1) {
@@ -232,8 +227,8 @@
 }
 
 
-#pragma mark - SearchText 【【 仅仅用于验证label的"searchTexts:方法"是否能正确工作 】】 -
-- (void)searchText:(AdvancedCell *)cell {
+#pragma mark - SearchText -
+- (void)searchText:(RichTextCell *)cell {
     [cell.content searchTexts:[NSArray arrayWithObjects:@"是另外的", @"需要注意的", @"提高效率", nil]
         resetSearchResultInfo:^NSDictionary * _Nullable {
             NSMutableDictionary *dic = [NSMutableDictionary dictionary];
