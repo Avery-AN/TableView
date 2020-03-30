@@ -265,7 +265,7 @@
 
         NSMutableArray *texts = [NSMutableArray array];
         [texts addObject:@"其它样式的Label"];
-        [texts addObject:@"[nezha] Tiktok [nezha]"];
+        [texts addObject:@"[nezha] 异形 [nezha]"];
         [texts addObject:@"将点击背景做#圆角#处理"];
         [trapezoidalDic_index1 setValue:texts forKey:@"trapezoidalTexts"];
         [trapezoidalDic_index1 setValue:@(NSTextAlignmentCenter) forKey:@"TextAlignment"];
@@ -279,7 +279,6 @@
         [trapezoidalDic_index2 setValue:[NSValue valueWithCGRect:desc_frame] forKey:@"desc-frame"];
         NSMutableArray *texts_2 = [NSMutableArray array];
         [texts_2 addObject:@"左对齐Label"];
-        [texts_2 addObject:@"Tiktok"];
         [texts_2 addObject:@"#圆角#点击背景😃"];
         [trapezoidalDic_index2 setValue:texts_2 forKey:@"trapezoidalTexts"];
         [trapezoidalDic_index2 setValue:@(NSTextAlignmentLeft) forKey:@"TextAlignment"];

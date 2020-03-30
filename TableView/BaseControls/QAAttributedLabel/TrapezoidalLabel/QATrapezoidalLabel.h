@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
  设置此属性时、文案将会全部被展示、不会去做文案的截断等操作(即:视numberOfLines的值为0)
  */
 @property (nonatomic, copy, nullable) NSArray *trapezoidalTexts;  // 展示的文案(数组中的每个元素均占有单独的一行)
-@property (nonatomic, assign) NSInteger trapezoidalLineHeight;   // 单行行高
+@property (nonatomic, assign) NSInteger trapezoidalLineHeight;    // 单行行高
 @property (nonatomic) UIColor *lineBackgroundColor;
 
 /**

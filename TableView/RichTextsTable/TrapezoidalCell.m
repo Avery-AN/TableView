@@ -71,43 +71,6 @@
     }
     
     
-    // *** 用户名 & desc 的绘制:
-//    {
-//        CGRect cellFrame = [[trapezoidalInfo valueForKey:@"cell-frame"] CGRectValue];
-//
-//        UIGraphicsBeginImageContextWithOptions(cellFrame.size, YES, 0);
-//        CGContextRef context = UIGraphicsGetCurrentContext();
-//
-//        [[UIColor whiteColor] set];
-//        CGContextFillRect(context, cellFrame); // 全局背景色
-//
-//        NSString *userName = [trapezoidalInfo valueForKey:@"name"];
-//        CGRect nameFrame = [[trapezoidalInfo valueForKey:@"name-frame"] CGRectValue];
-//        NSDictionary *style = [trapezoidalInfo valueForKey:@"name-style"];
-//        NSInteger startX = nameFrame.origin.x;
-//        NSInteger startY = nameFrame.origin.y;
-//        [userName drawInContext:context
-//                   withPosition:CGPointMake(startX, startY)
-//                           font:[style valueForKey:@"font"]
-//                      textColor:[style valueForKey:@"textColor"]
-//                         height:nameFrame.size.height
-//                  lineBreakMode:NSLineBreakByCharWrapping
-//                  textAlignment:NSTextAlignmentLeft];
-//
-//
-//        NSString *desc = [trapezoidalInfo valueForKey:@"desc"];
-//        CGRect descFrame = [[trapezoidalInfo valueForKey:@"desc-frame"] CGRectValue];
-//        startX = descFrame.origin.x;
-//        startY = descFrame.origin.y;
-//        [desc drawInContext:context
-//               withPosition:CGPointMake(startX, startY)
-//                       font:[style valueForKey:@"font"]
-//                  textColor:[style valueForKey:@"textColor"]
-//                     height:descFrame.size.height
-//              lineBreakMode:NSLineBreakByCharWrapping
-//              textAlignment:NSTextAlignmentLeft];
-//    }
-    
     // *** contentImageView
     if ([[trapezoidalInfo allKeys] indexOfObject:NSStringFromSelector(@selector(contentImageView))] != NSNotFound) {
         NSString *imageUrl = [trapezoidalInfo valueForKey:@"contentImageView"];
@@ -119,12 +82,6 @@
                                             self.yyImageView.image = image;
                                         }];
     }
-    
-//    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-//    UIGraphicsEndImageContext();
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        self.contentView.layer.contents = (__bridge id)image.CGImage;
-//    });
 }
 
 
@@ -174,7 +131,7 @@
         _trapezoidalLabel.display_async = YES;
         _trapezoidalLabel.trapezoidalLineHeight = TrapezoidalLineHeight;
         _trapezoidalLabel.textAlignment = NSTextAlignmentLeft;
-        _trapezoidalLabel.backgroundColor = [UIColor whiteColor];
+        _trapezoidalLabel.qaBackgroundColor = [UIColor whiteColor];
         _trapezoidalLabel.lineBackgroundColor = [UIColor purpleColor];
         _trapezoidalLabel.wordSpace = 3;
         // _trapezoidalLabel.highlightTextBackgroundColor = [UIColor yellowColor];

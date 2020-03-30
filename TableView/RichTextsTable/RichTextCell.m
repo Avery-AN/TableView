@@ -22,7 +22,7 @@
         NSInteger content_width = UIWidth - Avatar_left_gap - Avatar_left_gap;
         NSInteger content_height = 15;
         _styleLabel = [[QARichTextLabel alloc] initWithFrame:CGRectMake(Avatar_left_gap, 0, content_width, content_height)];
-        _styleLabel.backgroundColor = [UIColor whiteColor];
+        _styleLabel.qaBackgroundColor = [UIColor whiteColor];
         _styleLabel.font = [UIFont systemFontOfSize:18];
 //        _styleLabel.font = [UIFont fontWithName:@"AvenirNext-HeavyItalic" size:20];
         _styleLabel.textColor = HEXColor(@"666666");

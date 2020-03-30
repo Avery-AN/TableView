@@ -60,7 +60,8 @@ maxConcurrentOperationCount:(NSInteger)maxConcurrentOperationCount completion:(D
         
         
         
-        __block NSDictionary *styleProperties = nil;
+        __block NSDictionary *richText_styleProperties = nil;
+        __block NSDictionary *trapezoidal_styleProperties = nil;
         __block NSInteger start = 0;
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
         dispatch_group_t processGroup = dispatch_group_create();
@@ -71,34 +72,34 @@ maxConcurrentOperationCount:(NSInteger)maxConcurrentOperationCount completion:(D
                 if ([dic_item valueForKey:@"trapezoidalTexts"]) {
                     TrapezoidalCell *cell = [TrapezoidalCells objectAtIndex:(i % maxConcurrentOperationCount)];
                     QATrapezoidalLayer *layer = [TrapezoidalCellLayers objectAtIndex:(i % maxConcurrentOperationCount)];
-                    if (!styleProperties) {
-                        styleProperties = [cell getInstanceProperty:cell.trapezoidalLabel];
+                    if (!trapezoidal_styleProperties) {
+                        trapezoidal_styleProperties = [cell getInstanceProperty:cell.trapezoidalLabel];
                     }
                     if (![dic_item isKindOfClass:[NSMutableDictionary class]]) {
                         NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:dic_item];
                         [srcArray replaceObjectAtIndex:i withObject:dic];
-                        [dic setValue:styleProperties forKey:@"content-functions"];
+                        [dic setValue:trapezoidal_styleProperties forKey:@"content-functions"];
                         [cell getStyleWithQueue:processQueue dispatchGroup:processGroup dic:dic bounds:trapezoidalLabelBounds layer:layer];
                     }
                     else {
-                        [dic_item setValue:styleProperties forKey:@"content-functions"];
+                        [dic_item setValue:trapezoidal_styleProperties forKey:@"content-functions"];
                         [cell getStyleWithQueue:processQueue dispatchGroup:processGroup dic:dic_item bounds:trapezoidalLabelBounds layer:layer];
                     }
                 }
                 else {
                     RichTextCell *cell = [RichTextcells objectAtIndex:(i % maxConcurrentOperationCount)];
                     QARichTextLayer *layer = [RichTextcellLayers objectAtIndex:(i % maxConcurrentOperationCount)];
-                    if (!styleProperties) {
-                        styleProperties = [cell getInstanceProperty:cell.styleLabel];
+                    if (!richText_styleProperties) {
+                        richText_styleProperties = [cell getInstanceProperty:cell.styleLabel];
                     }
                     if (![dic_item isKindOfClass:[NSMutableDictionary class]]) {
                         NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:dic_item];
                         [srcArray replaceObjectAtIndex:i withObject:dic];
-                        [dic setValue:styleProperties forKey:@"content-functions"];
+                        [dic setValue:richText_styleProperties forKey:@"content-functions"];
                         [cell getStyleWithQueue:processQueue dispatchGroup:processGroup dic:dic bounds:richTextBounds layer:layer];
                     }
                     else {
-                        [dic_item setValue:styleProperties forKey:@"content-functions"];
+                        [dic_item setValue:richText_styleProperties forKey:@"content-functions"];
                         [cell getStyleWithQueue:processQueue dispatchGroup:processGroup dic:dic_item bounds:richTextBounds layer:layer];
                     }
                 }

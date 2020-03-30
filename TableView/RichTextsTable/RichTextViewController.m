@@ -155,7 +155,7 @@
         
         cell.trapezoidalLabel.highLightTexts = nil;
         if (indexPath.row % 2 == 0) {
-            cell.trapezoidalLabel.highLightTexts = [NSArray arrayWithObject:@"Tiktok"];
+            cell.trapezoidalLabel.highLightTexts = [NSArray arrayWithObject:@"异形"];
         }
         [cell setTrapezoidalTexts:dic];
 

@@ -429,7 +429,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
     
     _drawState = QAAttributedLayer_State_Drawing;
     
-    CGColorRef backgroundCgcolor = attributedLabel.backgroundColor.CGColor;
+    CGColorRef backgroundCgcolor = [UIColor clearColor].CGColor;
     CGRect bounds = attributedLabel.bounds;
     
     dispatch_async(QAAttributedLayerDrawQueue(), ^{
@@ -496,7 +496,8 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
     CGContextRef context = UIGraphicsGetCurrentContext();
     
     // 给上下文填充背景色:
-    CGContextSetFillColorWithColor(context, attributedLabel.backgroundColor.CGColor);
+    CGColorRef backgroundCgcolor = [UIColor clearColor].CGColor;
+    CGContextSetFillColorWithColor(context, backgroundCgcolor);
     CGContextFillRect(context, attributedLabel.bounds);
 
     // 绘制文案:

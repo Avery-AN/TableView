@@ -33,7 +33,7 @@
     [dic setValuesForKeysWithDictionary:dic_base];
     free(properties);
 
-    if ([[instance class] isMemberOfClass:[QATrapezoidalLabel class]]) {
+    if ([NSStringFromClass([instance class]) isEqualToString:NSStringFromClass([QATrapezoidalLabel class])]) {
         NSMutableDictionary *dic_current = [NSMutableDictionary dictionary];
         count = 0;
         properties = class_copyPropertyList([instance class], &count);

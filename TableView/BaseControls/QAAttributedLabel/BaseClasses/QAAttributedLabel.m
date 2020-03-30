@@ -590,6 +590,11 @@ static void *TouchingContext = &TouchingContext;
     [self _commitUpdate];
 }
 
+- (void)setQaBackgroundColor:(UIColor *)qaBackgroundColor {
+    _qaBackgroundColor = qaBackgroundColor;
+    self.backgroundColor = qaBackgroundColor;
+}
+
 - (void)setText:(NSString *)text {
     if (!text) {
         return;
