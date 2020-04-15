@@ -19,7 +19,7 @@
     NSMutableDictionary *dic_base = [NSMutableDictionary dictionary];
     unsigned int count = 0;
     objc_property_t *properties = class_copyPropertyList([QAAttributedLabel class], &count);
-    for (int i = 0; i < count; i++) {
+    for (NSUInteger i = 0; i < count; i++) {
         objc_property_t property = properties[i];
         const char *name = property_getName(property);
         NSString *key = [NSString stringWithUTF8String:name];
@@ -37,7 +37,7 @@
         NSMutableDictionary *dic_current = [NSMutableDictionary dictionary];
         count = 0;
         properties = class_copyPropertyList([instance class], &count);
-        for (int i = 0; i < count; i++) {
+        for (NSUInteger i = 0; i < count; i++) {
             objc_property_t property = properties[i];
             const char *name = property_getName(property);
             NSString *key = [NSString stringWithUTF8String:name];
@@ -75,7 +75,7 @@
     CGRect styleLabelBounds = CGRectZero;
     NSMutableArray *cells = [NSMutableArray arrayWithCapacity:maxConcurrentOperationCount];
     NSMutableArray *cellLayers = [NSMutableArray arrayWithCapacity:maxConcurrentOperationCount];
-    for (int i = 0; i < maxConcurrentOperationCount; i++) {
+    for (NSUInteger i = 0; i < maxConcurrentOperationCount; i++) {
         ScratchablelatexCell *cell = [[ScratchablelatexCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:[NSString stringWithFormat:@"style-%ld",(i % maxConcurrentOperationCount)]];
         
         [cells addObject:cell];
@@ -92,7 +92,7 @@
         __block NSInteger start = 0;
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
         
-        for (int i = 0; i < datas.count; i++) {
+        for (NSUInteger i = 0; i < datas.count; i++) {
             NSMutableDictionary *dic_item = [datas objectAtIndex:i];
             
             ScratchablelatexCell *cell = [cells objectAtIndex:(i % maxConcurrentOperationCount)];

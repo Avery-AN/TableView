@@ -132,7 +132,7 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
         CTFrameGetLineOrigins(ctFrame, CFRangeMake(0, numberOfLines), lineOrigins);
         
         // 遍历CTFrame中的每一行CTLine:
-        for (int lineIndex = 0; lineIndex < numberOfLines; lineIndex++) {
+        for (NSUInteger lineIndex = 0; lineIndex < numberOfLines; lineIndex++) {
             CGPoint lineOrigin = lineOrigins[lineIndex];
             CTLineRef lineRef = CFArrayGetValueAtIndex(lines, lineIndex);
             
@@ -156,7 +156,7 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
             long runCounts = CFArrayGetCount(runs);
             
             // 遍历CTLine中的每一个CTRun:
-            for (int runIndex = 0; runIndex < runCounts; runIndex++) {
+            for (NSUInteger runIndex = 0; runIndex < runCounts; runIndex++) {
                 CTRunRef run = CFArrayGetValueAtIndex(runs, runIndex);
                 
                 /*
@@ -243,7 +243,7 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
             else {
                 NSRange range_current = NSRangeFromString(rangeKey);
                 int position = 0;
-                for (int k = 0; k < self.highlightRanges_sorted.count; k++) {
+                for (NSUInteger k = 0; k < self.highlightRanges_sorted.count; k++) {
                     NSRange range_previous = NSRangeFromString([self.highlightRanges_sorted objectAtIndex:k]);
                     if (range_current.location > range_previous.location) {
                         position++;
@@ -353,7 +353,7 @@ static inline CGFloat QAFlushFactorForTextAlignment(NSTextAlignment textAlignmen
     NSString *runContent = [attributedString.string substringWithRange:currentRunRange];
     NSMutableString *currentRunString = [NSMutableString stringWithString:runContent];
 
-    for (int i = 0; i < self.highlightRanges_sorted.count; i++) {
+    for (NSUInteger i = 0; i < self.highlightRanges_sorted.count; i++) {
         NSString *rangeString = [self.highlightRanges_sorted objectAtIndex:i];
         NSRange highlightRange = NSRangeFromString(rangeString);  // 存放高亮文本的range
         

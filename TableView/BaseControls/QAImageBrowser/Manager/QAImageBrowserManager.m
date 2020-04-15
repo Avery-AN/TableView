@@ -89,7 +89,7 @@ static void *CollectionContext = &CollectionContext;
     self.tapedSuperView = self.tapedImageView.superview;
     CGRect tapedRect = self.tapedImageView.frame;
     self.tapedImageViewRect = tapedRect;
-    for (int i = 0; i < self.images.count; i++) {
+    for (NSUInteger i = 0; i < self.images.count; i++) {
         NSDictionary *info = [self.images objectAtIndex:i];
         if ([info isKindOfClass:[NSDictionary class]]) {
             CGRect rect = [[info valueForKey:@"frame"] CGRectValue];

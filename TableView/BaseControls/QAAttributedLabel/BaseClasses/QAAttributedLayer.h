@@ -16,7 +16,7 @@ static inline id _Nonnull GetAttributedLabel (CALayer * _Nonnull layer) {
 }
 
 static dispatch_queue_t _Nonnull QAAttributedLayerDrawQueue() {
-#define MAX_QUEUE_COUNT 16
+#define MAX_QUEUE_COUNT 8
     static int queueCount;
     static dispatch_queue_t queues[MAX_QUEUE_COUNT];
     static dispatch_once_t onceToken;

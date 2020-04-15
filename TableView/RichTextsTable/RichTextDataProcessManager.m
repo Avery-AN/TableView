@@ -32,7 +32,7 @@ maxConcurrentOperationCount:(NSInteger)maxConcurrentOperationCount completion:(D
         CGRect trapezoidalLabelBounds = CGRectZero;
         NSMutableArray *TrapezoidalCells = [NSMutableArray arrayWithCapacity:maxConcurrentOperationCount];
         NSMutableArray *TrapezoidalCellLayers = [NSMutableArray arrayWithCapacity:maxConcurrentOperationCount];
-        for (int i = 0; i < maxConcurrentOperationCount; i++) {
+        for (NSUInteger i = 0; i < maxConcurrentOperationCount; i++) {
             TrapezoidalCell *cell = [[TrapezoidalCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:[NSString stringWithFormat:@"style-%ld",(i % maxConcurrentOperationCount)]];
             
             [TrapezoidalCells addObject:cell];
@@ -47,7 +47,7 @@ maxConcurrentOperationCount:(NSInteger)maxConcurrentOperationCount completion:(D
         CGRect richTextBounds = CGRectZero;
         NSMutableArray *RichTextcells = [NSMutableArray arrayWithCapacity:maxConcurrentOperationCount];
         NSMutableArray *RichTextcellLayers = [NSMutableArray arrayWithCapacity:maxConcurrentOperationCount];
-        for (int i = 0; i < maxConcurrentOperationCount; i++) {
+        for (NSUInteger i = 0; i < maxConcurrentOperationCount; i++) {
             RichTextCell *cell = [[RichTextCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:[NSString stringWithFormat:@"style-%ld",(i % maxConcurrentOperationCount)]];
             
             [RichTextcells addObject:cell];
@@ -67,7 +67,7 @@ maxConcurrentOperationCount:(NSInteger)maxConcurrentOperationCount completion:(D
         dispatch_group_t processGroup = dispatch_group_create();
         dispatch_queue_t processQueue = dispatch_queue_create("com.avery.processQueue", DISPATCH_QUEUE_CONCURRENT);
         dispatch_async(processQueue, ^{
-            for (int i = 0; i < srcArray.count; i++) {
+            for (NSUInteger i = 0; i < srcArray.count; i++) {
                 NSMutableDictionary *dic_item = [srcArray objectAtIndex:i];
                 if ([dic_item valueForKey:@"trapezoidalTexts"]) {
                     TrapezoidalCell *cell = [TrapezoidalCells objectAtIndex:(i % maxConcurrentOperationCount)];

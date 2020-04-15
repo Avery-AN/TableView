@@ -35,7 +35,7 @@
             }
             
             NSInteger diff_pre = 0;
-            for (int i = 0; i < ranges.count; i++) {
+            for (NSUInteger i = 0; i < ranges.count; i++) {
                 NSString *rangeString = [ranges objectAtIndex:i];
                 NSRange range = NSRangeFromString(rangeString);
                 
@@ -51,7 +51,7 @@
             }
             
             /**【 下面的代码有重大bug 】
-             for (int i = 0; i < links.count ; i++) {
+             for (NSUInteger i = 0; i < links.count ; i++) {
                  NSString *linkurlstring = [links objectAtIndex:i];
                  *content = [*content stringByReplacingOccurrencesOfString:linkurlstring withString:shortLink];
              }

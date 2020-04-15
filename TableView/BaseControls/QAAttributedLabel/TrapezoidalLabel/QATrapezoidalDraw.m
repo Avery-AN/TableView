@@ -16,7 +16,7 @@
                                                       runRange:(NSRange)runRange {
     NSArray *trapezoidalTexts = self.trapezoidalTexts_new;
     NSInteger location = runRange.location;
-    for (int i = 0; i < lineIndex; i++) {
+    for (NSUInteger i = 0; i < lineIndex; i++) {
         NSAttributedString *attributedString = [trapezoidalTexts objectAtIndex:i];
         NSString *string = attributedString.string;
         location = location + string.length;
@@ -47,7 +47,7 @@
         
         // 绘制line:
         NSInteger numberOfLines = lines.count;
-        for (int lineIndex = 0; lineIndex < numberOfLines; lineIndex++) {
+        for (NSUInteger lineIndex = 0; lineIndex < numberOfLines; lineIndex++) {
             id obj = [lines objectAtIndex:lineIndex];
             CTLineRef line = (__bridge CTLineRef)obj;
             
@@ -104,7 +104,7 @@
             long runCounts = CFArrayGetCount(runs);
             
             // 遍历CTLine中的每一个CTRun:
-            for (int j = 0; j < runCounts; j++) {
+            for (NSUInteger j = 0; j < runCounts; j++) {
                 CTRunRef run = CFArrayGetValueAtIndex(runs, j);
                 
                 /*

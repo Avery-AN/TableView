@@ -86,7 +86,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
                              textAttributes:attributedLabel.textLayout.textAttributes
                                  completion:^(BOOL success, NSArray * _Nullable emojiTexts, NSArray * _Nullable matches) {
                                      if (success && emojiTexts.count > 0 && highlightRanges.count > 0) {
-                                         for (int i = 0; i < emojiTexts.count; i++) {
+                                         for (NSUInteger i = 0; i < emojiTexts.count; i++) {
                                              NSString *emojiText = [emojiTexts objectAtIndex:i];
                                              NSTextCheckingResult *result = [matches objectAtIndex:i];
 
@@ -201,7 +201,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
     if (attributedLabel.showShortLink) {  // 显示短连接的情况需要保存原始链接到highlightTextDic中
         NSArray *linkRanges = [highlightRanges valueForKey:@"link"];
         NSArray *links = [highlightContents valueForKey:@"srcLink"];
-        for (int i = 0; i < linkRanges.count; i++) {
+        for (NSUInteger i = 0; i < linkRanges.count; i++) {
             NSString *rangeString = [linkRanges objectAtIndex:i];
             [attributedText.highlightTextDic setValue:[links objectAtIndex:i] forKey:rangeString];
         }
@@ -676,7 +676,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
             if (color) {
                 highlightTextColor = color;
             }
-            for (int i = 0; i < highLightTextRanges.count; i++) {
+            for (NSUInteger i = 0; i < highLightTextRanges.count; i++) {
                 NSString *rangeString = [highLightTextRanges objectAtIndex:i];
                 NSRange highlightRange = NSRangeFromString(rangeString);
                 
@@ -691,7 +691,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
             if (color) {
                 highlightTextColor = color;
             }
-            for (int i = 0; i < linkRanges.count; i++) {
+            for (NSUInteger i = 0; i < linkRanges.count; i++) {
                 NSString *rangeString = [linkRanges objectAtIndex:i];
                 NSRange highlightRange = NSRangeFromString(rangeString);
                 
@@ -706,7 +706,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
             if (color) {
                 highlightTextColor = color;
             }
-            for (int i = 0; i < atRanges.count; i++) {
+            for (NSUInteger i = 0; i < atRanges.count; i++) {
                 NSString *rangeString = [atRanges objectAtIndex:i];
                 NSRange highlightRange = NSRangeFromString(rangeString);
                 
@@ -721,7 +721,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
             if (color) {
                 highlightTextColor = color;
             }
-            for (int i = 0; i < topicRanges.count; i++) {
+            for (NSUInteger i = 0; i < topicRanges.count; i++) {
                 NSString *rangeString = [topicRanges objectAtIndex:i];
                 NSRange highlightRange = NSRangeFromString(rangeString);
                 
@@ -842,7 +842,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
                           ranges:(NSMutableArray *)ranges
                         contents:(NSMutableArray *)contents
                 attributedString:(NSMutableAttributedString *)attributedText {
-    for (int i = 0; i < ranges.count; i++) {
+    for (NSUInteger i = 0; i < ranges.count; i++) {
         NSString *rangeString = [ranges objectAtIndex:i];
         NSRange highlightRange = NSRangeFromString(rangeString);
         NSString *highlightContent = [contents objectAtIndex:i];
@@ -957,7 +957,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
 - (void)processEmojiRangeWithRanges:(NSMutableArray *)ranges
                         emojiText:(NSString *)emojiText
                            result:(NSTextCheckingResult *)result {
-    for (int i = 0; i < ranges.count; i++) {
+    for (NSUInteger i = 0; i < ranges.count; i++) {
         NSString *rangestring = [ranges objectAtIndex:i];
         NSRange highlightRange = NSRangeFromString(rangestring);
         NSInteger dif = highlightRange.location - result.range.location;
@@ -977,7 +977,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
     @autoreleasepool {
         NSRange range;
         NSMutableArray * __autoreleasing tmp_ranges = [[NSMutableArray alloc] initWithArray:ranges copyItems:YES];
-        for (int i = 0; i < tmp_ranges.count; i++) {
+        for (NSUInteger i = 0; i < tmp_ranges.count; i++) {
             NSString *rangeString = [tmp_ranges objectAtIndex:i];
             range = NSRangeFromString(rangeString);
             
@@ -1076,7 +1076,7 @@ typedef NS_ENUM(NSUInteger, QAAttributedLayer_State) {
     
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    self.contents = (__bridge id _Nullable)(image.CGImage);
+    self.contents = (__bridge id)(image.CGImage);
 }
 - (int)updateAttributeText:(NSMutableAttributedString *)attributedText
              withTextColor:(UIColor *)textColor

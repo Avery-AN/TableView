@@ -101,7 +101,7 @@
     collectionViewW = collectionViewW - PagesGap;
     NSInteger sectionsCount = [self.collectionView numberOfSections];  //获取section的个数
     
-    for (NSInteger section = 0; section < sectionsCount; section++) {
+    for (NSUInteger section = 0; section < sectionsCount; section++) {
         NSInteger rowCounts = [self.collectionView numberOfItemsInSection:section]; //每个section里row的总数
         
         CGFloat itemWidth = self.itemWidth;
@@ -130,7 +130,7 @@
             }
         }
         
-        for (NSInteger row = 0; row < rowCounts; row++) {
+        for (NSUInteger row = 0; row < rowCounts; row++) {
             NSIndexPath *cellIndexPath = [NSIndexPath indexPathForItem:row inSection:section];
             UICollectionViewLayoutAttributes *attribute = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:cellIndexPath];
             
@@ -152,7 +152,7 @@
     CGFloat collectionViewW = self.collectionView.frame.size.width;
     NSInteger sectionsCount = [self.collectionView numberOfSections];  //获取section的个数
     
-    for (NSInteger section = 0; section < sectionsCount; section++) {
+    for (NSUInteger section = 0; section < sectionsCount; section++) {
         NSInteger rowCounts = [self.collectionView numberOfItemsInSection:section]; //每个section里row的总数
         
         /** // 【1】处理headerView:
@@ -175,7 +175,7 @@
         CGFloat itemSpace = self.itemSpace;
         
         // 将Section里每个cell的frame的Y值进行初始设置:
-        for (int i = 0; i < rowCounts; i++) {
+        for (NSUInteger i = 0; i < rowCounts; i++) {
             self.bottomYForItem[@(i)] = @(self.currentContentHeight);
         }
         
@@ -203,7 +203,7 @@
             }
         }
         
-        for (NSInteger row = 0; row < rowCounts; row++) {
+        for (NSUInteger row = 0; row < rowCounts; row++) {
             NSIndexPath *cellIndexPath = [NSIndexPath indexPathForItem:row inSection:section];
             UICollectionViewLayoutAttributes *attribute = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:cellIndexPath];
             

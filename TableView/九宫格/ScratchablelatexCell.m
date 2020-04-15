@@ -45,7 +45,7 @@ static BOOL openClipsToBounds = YES;
     CGPoint point = [[touches anyObject] locationInView:self];
     NSArray *contentImageViews = [self.styleInfo valueForKey:@"contentImageViews"];
     if (contentImageViews && [contentImageViews isKindOfClass:[NSArray class]]) {
-        for (int i = 0; i < contentImageViews.count; i++) {
+        for (NSUInteger i = 0; i < contentImageViews.count; i++) {
             NSDictionary *dic = [contentImageViews objectAtIndex:i];
             CGRect contentImageViewFrame = [[dic valueForKey:@"frame"] CGRectValue];
             
@@ -126,7 +126,7 @@ static BOOL openClipsToBounds = YES;
     if (contentImageViews && [contentImageViews isKindOfClass:[NSArray class]]) {
         self.yyImageView.hidden = NO;
         
-        for (int i = 0; i < contentImageViews.count; i++) {
+        for (NSUInteger i = 0; i < contentImageViews.count; i++) {
             UIImageView *contentImageView = [self.contentView viewWithTag:DefaultTag_contentImageView + i];
             contentImageView.hidden = NO;
             NSDictionary *dic = [contentImageViews objectAtIndex:i];
@@ -178,7 +178,7 @@ static BOOL openClipsToBounds = YES;
 - (void)drawScratchablelatexContent {
     NSArray *contentImageViews = [self.styleInfo valueForKey:@"contentImageViews"];
     if (contentImageViews && [contentImageViews isKindOfClass:[NSArray class]]) {
-        for (int i = 0; i < contentImageViews.count; i++) {
+        for (NSUInteger i = 0; i < contentImageViews.count; i++) {
             NSDictionary *dic = [contentImageViews objectAtIndex:i];
             NSString *url = [dic valueForKey:@"url"];
             UIImageView *contentImageView = [self.contentView viewWithTag:DefaultTag_contentImageView + i];

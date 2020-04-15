@@ -19,7 +19,7 @@
     NSMutableDictionary *dic_base = [NSMutableDictionary dictionary];
     unsigned int count = 0;
     objc_property_t *properties = class_copyPropertyList([QAAttributedLabel class], &count);
-    for (int i = 0; i < count; i++) {
+    for (NSUInteger i = 0; i < count; i++) {
         objc_property_t property = properties[i];
         const char *name = property_getName(property);
         NSString *key = [NSString stringWithUTF8String:name];
@@ -37,7 +37,7 @@
         NSMutableDictionary *dic_current = [NSMutableDictionary dictionary];
         count = 0;
         properties = class_copyPropertyList([instance class], &count);
-        for (int i = 0; i < count; i++) {
+        for (NSUInteger i = 0; i < count; i++) {
             objc_property_t property = properties[i];
             const char *name = property_getName(property);
             NSString *key = [NSString stringWithUTF8String:name];

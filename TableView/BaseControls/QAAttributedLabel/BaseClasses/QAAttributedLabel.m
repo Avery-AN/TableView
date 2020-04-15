@@ -165,7 +165,7 @@ static void *TouchingContext = &TouchingContext;
         for (NSString *highlightRangeString in highlightFrameDic) {
             NSArray *highlightRects = [highlightFrameDic valueForKey:highlightRangeString];
             
-            for (int i = 0; i < highlightRects.count; i++) {
+            for (NSUInteger i = 0; i < highlightRects.count; i++) {
                 NSValue *value = [highlightRects objectAtIndex:i];
                 CGRect highlightRect = [value CGRectValue];
                 

@@ -73,7 +73,7 @@
     BOOL hited = NO;
     
     NSArray *lineIndexs = [self.attributedString.highlightLineDic valueForKey:NSStringFromCGRect(highlightRect)];
-    for (int i = 0; i < lineIndexs.count; i++) {
+    for (NSUInteger i = 0; i < lineIndexs.count; i++) {
         NSString *lineIndexStr = [lineIndexs objectAtIndex:i];
         NSInteger lineIndex = lineIndexStr.integerValue;
         NSArray *lineWidths = self.attributedString.lineWidths;

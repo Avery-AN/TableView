@@ -183,7 +183,7 @@
     NSArray *trapezoidalTexts = attributedText.trapezoidalTexts_new;
     int lineIndex = 0;
     NSInteger length = 0;
-    for (int i = 0; i < trapezoidalTexts.count; i++) {
+    for (NSUInteger i = 0; i < trapezoidalTexts.count; i++) {
         NSAttributedString *attributedString = [trapezoidalTexts objectAtIndex:i];
         length = length + attributedString.length;
         if (length > range.location) {
@@ -198,7 +198,7 @@
     NSInteger widthAdded = 1;
     NSMutableArray *highlightRects_new = [NSMutableArray array];
     NSArray *lineWidths = attributedText.lineWidths;
-    for (int i = 0; i < highlightRects.count; i++) {
+    for (NSUInteger i = 0; i < highlightRects.count; i++) {
         NSValue *rectValue = [highlightRects objectAtIndex:i];
         CGRect rect = rectValue.CGRectValue;
         NSInteger currentLineIndex = lineIndex+i;
@@ -392,7 +392,7 @@
     CFArrayRef allLines = CTFrameGetLines(ctFrame);
     NSInteger numberOfAllLines = CFArrayGetCount(allLines);
     
-    for (int lineIndex = 0; lineIndex < numberOfAllLines; lineIndex++) {
+    for (NSUInteger lineIndex = 0; lineIndex < numberOfAllLines; lineIndex++) {
         CTLineRef lineRef = CFArrayGetValueAtIndex(allLines, lineIndex);
         CFRange cfrange = CTLineGetStringRange(lineRef);
         NSRange range = NSMakeRange(cfrange.location, cfrange.length);

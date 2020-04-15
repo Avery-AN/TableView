@@ -63,7 +63,7 @@ static CGFloat minRadius = 1;   // 最小弧度
                         radius:(CGFloat)radius
                backgroundColor:(UIColor *)backgroundColor {
     UIBezierPath *path = [UIBezierPath bezierPath];
-    for (int i = 0; i < dots.count; i++) {
+    for (NSUInteger i = 0; i < dots.count; i++) {
         NSInteger previous = i - 1;
         if (i == 0) {
             previous = dots.count - 1;
@@ -135,7 +135,7 @@ static CGFloat minRadius = 1;   // 最小弧度
                           dotCounts:(NSInteger)dotCounts
                       textAlignment:(Background_TextAlignment)textAlignment
                                dots:(NSMutableArray *)dots {
-    for (int dotIndex = 0; dotIndex < dotCounts; dotIndex++) {
+    for (NSUInteger dotIndex = 0; dotIndex < dotCounts; dotIndex++) {
         NSInteger currentLine = 0;
         CGFloat currentX = 0;
         CGFloat currentY = 0;
@@ -182,7 +182,7 @@ static CGFloat minRadius = 1;   // 最小弧度
                        lineHeight:(CGFloat)lineHeight
                         dotCounts:(NSInteger)dotCounts
                              dots:(NSMutableArray *)dots {
-    for (int dotIndex = 0; dotIndex < dotCounts; dotIndex++) {
+    for (NSUInteger dotIndex = 0; dotIndex < dotCounts; dotIndex++) {
         NSInteger currentLine = 0;
         if (dotIndex < dotCounts/2) {
             currentLine = dotIndex/2;   // 当前点所在的行数

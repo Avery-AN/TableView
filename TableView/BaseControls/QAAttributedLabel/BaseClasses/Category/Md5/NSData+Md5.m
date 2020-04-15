@@ -16,7 +16,7 @@
     CC_MD5(str, (CC_LONG)self.length, result);
     
     NSMutableString *hash = [NSMutableString string];
-    for (int i = 0; i < CC_MD5_DIGEST_LENGTH; i++) {
+    for (NSUInteger i = 0; i < CC_MD5_DIGEST_LENGTH; i++) {
         [hash appendFormat:@"%02X", result[i]];
     }
     
