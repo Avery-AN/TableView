@@ -15,6 +15,7 @@
 		BB58E08D238B7CD0005C4EA9 /* nezha@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB58E089238B7CD0005C4EA9 /* nezha@3x.png */; };
 		BB6C5F5C2425C4FC00A900E2 /* TrapezoidalCell+SelfManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BB6C5F5B2425C4FC00A900E2 /* TrapezoidalCell+SelfManager.m */; };
 		BB6C5F622425CA2D00A900E2 /* RichTextDataProcessManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BB6C5F612425CA2D00A900E2 /* RichTextDataProcessManager.m */; };
+		BB76161D245AD459009D6C5B /* QAImageBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB76161C245AD459009D6C5B /* QAImageBrowserViewController.m */; };
 		BB7BECCA2390E40C00688028 /* QAImageBrowserManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BB7BECC22390E40C00688028 /* QAImageBrowserManager.m */; };
 		BB7BECD723925B0000688028 /* 默认图@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB7BECD523925B0000688028 /* 默认图@3x.png */; };
 		BB7BECD823925B0000688028 /* 默认图@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BB7BECD623925B0000688028 /* 默认图@2x.png */; };
@@ -131,6 +132,8 @@
 		BB6C5F5B2425C4FC00A900E2 /* TrapezoidalCell+SelfManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "TrapezoidalCell+SelfManager.m"; sourceTree = "<group>"; };
 		BB6C5F602425CA2D00A900E2 /* RichTextDataProcessManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RichTextDataProcessManager.h; sourceTree = "<group>"; };
 		BB6C5F612425CA2D00A900E2 /* RichTextDataProcessManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RichTextDataProcessManager.m; sourceTree = "<group>"; };
+		BB76161B245AD459009D6C5B /* QAImageBrowserViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QAImageBrowserViewController.h; sourceTree = "<group>"; };
+		BB76161C245AD459009D6C5B /* QAImageBrowserViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QAImageBrowserViewController.m; sourceTree = "<group>"; };
 		BB7BECC22390E40C00688028 /* QAImageBrowserManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QAImageBrowserManager.m; sourceTree = "<group>"; };
 		BB7BECC32390E40C00688028 /* QAImageBrowserManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QAImageBrowserManager.h; sourceTree = "<group>"; };
 		BB7BECD523925B0000688028 /* 默认图@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "默认图@3x.png"; sourceTree = "<group>"; };
@@ -378,11 +381,21 @@
 			path = EmojiImages;
 			sourceTree = "<group>";
 		};
+		BB76161A245AD445009D6C5B /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				BB76161B245AD459009D6C5B /* QAImageBrowserViewController.h */,
+				BB76161C245AD459009D6C5B /* QAImageBrowserViewController.m */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
 		BB7BECC02390E40C00688028 /* QAImageBrowser */ = {
 			isa = PBXGroup;
 			children = (
 				BB97A75D23A5E2A900A3BA7A /* QAImageBrowserManagerConfig.h */,
 				BB7BECC12390E40C00688028 /* Manager */,
+				BB76161A245AD445009D6C5B /* ViewControllers */,
 				BB7BECC72390E40C00688028 /* Views */,
 				BB7BECD423925B0000688028 /* Resources */,
 			);
@@ -932,6 +945,7 @@
 				BBB7BC752418806C00347814 /* NSArray+MASAdditions.m in Sources */,
 				BBB7BC032418801C00347814 /* QARichTextDraw.m in Sources */,
 				BBB7BBF92418801C00347814 /* QAEmojiTextManager.m in Sources */,
+				BB76161D245AD459009D6C5B /* QAImageBrowserViewController.m in Sources */,
 				BBB7BBF72418801C00347814 /* QATextDraw.m in Sources */,
 				BBB7BC792418806C00347814 /* MASViewAttribute.m in Sources */,
 				BBB7BBEC2418801C00347814 /* QATextRunDelegate.m in Sources */,
