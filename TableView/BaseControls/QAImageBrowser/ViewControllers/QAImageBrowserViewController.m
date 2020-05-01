@@ -268,14 +268,7 @@ static void *CollectionContext = &CollectionContext;
     [self removePanGestureRecognizer];
     imageBrowserCell.userInteractionEnabled = NO;
     
-    [UIView animateWithDuration:.2
-                     animations:^{
-        self.blackBackgroundView.alpha = 0;
-        self.currentShowingImageView.frame = rectInWindow;
-    }
-    completion:^(BOOL finished) {
-        [self cleanupTheBattlefield];
-    }];
+    [self quitAnimation:rectInWindow];
 }
 - (void)quitImageBrowser_directly {
     [self hideImageViewInCell:YES];
@@ -287,10 +280,13 @@ static void *CollectionContext = &CollectionContext;
     CGRect srcRect = [self getOriginalFrameInTableViewAtIndex:self.currentPosition];  // 在tableView的cell中的坐标
     CGRect rectInWindow = CGRectMake(srcRect.origin.x + self.rectOffsetX + self.currentImageBrowserCell.scrollView.contentOffset.x, srcRect.origin.y + self.rectOffsetY + self.currentImageBrowserCell.scrollView.contentOffset.y, srcRect.size.width, srcRect.size.height);
     
+    [self quitAnimation:rectInWindow];
+}
+- (void)quitAnimation:(CGRect)rect {
     [UIView animateWithDuration:.2
                      animations:^{
         self.blackBackgroundView.alpha = 0;
-        self.currentShowingImageView.frame = rectInWindow;
+        self.currentShowingImageView.frame = rect;
     } completion:^(BOOL finished) {
         [self cleanupTheBattlefield];
     }];
@@ -330,8 +326,6 @@ static void *CollectionContext = &CollectionContext;
              make.size.mas_equalTo(srcRectInTable.size);
          }];
          */
-    }
-    else {
     }
     
     /**

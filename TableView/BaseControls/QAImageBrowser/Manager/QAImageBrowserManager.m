@@ -42,11 +42,9 @@
                                                            images:images
                                                          finished:^(NSInteger index, YYAnimatedImageView * _Nonnull imageView) {
             __strong typeof(weakSelf) strongSelf = weakSelf;
-            
-            [strongSelf.window resignKeyWindow];
-            strongSelf.imageBrowserViewController = nil;
-            strongSelf.window = nil;
-            
+
+            [strongSelf performSelector:@selector(quit) withObject:nil afterDelay:0];
+
             if (finishedBlock) {
                 finishedBlock(index, imageView);
             }
@@ -56,9 +54,17 @@
     if (!self.window) {
         self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
         self.window.windowLevel = UIWindowLevelAlert - 1;
-        self.window.rootViewController = self.imageBrowserViewController;
         [self.window makeKeyAndVisible];
     }
+    self.window.rootViewController = self.imageBrowserViewController;
+}
+
+
+#pragma mark - Private Method -
+- (void)quit {
+    [self.window resignKeyWindow];
+    self.imageBrowserViewController = nil;
+    self.window = nil;
 }
 
 
