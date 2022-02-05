@@ -1,8 +1,7 @@
 # TableView
-
-【iOS14以后的版本注意处理一下YYAnimatedImageView中的bug】
-【iOS14以后，YYAnimatedImageView加载图片有些问题】
-【iOS14以后，可以添加一个类似于YYAnimatedImageView+ImageShow的分类】
+【iOS14以后的版本注意处理一下YYAnimatedImageView中的bug】<br>
+【iOS14以后，YYAnimatedImageView加载图片有些问题】<br>
+【iOS14以后，可以添加一个类似于YYAnimatedImageView+ImageShow的分类】<br>
 
 TableView优化案例<br>
 使用QAAttributedLabel的异步绘制时、即便在iPhone6真机下每个cell包含10张大图时仍能达到60fps
