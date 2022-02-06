@@ -116,6 +116,7 @@
 		BBCD5DC923A50CBA00950B71 /* 1.JPG in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DBF23A50CBA00950B71 /* 1.JPG */; };
 		BBCD5DCA23A50CBA00950B71 /* 0.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BBCD5DC023A50CBA00950B71 /* 0.jpg */; };
 		BBFB18D123A81D80009CD0C1 /* QAImageProcesser.m in Sources */ = {isa = PBXBuildFile; fileRef = BBFB18CF23A81D80009CD0C1 /* QAImageProcesser.m */; };
+		F8A4D4B427AF6704003766A2 /* YYAnimatedImageView+ImageShow.m in Sources */ = {isa = PBXBuildFile; fileRef = F8A4D4B227AF6703003766A2 /* YYAnimatedImageView+ImageShow.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -328,6 +329,8 @@
 		BBCD5DC023A50CBA00950B71 /* 0.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 0.jpg; sourceTree = "<group>"; };
 		BBFB18CC23A81D7F009CD0C1 /* QAImageProcesser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QAImageProcesser.h; sourceTree = "<group>"; };
 		BBFB18CF23A81D80009CD0C1 /* QAImageProcesser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QAImageProcesser.m; sourceTree = "<group>"; };
+		F8A4D4B227AF6703003766A2 /* YYAnimatedImageView+ImageShow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "YYAnimatedImageView+ImageShow.m"; sourceTree = "<group>"; };
+		F8A4D4B327AF6703003766A2 /* YYAnimatedImageView+ImageShow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "YYAnimatedImageView+ImageShow.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -481,6 +484,8 @@
 				BB9F6C2723838BEA00F05116 /* UIImage+RoundedImage.m */,
 				BB9F6C2B23838BEA00F05116 /* UIImage+ClipsToBounds.h */,
 				BB9F6C2823838BEA00F05116 /* UIImage+ClipsToBounds.m */,
+				F8A4D4B327AF6703003766A2 /* YYAnimatedImageView+ImageShow.h */,
+				F8A4D4B227AF6703003766A2 /* YYAnimatedImageView+ImageShow.m */,
 			);
 			path = Category;
 			sourceTree = "<group>";
@@ -983,6 +988,7 @@
 				BBB7BC772418806C00347814 /* MASConstraint.m in Sources */,
 				BBAFC63423BEFE0E0027E810 /* QAImageBrowserDownloadManager.m in Sources */,
 				BB9F6C2323838B8E00F05116 /* RootViewController.m in Sources */,
+				F8A4D4B427AF6704003766A2 /* YYAnimatedImageView+ImageShow.m in Sources */,
 				BBB7BC002418801C00347814 /* QATrapezoidalLayer.m in Sources */,
 				BBB7BBFF2418801C00347814 /* QATrapezoidalLabel.m in Sources */,
 				BBB7BC8C2418806C00347814 /* UIImageView+WebCache.m in Sources */,
