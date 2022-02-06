@@ -14,6 +14,8 @@
 #import "QATrapezoidalDraw.h"
 #import "QABackgroundDraw.h"
 
+int DrawBackgroundRadius = 10;  // 绘制背景的圆角
+
 @implementation QATrapezoidalLayer
 
 #pragma mark - Override Methods -
@@ -423,12 +425,14 @@
                        textAlignment:(NSTextAlignment)textAlignment
                trapezoidalLineHeight:(CGFloat)trapezoidalLineHeight
                  lineBackgroundColor:lineBackgroundColor {
+    int radius = DrawBackgroundRadius;
+    
     // 设置绘制背景:
     if (textAlignment == NSTextAlignmentLeft) {
         [QABackgroundDraw drawBackgroundWithMaxWidth:contentSize.width
                                           lineWidths:attributedText.lineWidths
                                           lineHeight:trapezoidalLineHeight
-                                              radius:5
+                                              radius:radius
                                        textAlignment:Background_TextAlignment_Left
                                      backgroundColor:lineBackgroundColor];
     }
@@ -436,7 +440,7 @@
         [QABackgroundDraw drawBackgroundWithMaxWidth:contentSize.width
                                           lineWidths:attributedText.lineWidths
                                           lineHeight:trapezoidalLineHeight
-                                              radius:5
+                                              radius:radius
                                        textAlignment:Background_TextAlignment_Right
                                      backgroundColor:lineBackgroundColor];
     }
@@ -444,7 +448,7 @@
         [QABackgroundDraw drawBackgroundWithMaxWidth:contentSize.width
                                           lineWidths:attributedText.lineWidths
                                           lineHeight:trapezoidalLineHeight
-                                              radius:5
+                                              radius:radius
                                        textAlignment:Background_TextAlignment_Center
                                      backgroundColor:lineBackgroundColor];
     }
